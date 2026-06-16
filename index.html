@@ -78,6 +78,14 @@
                     </ul>
                 </div>
             </div>
+            <div id="current-folder-bar" class="hidden">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                        d="M2 4.5V12A1.5 1.5 0 003.5 13.5h9A1.5 1.5 0 0014 12V5.5A1.5 1.5 0 0012.5 4H8.707l-1-1H3.5A1.5 1.5 0 002 4.5z"
+                        stroke="currentColor" stroke-width="1.5" fill="none" />
+                </svg>
+                <span id="current-folder-name"></span>
+            </div>
             <div id="file-list-container">
                 <div id="empty-state" class="empty-state">
                     <p>No folder selected</p>
@@ -130,7 +138,8 @@
                                     <input type="checkbox" id="use-gitignore-checkbox" checked />
                                     <span>Use .gitignore</span>
                                 </label>
-                                <p class="settings-hint">Skip files and folders matched by .gitignore. Uncheck to include ignored files in the list.</p>
+                                <p class="settings-hint">Skip files and folders matched by .gitignore. Uncheck to
+                                    include ignored files in the list.</p>
                             </div>
                         </div>
                         <div class="settings-section">

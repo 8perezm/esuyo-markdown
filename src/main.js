@@ -122,6 +122,8 @@ const settingsCloseBtn = document.getElementById("settings-close-btn");
 const fontDefaultSelect = document.getElementById("font-default-select");
 const fontHeaderSelect = document.getElementById("font-header-select");
 const useGitignoreCheckbox = document.getElementById("use-gitignore-checkbox");
+const currentFolderBar = document.getElementById("current-folder-bar");
+const currentFolderName = document.getElementById("current-folder-name");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -410,6 +412,7 @@ async function openFolderByPath(folderPath) {
         showLoading(false);
         pushRecent(folderPath);
         renderFileList(files);
+        updateCurrentFolderBar();
         updateOpenFolderBtnVisibility();
     } catch (error) {
         showLoading(false);
@@ -441,6 +444,21 @@ async function rescanCurrentFolder() {
 // ── Init ────────────────────────────────────────────────────────────────────
 
 loadSettings();
+updateCurrentFolderBar();
+
+// ── Current Folder Bar ──────────────────────────────────────────────────────
+
+function updateCurrentFolderBar() {
+    if (currentFolder) {
+        currentFolderBar.classList.remove("hidden");
+        currentFolderName.textContent = basename(currentFolder);
+        currentFolderBar.title = currentFolder;
+    } else {
+        currentFolderBar.classList.add("hidden");
+        currentFolderName.textContent = "";
+        currentFolderBar.title = "";
+    }
+}
 
 // ── File List ───────────────────────────────────────────────────────────────
 

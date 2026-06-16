@@ -132,6 +132,35 @@ html, body {
   background: var(--icon-btn-bg-hover);
 }
 
+/* ===== Current Folder Bar ===== */
+#current-folder-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sidebar-text);
+  border-bottom: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#current-folder-bar svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+#current-folder-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#current-folder-bar.hidden {
+  display: none;
+}
+
 /* ===== Sidebar Toggle ===== */
 .sidebar-toggle {
   position: absolute;
