@@ -22,6 +22,17 @@ pub struct AppSettings {
     pub default_font: Option<String>,
     /// Google Font name for headings
     pub header_font: Option<String>,
+    /// When true, `scan_md_files` honors `.gitignore` and the built-in
+    /// ignore list. When false, every `.md`/`.markdown` file in the tree
+    /// is returned (so the user can peek at docs in `node_modules/`, etc.).
+    /// Defaults to `true` for backward compatibility with existing
+    /// `settings.json` files that predate this field.
+    #[serde(default = "default_true")]
+    pub use_gitignore: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 // ── Built-in ignore list ────────────────────────────────────────────────────
@@ -148,22 +159,30 @@ fn is_ignored(rel: &str, name: &str, patterns: &[String]) -> bool {
 }
 
 /// Recursively scans a directory for markdown (.md) files.
-/// Honors .gitignore patterns and a built-in ignore list.
+/// When `use_gitignore` is true, honors `.gitignore` patterns and a
+/// built-in ignore list. When false, returns every markdown file
+/// regardless of ignore rules.
 #[tauri::command]
-fn scan_md_files(folder_path: &str) -> Result<Vec<MarkdownFile>, String> {
+fn scan_md_files(folder_path: &str, use_gitignore: bool) -> Result<Vec<MarkdownFile>, String> {
     let root = Path::new(folder_path);
     if !root.exists() || !root.is_dir() {
         return Err(format!("Directory not found: {}", folder_path));
     }
 
-    let ignore_patterns = load_gitignore(root);
+    // Only read .gitignore from disk when the user wants ignore rules
+    // applied. Avoids needless IO when the toggle is off.
+    let ignore_patterns = if use_gitignore {
+        load_gitignore(root)
+    } else {
+        Vec::new()
+    };
     let mut files: Vec<MarkdownFile> = Vec::new();
 
     for entry in WalkDir::new(folder_path)
         .follow_links(true)
         .into_iter()
         .filter_entry(|e| {
-            if e.depth() == 0 {
+            if !use_gitignore || e.depth() == 0 {
                 return true;
             }
             let name = e.file_name().to_string_lossy();

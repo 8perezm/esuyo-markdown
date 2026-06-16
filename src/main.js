@@ -94,7 +94,7 @@ function loadGoogleFont(family) {
 let currentFolder = null;
 let currentFiles = [];
 let currentFileIndex = -1;
-let settings = { recent_folders: [], theme: "dark" };
+let settings = { recent_folders: [], theme: "dark", use_gitignore: true };
 
 // ── DOM references ──────────────────────────────────────────────────────────
 
@@ -121,6 +121,7 @@ const settingsOverlay = document.getElementById("settings-overlay");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
 const fontDefaultSelect = document.getElementById("font-default-select");
 const fontHeaderSelect = document.getElementById("font-header-select");
+const useGitignoreCheckbox = document.getElementById("use-gitignore-checkbox");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -134,6 +135,9 @@ async function loadSettings() {
     // Ensure default font fields
     if (!settings.default_font) settings.default_font = "Inter";
     if (!settings.header_font) settings.header_font = "Inter";
+    // Ensure use_gitignore is a boolean (Rust serde default is `true`, but
+    // guard against any `undefined` from cached or legacy state).
+    settings.use_gitignore = settings.use_gitignore !== false;
     applyTheme(settings.theme);
     applyFonts(settings.default_font, settings.header_font);
     renderRecentFolders();
@@ -295,6 +299,7 @@ function openSettings() {
     GOOGLE_FONTS.forEach((f) => loadGoogleFont(f.family));
     buildFontSelect(fontDefaultSelect, settings.default_font);
     buildFontSelect(fontHeaderSelect, settings.header_font);
+    useGitignoreCheckbox.checked = settings.use_gitignore;
     settingsOverlay.classList.remove("hidden");
 }
 
@@ -317,6 +322,13 @@ fontHeaderSelect.addEventListener("change", () => {
     const val = fontHeaderSelect.value;
     applyFonts(settings.default_font, val);
     persistSettings();
+});
+
+useGitignoreCheckbox.addEventListener("change", () => {
+    settings.use_gitignore = useGitignoreCheckbox.checked;
+    persistSettings();
+    // Re-scan the current folder so the change is visible immediately.
+    rescanCurrentFolder();
 });
 
 // ── Recent Folders ──────────────────────────────────────────────────────────
@@ -388,7 +400,10 @@ async function openFolderByPath(folderPath) {
         currentFolder = folderPath;
         showLoading(true);
 
-        const files = await invoke("scan_md_files", { folderPath });
+        const files = await invoke("scan_md_files", {
+            folderPath,
+            useGitignore: settings.use_gitignore,
+        });
         currentFiles = files;
         currentFileIndex = -1;
 
@@ -400,6 +415,26 @@ async function openFolderByPath(folderPath) {
         showLoading(false);
         console.error("Failed to open folder:", error);
         alert(`Error opening folder: ${error}`);
+    }
+}
+
+// Re-runs the scan against the currently open folder using the latest
+// settings. Used when the user toggles "Use .gitignore" in Settings.
+async function rescanCurrentFolder() {
+    if (!currentFolder) return;
+    try {
+        showLoading(true);
+        const files = await invoke("scan_md_files", {
+            folderPath: currentFolder,
+            useGitignore: settings.use_gitignore,
+        });
+        currentFiles = files;
+        currentFileIndex = -1;
+        showLoading(false);
+        renderFileList(files);
+    } catch (error) {
+        showLoading(false);
+        console.error("Failed to rescan folder:", error);
     }
 }
 
