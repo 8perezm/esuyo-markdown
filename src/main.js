@@ -16,12 +16,9 @@ const marked = new Marked(
     })
 );
 
-// Override heading renderer to add IDs for potential anchor linking
-const originalHeadingRenderer = marked.defaults.renderer?.heading;
 marked.use({
     renderer: {
         heading({ tokens, depth }) {
-            // `text` is a token array in marked v5+; render to plain HTML
             const text = this.parser.parseInline(tokens);
             const id = text
                 .toLowerCase()
@@ -35,6 +32,63 @@ marked.use({
     },
 });
 
+// ── Google Fonts list ───────────────────────────────────────────────────────
+
+const GOOGLE_FONTS = [
+    // Sans-serif
+    { family: "Inter", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Roboto", category: "sans-serif", weights: "wght@400;500;700" },
+    { family: "Open Sans", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Lato", category: "sans-serif", weights: "wght@400;700" },
+    { family: "Montserrat", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Source Sans 3", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Nunito", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Poppins", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Noto Sans", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "DM Sans", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Plus Jakarta Sans", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Manrope", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Figtree", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Outfit", category: "sans-serif", weights: "wght@400;500;600;700" },
+    { family: "Nunito Sans", category: "sans-serif", weights: "wght@400;500;600;700" },
+    // Serif
+    { family: "Merriweather", category: "serif", weights: "wght@400;700" },
+    { family: "Lora", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "Source Serif 4", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "Playfair Display", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "EB Garamond", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "Spectral", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "Literata", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "Crimson Pro", category: "serif", weights: "wght@400;500;600;700" },
+    { family: "PT Serif", category: "serif", weights: "wght@400;700" },
+    // Monospace
+    { family: "JetBrains Mono", category: "monospace", weights: "wght@400;600" },
+    { family: "Fira Code", category: "monospace", weights: "wght@400;500;600" },
+    { family: "Source Code Pro", category: "monospace", weights: "wght@400;500;600;700" },
+    { family: "IBM Plex Mono", category: "monospace", weights: "wght@400;500;600" },
+    { family: "Space Mono", category: "monospace", weights: "wght@400;700" },
+    { family: "DM Mono", category: "monospace", weights: "wght@400;500" },
+    { family: "Inconsolata", category: "monospace", weights: "wght@400;500;600;700" },
+    { family: "Victor Mono", category: "monospace", weights: "wght@400;500;600" },
+];
+
+// Track which Google Fonts have been loaded
+const loadedFonts = new Set();
+
+function loadGoogleFont(family) {
+    const key = family.toLowerCase().replace(/\s+/g, "-");
+    if (loadedFonts.has(key)) return;
+    loadedFonts.add(key);
+
+    const font = GOOGLE_FONTS.find((f) => f.family === family);
+    if (!font) return;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.family)}:${font.weights}&display=swap`;
+    document.head.appendChild(link);
+}
+
 // ── State ───────────────────────────────────────────────────────────────────
 
 let currentFolder = null;
@@ -44,12 +98,15 @@ let settings = { recent_folders: [], theme: "dark" };
 
 // ── DOM references ──────────────────────────────────────────────────────────
 
+const app = document.getElementById("app");
 const openFolderBtn = document.getElementById("open-folder-btn");
+const sidebarToggle = document.getElementById("sidebar-toggle");
 const fileList = document.getElementById("file-list");
 const emptyState = document.getElementById("empty-state");
 const welcome = document.getElementById("welcome");
 const markdownViewer = document.getElementById("markdown-viewer");
 const renderedContent = document.getElementById("rendered-content");
+const renderedContentInner = document.getElementById("rendered-content-inner");
 const currentFilePath = document.getElementById("current-file-path");
 const loadingIndicator = document.getElementById("loading-indicator");
 const themeToggle = document.getElementById("theme-toggle");
@@ -58,8 +115,14 @@ const themeIconMoon = document.getElementById("theme-icon-moon");
 const menuBtn = document.getElementById("menu-btn");
 const menuDropdown = document.getElementById("menu-dropdown");
 const recentFoldersList = document.getElementById("recent-folders-list");
+const menuOpenFolderItem = document.getElementById("menu-open-folder-item");
+const menuSettingsItem = document.getElementById("menu-settings-item");
+const settingsOverlay = document.getElementById("settings-overlay");
+const settingsCloseBtn = document.getElementById("settings-close-btn");
+const fontDefaultSelect = document.getElementById("font-default-select");
+const fontHeaderSelect = document.getElementById("font-header-select");
 
-// ── Settings (theme, recents) ───────────────────────────────────────────────
+// ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
 async function loadSettings() {
     try {
@@ -68,8 +131,13 @@ async function loadSettings() {
         console.warn("Failed to load settings, using defaults:", err);
         settings = { recent_folders: [], theme: "dark" };
     }
+    // Ensure default font fields
+    if (!settings.default_font) settings.default_font = "Inter";
+    if (!settings.header_font) settings.header_font = "Inter";
     applyTheme(settings.theme);
+    applyFonts(settings.default_font, settings.header_font);
     renderRecentFolders();
+    updateOpenFolderBtnVisibility();
 }
 
 async function persistSettings() {
@@ -79,6 +147,8 @@ async function persistSettings() {
         console.warn("Failed to save settings:", err);
     }
 }
+
+// ── Theme ───────────────────────────────────────────────────────────────────
 
 function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
@@ -95,7 +165,35 @@ themeToggle.addEventListener("click", () => {
     persistSettings();
 });
 
-// ── Recent Folders Menu ─────────────────────────────────────────────────────
+// ── Fonts ───────────────────────────────────────────────────────────────────
+
+function applyFonts(defaultFont, headerFont) {
+    // Load Google Fonts if needed
+    loadGoogleFont(defaultFont);
+    if (headerFont !== defaultFont) {
+        loadGoogleFont(headerFont);
+    }
+
+    // Apply body font
+    document.documentElement.style.setProperty("--font-sans", `'${defaultFont}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`);
+    document.documentElement.style.setProperty("--user-font-sans", `'${defaultFont}', Georgia, 'Times New Roman', serif`);
+
+    // Apply heading font
+    document.documentElement.style.setProperty("--user-font-heading", `'${headerFont}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`);
+
+    settings.default_font = defaultFont;
+    settings.header_font = headerFont;
+}
+
+// ── Sidebar Toggle ──────────────────────────────────────────────────────────
+
+sidebarToggle.addEventListener("click", () => {
+    app.classList.toggle("sidebar-hidden");
+    const isHidden = app.classList.contains("sidebar-hidden");
+    sidebarToggle.title = isHidden ? "Show sidebar" : "Hide sidebar";
+});
+
+// ── Menu Dropdown ───────────────────────────────────────────────────────────
 
 menuBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -104,7 +202,10 @@ menuBtn.addEventListener("click", (e) => {
         menuDropdown.classList.add("hidden");
     } else {
         renderRecentFolders();
+        updateOpenFolderBtnVisibility();
         menuDropdown.classList.remove("hidden");
+        // Clamp menu position so it doesn't clip on the left
+        clampMenuPosition();
     }
 });
 
@@ -113,6 +214,105 @@ document.addEventListener("click", (e) => {
         menuDropdown.classList.add("hidden");
     }
 });
+
+// Prevent menu from positioning itself less than 0 horizontally
+function clampMenuPosition() {
+    // Reset any inline style first
+    menuDropdown.style.left = "";
+    menuDropdown.style.right = "";
+    // Force reflow
+    void menuDropdown.offsetWidth;
+    const rect = menuDropdown.getBoundingClientRect();
+    if (rect.left < 0) {
+        menuDropdown.style.left = "8px";
+        menuDropdown.style.right = "auto";
+    }
+}
+
+function updateOpenFolderBtnVisibility() {
+    const hasFolder = currentFolder !== null;
+    // Show/hide the standalone "Open Folder" button
+    openFolderBtn.style.display = hasFolder ? "none" : "";
+    // Show/hide the menu item
+    menuOpenFolderItem.classList.toggle("hidden", !hasFolder);
+}
+
+// Menu item actions
+menuOpenFolderItem.addEventListener("click", () => {
+    menuDropdown.classList.add("hidden");
+    openFolder();
+});
+
+menuSettingsItem.addEventListener("click", () => {
+    menuDropdown.classList.add("hidden");
+    openSettings();
+});
+
+// ── Settings Modal ──────────────────────────────────────────────────────────
+
+function buildFontSelect(selectEl, currentFont) {
+    // Group fonts by category
+    const categories = [
+        { label: "Sans-serif", key: "sans-serif" },
+        { label: "Serif", key: "serif" },
+        { label: "Monospace", key: "monospace" },
+    ];
+
+    selectEl.innerHTML = "";
+    categories.forEach((cat) => {
+        const fonts = GOOGLE_FONTS.filter((f) => f.category === cat.key);
+        if (fonts.length === 0) return;
+        const group = document.createElement("optgroup");
+        group.label = cat.label;
+        fonts.forEach((f) => {
+            const opt = document.createElement("option");
+            opt.value = f.family;
+            opt.textContent = f.family;
+            if (f.family === currentFont) opt.selected = true;
+            group.appendChild(opt);
+        });
+        selectEl.appendChild(group);
+    });
+
+    // If current font isn't in the list, add it
+    const exists = Array.from(selectEl.options).some((o) => o.value === currentFont);
+    if (!exists && currentFont) {
+        const opt = document.createElement("option");
+        opt.value = currentFont;
+        opt.textContent = currentFont;
+        opt.selected = true;
+        selectEl.insertBefore(opt, selectEl.firstChild);
+    }
+}
+
+function openSettings() {
+    buildFontSelect(fontDefaultSelect, settings.default_font);
+    buildFontSelect(fontHeaderSelect, settings.header_font);
+    settingsOverlay.classList.remove("hidden");
+}
+
+function closeSettings() {
+    settingsOverlay.classList.add("hidden");
+}
+
+settingsCloseBtn.addEventListener("click", closeSettings);
+settingsOverlay.addEventListener("click", (e) => {
+    if (e.target === settingsOverlay) closeSettings();
+});
+
+fontDefaultSelect.addEventListener("change", () => {
+    const val = fontDefaultSelect.value;
+    applyFonts(val, settings.header_font);
+    persistSettings();
+});
+
+fontHeaderSelect.addEventListener("change", () => {
+    const val = fontHeaderSelect.value;
+    applyFonts(settings.default_font, val);
+    persistSettings();
+});
+
+// ── Recent Folders ──────────────────────────────────────────────────────────
 
 function basename(p) {
     if (!p) return "";
@@ -166,7 +366,7 @@ async function openFolder() {
             title: "Select a folder with markdown files",
         });
 
-        if (!selected) return; // User cancelled
+        if (!selected) return;
 
         await openFolderByPath(selected);
     } catch (error) {
@@ -188,6 +388,7 @@ async function openFolderByPath(folderPath) {
         showLoading(false);
         pushRecent(folderPath);
         renderFileList(files);
+        updateOpenFolderBtnVisibility();
     } catch (error) {
         showLoading(false);
         console.error("Failed to open folder:", error);
@@ -215,7 +416,6 @@ function renderFileList(files) {
         return;
     }
 
-    // Reset empty state to its default "no folder selected" text
     emptyState.innerHTML = `
       <p>No folder selected</p>
       <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
@@ -223,7 +423,6 @@ function renderFileList(files) {
     emptyState.classList.add("hidden");
     fileList.classList.remove("hidden");
 
-    // Group files by directory for visual clarity
     files.forEach((file, index) => {
         const li = document.createElement("li");
         li.className = "file-item";
@@ -245,12 +444,10 @@ function renderFileList(files) {
 }
 
 function updateActiveFile(index) {
-    // Remove active class from all items
     document.querySelectorAll(".file-item").forEach((el) => {
         el.classList.remove("active");
     });
 
-    // Add active class to the selected item
     const items = document.querySelectorAll(".file-item");
     if (items[index]) {
         items[index].classList.add("active");
@@ -274,13 +471,13 @@ async function selectFile(index) {
         renderMarkdown(content);
     } catch (error) {
         console.error("Failed to read file:", error);
-        renderedContent.innerHTML = `<div class="error">Error reading file: ${error}</div>`;
+        renderedContentInner.innerHTML = `<div class="error">Error reading file: ${error}</div>`;
     }
 }
 
 function renderMarkdown(content) {
     const html = marked.parse(content);
-    renderedContent.innerHTML = html;
+    renderedContentInner.innerHTML = html;
 
     welcome.classList.add("hidden");
     markdownViewer.classList.remove("hidden");
@@ -324,5 +521,4 @@ document.addEventListener("keydown", (e) => {
 
 // ── Highlight.js theme ──────────────────────────────────────────────────────
 
-// Import a highlight.js theme
 import "highlight.js/styles/atom-one-dark.css";

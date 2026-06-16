@@ -7,9 +7,9 @@
    ========================================================================== */
 
 .markdown-body {
-  --md-font-sans: 'Merriweather', Georgia, 'Times New Roman', serif;
+  --md-font-sans: var(--user-font-sans, 'Merriweather', Georgia, 'Times New Roman', serif);
   --md-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --md-font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --md-font-heading: var(--user-font-heading, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
 
   --md-text-color: #d1d1d1;
   --md-heading-color: #ffffff;

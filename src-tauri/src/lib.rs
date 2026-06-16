@@ -18,6 +18,10 @@ pub struct AppSettings {
     pub recent_folders: Vec<String>,
     /// "light" | "dark"
     pub theme: String,
+    /// Google Font name for body text
+    pub default_font: Option<String>,
+    /// Google Font name for headings
+    pub header_font: Option<String>,
 }
 
 // ── Built-in ignore list ────────────────────────────────────────────────────
