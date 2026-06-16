@@ -8,7 +8,7 @@
 
 .markdown-body {
   --md-font-sans: var(--user-font-sans, 'Merriweather', Georgia, 'Times New Roman', serif);
-  --md-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --md-font-mono: var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
   --md-font-heading: var(--user-font-heading, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
 
   --md-text-color: #d1d1d1;
@@ -27,7 +27,7 @@
   --md-inline-code-bg: #1c1d20;
 
   font-family: var(--md-font-sans);
-  font-size: 16px;
+  font-size: var(--md-font-size, 16px);
   line-height: 1.75;
   color: var(--md-text-color);
   max-width: 800px;
@@ -67,12 +67,12 @@
   line-height: 1.3;
 }
 
-.markdown-body h1 { font-size: 2em; margin-top: 0; padding-bottom: 0.3em; border-bottom: 1px solid var(--md-hr-color); }
-.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.25em; border-bottom: 1px solid var(--md-hr-color); }
-.markdown-body h3 { font-size: 1.25em; }
-.markdown-body h4 { font-size: 1.1em; }
-.markdown-body h5 { font-size: 1em; }
-.markdown-body h6 { font-size: 0.9em; opacity: 0.8; }
+.markdown-body h1 { font-size: var(--md-heading-base-size, 32px); margin-top: 0; padding-bottom: 0.3em; border-bottom: 1px solid var(--md-hr-color); }
+.markdown-body h2 { font-size: calc(var(--md-heading-base-size, 32px) * 0.75); padding-bottom: 0.25em; border-bottom: 1px solid var(--md-hr-color); }
+.markdown-body h3 { font-size: calc(var(--md-heading-base-size, 32px) * 0.625); }
+.markdown-body h4 { font-size: calc(var(--md-heading-base-size, 32px) * 0.55); }
+.markdown-body h5 { font-size: calc(var(--md-heading-base-size, 32px) * 0.5); }
+.markdown-body h6 { font-size: calc(var(--md-heading-base-size, 32px) * 0.45); opacity: 0.8; }
 
 /* ---- Paragraphs & Text ---- */
 .markdown-body p {
@@ -122,7 +122,7 @@
 .markdown-body pre code {
   background: none;
   padding: 0;
-  font-size: 14px;
+  font-size: var(--md-code-font-size, 14px);
   line-height: 1.6;
   tab-size: 2;
 }

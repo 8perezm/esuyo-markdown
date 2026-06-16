@@ -22,6 +22,14 @@ pub struct AppSettings {
     pub default_font: Option<String>,
     /// Google Font name for headings
     pub header_font: Option<String>,
+    /// Google Font name for code
+    pub code_font: Option<String>,
+    /// Body font size in px
+    pub default_font_size: Option<u32>,
+    /// Heading font size in px (base, h1 scales from this)
+    pub header_font_size: Option<u32>,
+    /// Code font size in px
+    pub code_font_size: Option<u32>,
     /// When true, `scan_md_files` honors `.gitignore` and the built-in
     /// ignore list. When false, every `.md`/`.markdown` file in the tree
     /// is returned (so the user can peek at docs in `node_modules/`, etc.).

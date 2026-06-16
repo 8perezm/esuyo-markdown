@@ -121,6 +121,10 @@ const settingsOverlay = document.getElementById("settings-overlay");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
 const fontDefaultSelect = document.getElementById("font-default-select");
 const fontHeaderSelect = document.getElementById("font-header-select");
+const fontCodeSelect = document.getElementById("font-code-select");
+const fontDefaultSize = document.getElementById("font-default-size");
+const fontHeaderSize = document.getElementById("font-header-size");
+const fontCodeSize = document.getElementById("font-code-size");
 const useGitignoreCheckbox = document.getElementById("use-gitignore-checkbox");
 const currentFolderBar = document.getElementById("current-folder-bar");
 const currentFolderName = document.getElementById("current-folder-name");
@@ -137,11 +141,15 @@ async function loadSettings() {
     // Ensure default font fields
     if (!settings.default_font) settings.default_font = "Inter";
     if (!settings.header_font) settings.header_font = "Inter";
+    if (!settings.code_font) settings.code_font = "JetBrains Mono";
+    if (!settings.default_font_size) settings.default_font_size = 16;
+    if (!settings.header_font_size) settings.header_font_size = 32;
+    if (!settings.code_font_size) settings.code_font_size = 14;
     // Ensure use_gitignore is a boolean (Rust serde default is `true`, but
     // guard against any `undefined` from cached or legacy state).
     settings.use_gitignore = settings.use_gitignore !== false;
     applyTheme(settings.theme);
-    applyFonts(settings.default_font, settings.header_font);
+    applyFonts(settings.default_font, settings.header_font, settings.code_font, settings.default_font_size, settings.header_font_size, settings.code_font_size);
     renderRecentFolders();
     updateOpenFolderBtnVisibility();
 }
@@ -173,11 +181,14 @@ themeToggle.addEventListener("click", () => {
 
 // ── Fonts ───────────────────────────────────────────────────────────────────
 
-function applyFonts(defaultFont, headerFont) {
+function applyFonts(defaultFont, headerFont, codeFont, defaultFontSize, headerFontSize, codeFontSize) {
     // Load Google Fonts if needed
     loadGoogleFont(defaultFont);
     if (headerFont !== defaultFont) {
         loadGoogleFont(headerFont);
+    }
+    if (codeFont !== defaultFont && codeFont !== headerFont) {
+        loadGoogleFont(codeFont);
     }
 
     // Apply body font
@@ -187,8 +198,21 @@ function applyFonts(defaultFont, headerFont) {
     // Apply heading font
     document.documentElement.style.setProperty("--user-font-heading", `'${headerFont}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`);
 
+    // Apply code / monospace font
+    document.documentElement.style.setProperty("--font-mono", `'${codeFont}', 'Consolas', 'Courier New', monospace`);
+    document.documentElement.style.setProperty("--md-font-mono", `'${codeFont}', 'Consolas', 'Courier New', monospace`);
+
+    // Apply font sizes
+    document.documentElement.style.setProperty("--md-font-size", `${defaultFontSize}px`);
+    document.documentElement.style.setProperty("--md-heading-base-size", `${headerFontSize}px`);
+    document.documentElement.style.setProperty("--md-code-font-size", `${codeFontSize}px`);
+
     settings.default_font = defaultFont;
     settings.header_font = headerFont;
+    settings.code_font = codeFont;
+    settings.default_font_size = defaultFontSize;
+    settings.header_font_size = headerFontSize;
+    settings.code_font_size = codeFontSize;
 }
 
 // ── Sidebar Toggle ──────────────────────────────────────────────────────────
@@ -296,11 +320,37 @@ function buildFontSelect(selectEl, currentFont) {
     }
 }
 
+function buildCodeFontSelect(selectEl, currentFont) {
+    const monospaceFonts = GOOGLE_FONTS.filter((f) => f.category === "monospace");
+    selectEl.innerHTML = "";
+    monospaceFonts.forEach((f) => {
+        const opt = document.createElement("option");
+        opt.value = f.family;
+        opt.textContent = f.family;
+        opt.style.fontFamily = `'${f.family}', monospace`;
+        if (f.family === currentFont) opt.selected = true;
+        selectEl.appendChild(opt);
+    });
+    // If current font isn't in the list, add it
+    const exists = Array.from(selectEl.options).some((o) => o.value === currentFont);
+    if (!exists && currentFont) {
+        const opt = document.createElement("option");
+        opt.value = currentFont;
+        opt.textContent = currentFont;
+        opt.selected = true;
+        selectEl.insertBefore(opt, selectEl.firstChild);
+    }
+}
+
 function openSettings() {
     // Pre-load all Google Fonts so dropdown options render in their own typeface
     GOOGLE_FONTS.forEach((f) => loadGoogleFont(f.family));
     buildFontSelect(fontDefaultSelect, settings.default_font);
     buildFontSelect(fontHeaderSelect, settings.header_font);
+    buildCodeFontSelect(fontCodeSelect, settings.code_font);
+    fontDefaultSize.value = settings.default_font_size;
+    fontHeaderSize.value = settings.header_font_size;
+    fontCodeSize.value = settings.code_font_size;
     useGitignoreCheckbox.checked = settings.use_gitignore;
     settingsOverlay.classList.remove("hidden");
 }
@@ -315,14 +365,80 @@ settingsOverlay.addEventListener("click", (e) => {
 });
 
 fontDefaultSelect.addEventListener("change", () => {
-    const val = fontDefaultSelect.value;
-    applyFonts(val, settings.header_font);
+    applyFonts(
+        fontDefaultSelect.value,
+        settings.header_font,
+        settings.code_font,
+        +fontDefaultSize.value || settings.default_font_size,
+        +fontHeaderSize.value || settings.header_font_size,
+        +fontCodeSize.value || settings.code_font_size
+    );
     persistSettings();
 });
 
 fontHeaderSelect.addEventListener("change", () => {
-    const val = fontHeaderSelect.value;
-    applyFonts(settings.default_font, val);
+    applyFonts(
+        settings.default_font,
+        fontHeaderSelect.value,
+        settings.code_font,
+        +fontDefaultSize.value || settings.default_font_size,
+        +fontHeaderSize.value || settings.header_font_size,
+        +fontCodeSize.value || settings.code_font_size
+    );
+    persistSettings();
+});
+
+fontCodeSelect.addEventListener("change", () => {
+    applyFonts(
+        settings.default_font,
+        settings.header_font,
+        fontCodeSelect.value,
+        +fontDefaultSize.value || settings.default_font_size,
+        +fontHeaderSize.value || settings.header_font_size,
+        +fontCodeSize.value || settings.code_font_size
+    );
+    persistSettings();
+});
+
+fontDefaultSize.addEventListener("change", () => {
+    const val = Math.max(10, Math.min(32, +fontDefaultSize.value || 16));
+    fontDefaultSize.value = val;
+    applyFonts(
+        settings.default_font,
+        settings.header_font,
+        settings.code_font,
+        val,
+        +fontHeaderSize.value || settings.header_font_size,
+        +fontCodeSize.value || settings.code_font_size
+    );
+    persistSettings();
+});
+
+fontHeaderSize.addEventListener("change", () => {
+    const val = Math.max(14, Math.min(48, +fontHeaderSize.value || 32));
+    fontHeaderSize.value = val;
+    applyFonts(
+        settings.default_font,
+        settings.header_font,
+        settings.code_font,
+        +fontDefaultSize.value || settings.default_font_size,
+        val,
+        +fontCodeSize.value || settings.code_font_size
+    );
+    persistSettings();
+});
+
+fontCodeSize.addEventListener("change", () => {
+    const val = Math.max(10, Math.min(28, +fontCodeSize.value || 14));
+    fontCodeSize.value = val;
+    applyFonts(
+        settings.default_font,
+        settings.header_font,
+        settings.code_font,
+        +fontDefaultSize.value || settings.default_font_size,
+        +fontHeaderSize.value || settings.header_font_size,
+        val
+    );
     persistSettings();
 });
 

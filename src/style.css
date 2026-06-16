@@ -187,6 +187,10 @@ html, body {
   color: #ffffff;
 }
 
+:root[data-theme="light"] .sidebar-toggle:hover {
+  color: #1a1b1e;
+}
+
 .sidebar-toggle svg {
   transition: transform 0.25s ease;
 }
@@ -404,6 +408,10 @@ html, body {
 .file-item:hover {
   background: var(--sidebar-hover);
   color: #ffffff;
+}
+
+:root[data-theme="light"] .file-item:hover {
+  color: #1a1b1e;
 }
 
 .file-item.active {
@@ -742,6 +750,40 @@ html, body {
   font-size: 13px;
   padding: 4px 8px;
   min-height: 28px;
+}
+
+.settings-number {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #ffffff;
+  background-color: var(--sidebar-hover);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 6px;
+  transition: border-color 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.settings-number::-webkit-inner-spin-button,
+.settings-number::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 24px;
+}
+
+:root[data-theme="light"] .settings-number {
+  color: #1a1b1e;
+  background-color: #ffffff;
+}
+
+.settings-number:hover {
+  border-color: var(--accent);
+}
+
+.settings-number:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(108, 140, 255, 0.2);
 }
 
 /* ===== Loading Indicator ===== */
