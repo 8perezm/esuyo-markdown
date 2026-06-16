@@ -383,9 +383,20 @@ html, body {
   border-left-color: var(--accent);
 }
 
+:root[data-theme="light"] .file-item.active {
+  color: #1a1b1e;
+}
+
 .file-item .file-icon {
   flex-shrink: 0;
-  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+:root[data-theme="light"] .file-item .file-icon {
+  opacity: 0.9;
 }
 
 .file-item .file-label {
@@ -464,7 +475,7 @@ html, body {
 
 /* ===== Editor Bar ===== */
 #editor-bar {
-  padding: 8px 20px;
+  padding: 8px 20px 8px 44px;
   background: var(--sidebar-bg);
   border-bottom: 1px solid var(--sidebar-border);
   flex-shrink: 0;
