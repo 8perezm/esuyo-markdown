@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Esuyo Markdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/markdown-theme.css" />
+</head>
+
+<body>
+    <div id="app">
+        <aside id="sidebar">
+            <div id="sidebar-header">
+                <div id="app-title-row">
+                    <h1 id="app-title">Esuyo Markdown</h1>
+                    <div id="header-actions">
+                        <button id="menu-btn" class="icon-btn" title="Menu" aria-label="Menu">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="3" cy="8" r="1.5" fill="currentColor" />
+                                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+                                <circle cx="13" cy="8" r="1.5" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+                            <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                <path
+                                    d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                            <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                style="display:none">
+                                <path
+                                    d="M13 9.5A5.5 5.5 0 016.5 3a.5.5 0 00-.7-.5 6.5 6.5 0 109.7 6.5.5.5 0 00-.5-.7 5.5 5.5 0 00-2-1.8z"
+                                    fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button id="open-folder-btn" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path
+                            d="M2 4.5V12A1.5 1.5 0 003.5 13.5h9A1.5 1.5 0 0014 12V5.5A1.5 1.5 0 0012.5 4H8.707l-1-1H3.5A1.5 1.5 0 002 4.5z"
+                            stroke="currentColor" stroke-width="1.5" fill="none" />
+                    </svg>
+                    Open Folder
+                </button>
+                <div id="menu-dropdown" class="menu-dropdown hidden">
+                    <div class="menu-section-title">Recent Folders</div>
+                    <ul id="recent-folders-list" class="recent-list">
+                        <li class="recent-empty">No recent folders</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="file-list-container">
+                <div id="empty-state" class="empty-state">
+                    <p>No folder selected</p>
+                    <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
+                </div>
+                <ul id="file-list" class="hidden"></ul>
+            </div>
+        </aside>
+        <main id="content">
+            <div id="welcome" class="welcome">
+                <h2>Welcome to Esuyo Markdown</h2>
+                <p>Open a folder to browse and read markdown files.</p>
+            </div>
+            <div id="markdown-viewer" class="hidden">
+                <div id="editor-bar">
+                    <span id="current-file-path" class="file-path"></span>
+                </div>
+                <div id="rendered-content" class="markdown-body"></div>
+            </div>
+            <div id="loading-indicator" class="hidden">
+                <div class="spinner"></div>
+                <p>Scanning folder...</p>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

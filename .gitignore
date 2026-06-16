@@ -1,0 +1,52 @@
+# ── Node / Vite / Tauri frontend ────────────────────────────────────────────
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Frontend build output
+.vite/
+
+# ── Rust / Tauri backend ─────────────────────────────────────────────────────
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# Keep target out of the working tree — it's reproducible from source.
+# If you need to commit Cargo.lock (e.g. for a binary crate), remove the line above.
+
+# ── Editor / OS noise ────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Environment files (never commit secrets) ────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Tauri build artifacts (in case anyone builds here) ──────────────────────
+src-tauri/gen/
+
+# ── OS / Windows ─────────────────────────────────────────────────────────────
+$RECYCLE.BIN/
+System Volume Information/
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+*.tgz
+*.tar.gz
+*.zip
+*.rar

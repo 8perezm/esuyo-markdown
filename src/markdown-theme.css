@@ -1,0 +1,217 @@
+/* ==========================================================================
+   Markdown Theme — User Customizable
+   ==========================================================================
+   This stylesheet controls the appearance of rendered markdown content.
+   Edit any values below to customize the presentation. Changes are
+   reflected when you reload the app or open a new file.
+   ========================================================================== */
+
+.markdown-body {
+  --md-font-sans: 'Merriweather', Georgia, 'Times New Roman', serif;
+  --md-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --md-font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --md-text-color: #d1d1d1;
+  --md-heading-color: #ffffff;
+  --md-link-color: #6c8cff;
+  --md-link-hover: #8ba3ff;
+  --md-code-bg: #1c1d20;
+  --md-code-text: #e3e3e3;
+  --md-blockquote-border: #6c8cff;
+  --md-blockquote-bg: #15161a;
+  --md-blockquote-text: #a0a0a0;
+  --md-table-border: #2c2e33;
+  --md-table-header-bg: #1a1b1e;
+  --md-table-alt-bg: #141518;
+  --md-hr-color: #2c2e33;
+  --md-inline-code-bg: #1c1d20;
+
+  font-family: var(--md-font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--md-text-color);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Light theme overrides — auto-applied when <html data-theme="light"> */
+:root[data-theme="light"] .markdown-body {
+  --md-text-color: #2a2c30;
+  --md-heading-color: #1a1b1e;
+  --md-link-color: #4a6cf7;
+  --md-link-hover: #3a5ce7;
+  --md-code-bg: #f1f3f6;
+  --md-code-text: #1a1b1e;
+  --md-blockquote-border: #4a6cf7;
+  --md-blockquote-bg: #f6f7f9;
+  --md-blockquote-text: #5a5d62;
+  --md-table-border: #d8dde3;
+  --md-table-header-bg: #eceef2;
+  --md-table-alt-bg: #f6f7f9;
+  --md-hr-color: #d8dde3;
+  --md-inline-code-bg: #f1f3f6;
+}
+
+/* ---- Headings ---- */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  font-family: var(--md-font-heading);
+  font-weight: 600;
+  color: var(--md-heading-color);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.markdown-body h1 { font-size: 2em; margin-top: 0; padding-bottom: 0.3em; border-bottom: 1px solid var(--md-hr-color); }
+.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.25em; border-bottom: 1px solid var(--md-hr-color); }
+.markdown-body h3 { font-size: 1.25em; }
+.markdown-body h4 { font-size: 1.1em; }
+.markdown-body h5 { font-size: 1em; }
+.markdown-body h6 { font-size: 0.9em; opacity: 0.8; }
+
+/* ---- Paragraphs & Text ---- */
+.markdown-body p {
+  margin-bottom: 1em;
+}
+
+.markdown-body strong {
+  font-weight: 700;
+  color: var(--md-heading-color);
+}
+
+.markdown-body em {
+  font-style: italic;
+}
+
+/* ---- Links ---- */
+.markdown-body a {
+  color: var(--md-link-color);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.markdown-body a:hover {
+  color: var(--md-link-hover);
+  text-decoration: underline;
+}
+
+/* ---- Code ---- */
+.markdown-body code {
+  font-family: var(--md-font-mono);
+  font-size: 0.875em;
+  background: var(--md-inline-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  color: var(--md-code-text);
+}
+
+.markdown-body pre {
+  background: var(--md-code-bg);
+  border: 1px solid var(--md-table-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+/* ---- Blockquotes ---- */
+.markdown-body blockquote {
+  border-left: 4px solid var(--md-blockquote-border);
+  background: var(--md-blockquote-bg);
+  padding: 12px 20px;
+  margin: 1em 0;
+  border-radius: 0 8px 8px 0;
+  color: var(--md-blockquote-text);
+}
+
+.markdown-body blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Lists ---- */
+.markdown-body ul,
+.markdown-body ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.markdown-body li {
+  margin-bottom: 0.25em;
+}
+
+.markdown-body li > ul,
+.markdown-body li > ol {
+  margin-bottom: 0;
+  margin-top: 0.25em;
+}
+
+/* ---- Tables ---- */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  font-size: 0.9em;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--md-table-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.markdown-body th {
+  background: var(--md-table-header-bg);
+  font-family: var(--md-font-heading);
+  font-weight: 600;
+  color: var(--md-heading-color);
+}
+
+.markdown-body tr:nth-child(even) {
+  background: var(--md-table-alt-bg);
+}
+
+/* ---- Horizontal Rules ---- */
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--md-hr-color);
+  margin: 2em 0;
+}
+
+/* ---- Images ---- */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+/* ---- Task Lists ---- */
+.markdown-body input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: var(--md-link-color);
+}
+
+/* ---- Inline HTML ---- */
+.markdown-body details {
+  margin-bottom: 1em;
+}
+
+.markdown-body summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--md-heading-color);
+}

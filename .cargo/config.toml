@@ -1,0 +1,4 @@
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld-link"
+# Using LLD (LLVM linker) in MSVC-compatible mode (-flavor link) as a
+# drop-in for link.exe — avoids needing Visual Studio MSVC tools.
