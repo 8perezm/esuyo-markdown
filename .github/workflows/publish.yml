@@ -120,7 +120,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
 
       - name: Install Rust (macOS / Linux)
         if: matrix.os != 'windows-latest'
