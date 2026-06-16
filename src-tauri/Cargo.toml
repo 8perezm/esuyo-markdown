@@ -1,6 +1,6 @@
 [package]
 name = "esuyo-markdown"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Tauri markdown browser app"
 authors = ["you"]
 edition = "2021"
@@ -25,3 +25,4 @@ codegen-units = 1
 lto = true
 opt-level = "s"
 strip = true
+
