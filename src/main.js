@@ -227,6 +227,10 @@ function clampMenuPosition() {
         menuDropdown.style.left = "8px";
         menuDropdown.style.right = "auto";
     }
+    if (rect.right > window.innerWidth) {
+        menuDropdown.style.right = "8px";
+        menuDropdown.style.left = "auto";
+    }
 }
 
 function updateOpenFolderBtnVisibility() {
@@ -268,6 +272,7 @@ function buildFontSelect(selectEl, currentFont) {
             const opt = document.createElement("option");
             opt.value = f.family;
             opt.textContent = f.family;
+            opt.style.fontFamily = `'${f.family}', sans-serif`;
             if (f.family === currentFont) opt.selected = true;
             group.appendChild(opt);
         });
@@ -286,6 +291,8 @@ function buildFontSelect(selectEl, currentFont) {
 }
 
 function openSettings() {
+    // Pre-load all Google Fonts so dropdown options render in their own typeface
+    GOOGLE_FONTS.forEach((f) => loadGoogleFont(f.family));
     buildFontSelect(fontDefaultSelect, settings.default_font);
     buildFontSelect(fontHeaderSelect, settings.header_font);
     settingsOverlay.classList.remove("hidden");
