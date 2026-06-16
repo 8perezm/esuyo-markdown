@@ -118,9 +118,11 @@ jobs:
       # ── Rust toolchain ──
       - name: Install Rust (GNU target on Windows)
         if: matrix.os == 'windows-latest'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          target: x86_64-pc-windows-gnu
+        shell: pwsh
+        run: |
+          rustup toolchain install stable-x86_64-pc-windows-gnu
+          rustup default stable-x86_64-pc-windows-gnu
+          rustup target add x86_64-pc-windows-gnu
 
       - name: Install Rust (macOS / Linux)
         if: matrix.os != 'windows-latest'
