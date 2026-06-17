@@ -112,6 +112,7 @@ const loadingIndicator = document.getElementById("loading-indicator");
 const themeToggle = document.getElementById("theme-toggle");
 const themeIconSun = document.getElementById("theme-icon-sun");
 const themeIconMoon = document.getElementById("theme-icon-moon");
+const reloadBtn = document.getElementById("reload-btn");
 const menuBtn = document.getElementById("menu-btn");
 const menuDropdown = document.getElementById("menu-dropdown");
 const recentFoldersList = document.getElementById("recent-folders-list");
@@ -177,6 +178,22 @@ themeToggle.addEventListener("click", () => {
     const next = settings.theme === "dark" ? "light" : "dark";
     applyTheme(next);
     persistSettings();
+});
+
+// ── Reload ────────────────────────────────────────────────────────────────────
+
+reloadBtn.addEventListener("click", async () => {
+    if (!currentFolder) return;
+    // Spin animation
+    const svg = reloadBtn.querySelector("svg");
+    svg.style.transition = "transform 0.3s ease";
+    svg.style.transform = "rotate(-360deg)";
+    await rescanCurrentFolder();
+    // Reset rotation after animation completes
+    setTimeout(() => {
+        svg.style.transition = "none";
+        svg.style.transform = "rotate(0deg)";
+    }, 350);
 });
 
 // ── Fonts ───────────────────────────────────────────────────────────────────
@@ -267,6 +284,8 @@ function updateOpenFolderBtnVisibility() {
     const hasFolder = currentFolder !== null;
     // Show/hide the standalone "Open Folder" button
     openFolderBtn.style.display = hasFolder ? "none" : "";
+    // Show/hide the reload button
+    reloadBtn.style.display = hasFolder ? "" : "none";
     // Show/hide the menu item
     menuOpenFolderItem.classList.toggle("hidden", !hasFolder);
 }
@@ -542,13 +561,33 @@ async function openFolderByPath(folderPath) {
 async function rescanCurrentFolder() {
     if (!currentFolder) return;
     try {
+        // Remember which file was selected so we can re-render it after rescan
+        const selectedRelativePath = currentFileIndex >= 0 ? currentFiles[currentFileIndex]?.relative_path : null;
+
         showLoading(true);
         const files = await invoke("scan_md_files", {
             folderPath: currentFolder,
             useGitignore: settings.use_gitignore,
         });
         currentFiles = files;
-        currentFileIndex = -1;
+
+        // Try to restore the previously selected file by relative path
+        if (selectedRelativePath) {
+            const restoredIndex = files.findIndex((f) => f.relative_path === selectedRelativePath);
+            if (restoredIndex >= 0) {
+                currentFileIndex = restoredIndex;
+                updateActiveFile(restoredIndex);
+                const file = files[restoredIndex];
+                currentFilePath.textContent = file.relative_path;
+                const content = await invoke("read_file", { filePath: file.path });
+                renderMarkdown(content);
+            } else {
+                currentFileIndex = -1;
+            }
+        } else {
+            currentFileIndex = -1;
+        }
+
         showLoading(false);
         renderFileList(files);
     } catch (error) {
