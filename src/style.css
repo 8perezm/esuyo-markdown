@@ -847,17 +847,86 @@ html, body {
   background: var(--content-bg);
 }
 
-/* TinyMCE overrides for theme consistency */
-.tox.tox-tinymce {
+/* Quill overrides for theme consistency */
+.ql-container {
   border: none !important;
-  border-radius: 0 !important;
   font-family: inherit !important;
 }
 
-.tox .tox-statusbar {
-  border: none !important;
+.ql-editor {
+  background: var(--content-bg) !important;
+  font-family: inherit !important;
 }
 
-.tox .tox-edit-area__iframe {
+.ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
   background: var(--content-bg) !important;
+}
+
+.ql-toolbar .ql-formats {
+  margin-right: 0 !important;
+}
+
+.ql-toolbar button {
+  color: var(--text) !important;
+}
+
+.ql-toolbar button:hover {
+  color: var(--accent) !important;
+}
+
+.ql-toolbar button.ql-active {
+  color: var(--accent) !important;
+}
+
+.ql-toolbar .ql-stroke {
+  stroke: var(--text) !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: var(--text) !important;
+}
+
+.ql-toolbar button:hover .ql-stroke {
+  stroke: var(--accent) !important;
+}
+
+.ql-toolbar button:hover .ql-fill {
+  fill: var(--accent) !important;
+}
+
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--accent) !important;
+}
+
+.ql-toolbar button.ql-active .ql-fill {
+  fill: var(--accent) !important;
+}
+
+.ql-picker {
+  color: var(--text) !important;
+}
+
+.ql-picker-label {
+  color: var(--text) !important;
+}
+
+.ql-picker-label:hover {
+  color: var(--accent) !important;
+}
+
+.ql-picker-options {
+  background: var(--content-bg) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Quill syntax highlighting block */
+.ql-editor pre.ql-syntax {
+  background: var(--code-bg) !important;
+  color: var(--code-color) !important;
+  font-family: 'Consolas', 'Monaco', monospace;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
 }

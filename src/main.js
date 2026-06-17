@@ -3,6 +3,9 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
+import Quill from "quill";
+import QuillMarkdown from "quilljs-markdown";
+import TurndownService from "turndown";
 
 // ── Markdown setup ──────────────────────────────────────────────────────────
 
@@ -758,7 +761,16 @@ document.addEventListener("keydown", (e) => {
 
 // ── Edit Mode ────────────────────────────────────────────────────────────────
 
-let tinymceEditor = null;
+let quillEditor = null;
+let quillMarkdown = null;
+const turndown = new TurndownService({
+    headingStyle: 'atx',
+    codeBlockStyle: 'fenced',
+    bulletListMarker: '-',
+    emDelimiter: '*',
+    strongDelimiter: '**',
+    linkStyle: 'inlined',
+});
 
 editToggleBtn.addEventListener("click", async () => {
     if (!currentFileIndex || currentFileIndex < 0) return;
@@ -775,7 +787,7 @@ editToggleBtn.addEventListener("click", async () => {
 async function enterEditMode() {
     const file = currentFiles[currentFileIndex];
     try {
-        const content = await invoke("read_file", { filePath: file.path });
+        const markdownContent = await invoke("read_file", { filePath: file.path });
 
         // Hide rendered content
         renderedContent.style.display = "none";
@@ -783,58 +795,83 @@ async function enterEditMode() {
         // Show editor container
         editorContainer.style.display = "block";
 
-        // Initialize TinyMCE if not already initialized
-        if (!tinymceEditor) {
-            return new Promise((resolve) => {
-                tinymce.init({
-                    target: document.getElementById("editor-container"),
-                    plugins: "markdown",
-                    toolbar: "undo redo | formatbold formatitalic | link image | alignleft aligncenter alignright | numlist bullist | removeformat",
-                    menubar: false,
-                    statusbar: true,
-                    markdown: {
-                        lib: marked,
-                    },
-                    content_style: `
-                        body {
-                            font-family: var(--font-default, Inter);
-                            font-size: ${settings.default_font_size || 16}px;
-                            color: var(--content-text, #e0e0e0);
-                            background: var(--content-bg, #1a1b1e);
-                        }
-                    `,
-                    setup: (editor) => {
-                        tinymceEditor = editor;
-                        editor.on('init', () => {
-                            editor.setContent(content);
-                            // Update UI after editor is ready
-                            isEditMode = true;
-                            editToggleBtn.setAttribute("aria-pressed", "true");
-                            editIconPen.style.display = "none";
-                            editIconCheck.style.display = "block";
-                            menuSaveItem.classList.remove("hidden");
-                            menuSaveAsItem.classList.remove("hidden");
-                            menuEditDivider.classList.remove("hidden");
-                            resolve();
-                        });
-                        editor.on('change', () => {
-                            hasUnsavedChanges = true;
-                        });
-                    },
-                });
-            });
-        } else {
-            tinymceEditor.setContent(content);
+        // Clear any existing content in the container
+        editorContainer.innerHTML = '<div id="quill-editor"></div>';
 
-            // Update UI
-            isEditMode = true;
-            editToggleBtn.setAttribute("aria-pressed", "true");
-            editIconPen.style.display = "none";
-            editIconCheck.style.display = "block";
-            menuSaveItem.classList.remove("hidden");
-            menuSaveAsItem.classList.remove("hidden");
-            menuEditDivider.classList.remove("hidden");
+        // Create toolbar container
+        const toolbarContainer = document.createElement('div');
+        toolbarContainer.id = 'quill-toolbar';
+        toolbarContainer.innerHTML = `
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-header" value="1"></button>
+                <button class="ql-header" value="2"></button>
+                <button class="ql-header" value="3"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-link"></button>
+                <button class="ql-image"></button>
+            </span>
+            <span class="ql-formats">
+                <button class="ql-clean"></button>
+            </span>
+        `;
+        editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
+
+        // Convert Markdown to HTML for Quill display
+        const htmlContent = marked.parse(markdownContent);
+
+        // Initialize Quill editor
+        quillEditor = new Quill('#quill-editor', {
+            modules: {
+                toolbar: '#quill-toolbar',
+            },
+            theme: 'snow',
+            placeholder: 'Start writing Markdown...',
+        });
+
+        // Set content
+        quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
+
+        // Enable QuillMarkdown plugin for Markdown shortcuts
+        try {
+            quillMarkdown = new QuillMarkdown(quillEditor, {
+                markdownShortcut: true,
+                markdownShortcutSpaces: 1,
+                quoteText: true,
+                deleteOnBackspace: true,
+                undoLikeWord: true,
+            });
+        } catch (err) {
+            console.warn("QuillMarkdown initialization failed, continuing without it:", err);
         }
+
+        // Track changes
+        quillEditor.on('text-change', () => {
+            hasUnsavedChanges = true;
+        });
+
+        // Update UI
+        isEditMode = true;
+        editToggleBtn.setAttribute("aria-pressed", "true");
+        editIconPen.style.display = "none";
+        editIconCheck.style.display = "block";
+        menuSaveItem.classList.remove("hidden");
+        menuSaveAsItem.classList.remove("hidden");
+        menuEditDivider.classList.remove("hidden");
 
     } catch (error) {
         console.error("Failed to enter edit mode:", error);
@@ -842,11 +879,23 @@ async function enterEditMode() {
 }
 
 function exitEditMode() {
-    if (!tinymceEditor) return;
+    if (!quillEditor) return;
 
-    // Destroy TinyMCE editor
-    tinymceEditor.destroy();
-    tinymceEditor = null;
+    // Clean up QuillMarkdown if initialized
+    if (quillMarkdown) {
+        try {
+            quillMarkdown.destroy();
+        } catch (err) {
+            console.warn("Error destroying QuillMarkdown:", err);
+        }
+        quillMarkdown = null;
+    }
+
+    // Destroy Quill editor
+    quillEditor = null;
+
+    // Clear editor container
+    editorContainer.innerHTML = '';
 
     // Hide editor container
     editorContainer.style.display = "none";
@@ -876,17 +925,26 @@ menuSaveAsItem.addEventListener("click", async () => {
 });
 
 async function saveCurrentFile() {
-    if (!tinymceEditor || currentFileIndex < 0) return;
+    if (!quillEditor || currentFileIndex < 0) return;
 
     const file = currentFiles[currentFileIndex];
-    const content = tinymceEditor.getContent();
+
+    // Get HTML from Quill, convert to Markdown using turndown
+    const htmlContent = quillEditor.root.innerHTML;
+    const markdownContent = turndown.turndown(htmlContent);
 
     try {
-        await invoke("write_file", { filePath: file.path, content });
+        await invoke("write_file", { filePath: file.path, content: markdownContent });
         hasUnsavedChanges = false;
 
+        // Update file path if it was new
+        if (file.path.endsWith('.tmp') || !file.path.endsWith('.md')) {
+            file.path = file.path; // Keep the same path
+        }
+        currentFiles[currentFileIndex] = file;
+
         // Re-render markdown
-        renderMarkdown(content);
+        renderMarkdown(markdownContent);
 
         // Exit edit mode
         exitEditMode();
@@ -896,9 +954,11 @@ async function saveCurrentFile() {
 }
 
 async function saveFileAs() {
-    if (!tinymceEditor) return;
+    if (!quillEditor) return;
 
-    const content = tinymceEditor.getContent();
+    // Get HTML from Quill, convert to Markdown using turndown
+    const htmlContent = quillEditor.root.innerHTML;
+    const markdownContent = turndown.turndown(htmlContent);
 
     try {
         const path = await save({
@@ -910,10 +970,15 @@ async function saveFileAs() {
         });
 
         if (path) {
-            await invoke("write_file", { filePath: path, content });
+            await invoke("write_file", { filePath: path, content: markdownContent });
+
+            // Update current file path
+            if (currentFileIndex >= 0) {
+                currentFiles[currentFileIndex].path = path;
+            }
 
             // Re-render markdown
-            renderMarkdown(content);
+            renderMarkdown(markdownContent);
 
             // Exit edit mode
             exitEditMode();

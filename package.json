@@ -15,7 +15,9 @@
     "highlight.js": "^11.9.0",
     "marked": "^18.0.0",
     "marked-highlight": "^2.2.0",
-    "tinymce": "^8.6.0"
+    "quill": "^2.0.0",
+    "quilljs-markdown": "^1.2.0",
+    "turndown": "^7.1.2"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
