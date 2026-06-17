@@ -527,13 +527,21 @@ html, body {
   font-family: var(--font-mono);
 }
 
-/* Edit toggle button */
+/* Edit toggle button — styled like Save/Cancel .btn */
 .edit-toggle {
   position: relative;
-  width: 36px;
-  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  border: 1px solid var(--sidebar-border);
   border-radius: 6px;
-  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  background: var(--icon-btn-bg);
+  color: var(--icon-btn-color);
 }
 
 .edit-toggle:hover {
