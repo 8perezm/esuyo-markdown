@@ -259,18 +259,23 @@ fn write_file(file_path: &str, content: &str) -> Result<(), String> {
 
 /// Opens a save dialog and returns the selected file path.
 #[tauri::command]
-async fn pick_save_file() -> Result<Option<String>, String> {
-    let window = tauri::WebviewWindow::current();
-    let result = tauri_plugin_dialog::DialogBuilder::new()
-        .title("Save As")
-        .set_file_filter("Markdown", "md,markdown")
-        .set_filename("untitled.md")
-        .save(&window);
+async fn pick_save_file(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::{DialogExt, FilePath};
 
-    match result {
-        Ok(Some(path)) => Ok(Some(path.to_string_lossy().to_string())),
-        Ok(None) => Ok(None),
-        Err(e) => Err(format!("Save dialog failed: {}", e)),
+    let (tx, rx) = std::sync::mpsc::channel();
+
+    app.dialog()
+        .file()
+        .set_title("Save As")
+        .set_file_name("untitled.md")
+        .save_file(move |path| {
+            let _ = tx.send(path);
+        });
+
+    match rx.recv().map_err(|e| format!("Dialog error: {}", e))? {
+        Some(FilePath::Path(path)) => Ok(Some(path.to_string_lossy().to_string())),
+        Some(_) => Ok(None),
+        None => Ok(None),
     }
 }
 
