@@ -3,7 +3,6 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
-import { Editor } from "tinymce/tinymce";
 
 // ── Markdown setup ──────────────────────────────────────────────────────────
 
@@ -786,43 +785,56 @@ async function enterEditMode() {
 
         // Initialize TinyMCE if not already initialized
         if (!tinymceEditor) {
-            tinymceEditor = new Editor("editor-container", {
-                plugins: "markdown",
-                toolbar: "undo redo | formatbold formatitalic | link image | alignleft aligncenter alignright | numlist bullist | removeformat",
-                menubar: false,
-                statusbar: true,
-                markdown: {
-                    lib: marked,
-                },
-                content_style: `
-                    body {
-                        font-family: var(--font-default, Inter);
-                        font-size: ${settings.default_font_size || 16}px;
-                        color: var(--content-text, #e0e0e0);
-                        background: var(--content-bg, #1a1b1e);
-                    }
-                `,
-                setup: (editor) => {
-                    editor.on('init', () => {
-                        editor.setContent(content);
-                    });
-                    editor.on('change', () => {
-                        hasUnsavedChanges = true;
-                    });
-                },
+            return new Promise((resolve) => {
+                tinymce.init({
+                    target: document.getElementById("editor-container"),
+                    plugins: "markdown",
+                    toolbar: "undo redo | formatbold formatitalic | link image | alignleft aligncenter alignright | numlist bullist | removeformat",
+                    menubar: false,
+                    statusbar: true,
+                    markdown: {
+                        lib: marked,
+                    },
+                    content_style: `
+                        body {
+                            font-family: var(--font-default, Inter);
+                            font-size: ${settings.default_font_size || 16}px;
+                            color: var(--content-text, #e0e0e0);
+                            background: var(--content-bg, #1a1b1e);
+                        }
+                    `,
+                    setup: (editor) => {
+                        tinymceEditor = editor;
+                        editor.on('init', () => {
+                            editor.setContent(content);
+                            // Update UI after editor is ready
+                            isEditMode = true;
+                            editToggleBtn.setAttribute("aria-pressed", "true");
+                            editIconPen.style.display = "none";
+                            editIconCheck.style.display = "block";
+                            menuSaveItem.classList.remove("hidden");
+                            menuSaveAsItem.classList.remove("hidden");
+                            menuEditDivider.classList.remove("hidden");
+                            resolve();
+                        });
+                        editor.on('change', () => {
+                            hasUnsavedChanges = true;
+                        });
+                    },
+                });
             });
         } else {
             tinymceEditor.setContent(content);
-        }
 
-        // Update UI
-        isEditMode = true;
-        editToggleBtn.setAttribute("aria-pressed", "true");
-        editIconPen.style.display = "none";
-        editIconCheck.style.display = "block";
-        menuSaveItem.classList.remove("hidden");
-        menuSaveAsItem.classList.remove("hidden");
-        menuEditDivider.classList.remove("hidden");
+            // Update UI
+            isEditMode = true;
+            editToggleBtn.setAttribute("aria-pressed", "true");
+            editIconPen.style.display = "none";
+            editIconCheck.style.display = "block";
+            menuSaveItem.classList.remove("hidden");
+            menuSaveAsItem.classList.remove("hidden");
+            menuEditDivider.classList.remove("hidden");
+        }
 
     } catch (error) {
         console.error("Failed to enter edit mode:", error);

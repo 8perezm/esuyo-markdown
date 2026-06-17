@@ -37,6 +37,22 @@ Run the app in development mode (Vite dev server + Tauri window):
 $env:Path += ";C:\tools\w64devkit\w64devkit\bin"; $env:Path += ";$env:USERPROFILE\.cargo\bin"; npx tauri dev
 ```
 
+> **Important:** On Windows, this must be run from an **Administrator terminal**. Windows Defender's Application Control policy may block Cargo build scripts (error `4551`) when running without elevated privileges.
+
+#### Clearing build caches
+
+If you encounter stale build errors or the Application Control policy blocks previously compiled artifacts, clear the Rust build cache:
+
+```powershell
+cd src-tauri; cargo clean
+```
+
+Or nuke everything (Rust + Node):
+
+```powershell
+Remove-Item -Recurse -Force src-tauri\target, node_modules\.vite -ErrorAction SilentlyContinue
+```
+
 This will:
 1. Start the Vite dev server on `http://localhost:1420`
 2. Compile and launch the Tauri desktop app pointing at that dev server
