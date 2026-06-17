@@ -550,7 +550,7 @@ html, body {
 
 /* Edit actions (Save / Cancel buttons) */
 .edit-actions {
-  display: flex;
+  display: none;
   gap: 6px;
   align-items: center;
 }

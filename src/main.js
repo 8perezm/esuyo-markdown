@@ -879,7 +879,7 @@ async function enterEditMode() {
         // Update UI
         isEditMode = true;
         editToggleBtn.style.display = "none";
-        editActions.classList.remove("hidden");
+        editActions.style.display = "flex";
         menuSaveItem.classList.remove("hidden");
         menuSaveAsItem.classList.remove("hidden");
         menuEditDivider.classList.remove("hidden");
@@ -917,7 +917,7 @@ function exitEditMode() {
     // Update UI
     isEditMode = false;
     hasUnsavedChanges = false;
-    editActions.classList.add("hidden");
+    editActions.style.display = "none";
     editToggleBtn.style.display = "";
     menuSaveItem.classList.add("hidden");
     menuSaveAsItem.classList.add("hidden");
