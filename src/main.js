@@ -138,7 +138,9 @@ const currentFolderBar = document.getElementById("current-folder-bar");
 const currentFolderName = document.getElementById("current-folder-name");
 const editToggleBtn = document.getElementById("edit-toggle-btn");
 const editIconPen = document.getElementById("edit-icon-pen");
-const editIconCheck = document.getElementById("edit-icon-check");
+const editActions = document.getElementById("edit-actions");
+const saveBtn = document.getElementById("save-btn");
+const cancelBtn = document.getElementById("cancel-btn");
 const editorContainer = document.getElementById("editor-container");
 const menuSaveItem = document.getElementById("menu-save-item");
 const menuSaveAsItem = document.getElementById("menu-save-as-item");
@@ -778,12 +780,20 @@ editToggleBtn.addEventListener("click", async () => {
     if (!currentFileIndex || currentFileIndex < 0) return;
 
     if (isEditMode) {
-        // Exit edit mode
-        exitEditMode();
+        // Toggle button just enters edit mode; it's always "enter" from view mode
+        await enterEditMode();
     } else {
         // Enter edit mode
         await enterEditMode();
     }
+});
+
+saveBtn.addEventListener("click", async () => {
+    await saveCurrentFile();
+});
+
+cancelBtn.addEventListener("click", () => {
+    exitEditMode();
 });
 
 async function enterEditMode() {
@@ -868,9 +878,8 @@ async function enterEditMode() {
 
         // Update UI
         isEditMode = true;
-        editToggleBtn.setAttribute("aria-pressed", "true");
-        editIconPen.style.display = "none";
-        editIconCheck.style.display = "block";
+        editToggleBtn.style.display = "none";
+        editActions.classList.remove("hidden");
         menuSaveItem.classList.remove("hidden");
         menuSaveAsItem.classList.remove("hidden");
         menuEditDivider.classList.remove("hidden");
@@ -908,9 +917,8 @@ function exitEditMode() {
     // Update UI
     isEditMode = false;
     hasUnsavedChanges = false;
-    editToggleBtn.setAttribute("aria-pressed", "false");
-    editIconPen.style.display = "block";
-    editIconCheck.style.display = "none";
+    editActions.classList.add("hidden");
+    editToggleBtn.style.display = "";
     menuSaveItem.classList.add("hidden");
     menuSaveAsItem.classList.add("hidden");
     menuEditDivider.classList.add("hidden");

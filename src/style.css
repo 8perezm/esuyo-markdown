@@ -548,6 +548,49 @@ html, body {
   transition: opacity 0.15s ease;
 }
 
+/* Edit actions (Save / Cancel buttons) */
+.edit-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.edit-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  background: var(--icon-btn-bg);
+  color: var(--icon-btn-color);
+}
+
+.edit-actions .btn:hover {
+  background: var(--icon-btn-bg-hover);
+}
+
+.edit-actions .btn-save {
+  color: #5cb85c;
+  border-color: #5cb85c40;
+}
+
+.edit-actions .btn-save:hover {
+  background: #5cb85c18;
+}
+
+.edit-actions .btn-cancel {
+  color: #c1c2c5;
+}
+
+[data-theme="light"] .edit-actions .btn-cancel {
+  color: #4a4d52;
+}
+
 /* ===== Rendered Content ===== */
 #markdown-viewer {
   display: flex;

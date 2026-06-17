@@ -140,16 +140,27 @@
             <div id="markdown-viewer" class="hidden">
                 <div id="editor-bar">
                     <span id="current-file-path" class="file-path"></span>
+                    <div id="edit-actions" class="edit-actions hidden">
+                        <button id="save-btn" class="btn btn-save" title="Save" aria-label="Save">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                            Save
+                        </button>
+                        <button id="cancel-btn" class="btn btn-cancel" title="Cancel" aria-label="Cancel">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                    </div>
                     <button id="edit-toggle-btn" class="icon-btn edit-toggle" title="Toggle edit mode"
                         aria-label="Toggle edit mode">
                         <svg id="edit-icon-pen" width="16" height="16" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                        </svg>
-                        <svg id="edit-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            style="display:none">
-                            <path d="M20 6 9 17l-5-5" />
                         </svg>
                     </button>
                 </div>
