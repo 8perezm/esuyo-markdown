@@ -4,7 +4,9 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
 import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import QuillMarkdown from "quilljs-markdown";
+import "quilljs-markdown/dist/quilljs-markdown-common-style.css";
 import TurndownService from "turndown";
 
 // ── Markdown setup ──────────────────────────────────────────────────────────

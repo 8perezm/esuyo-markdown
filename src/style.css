@@ -855,12 +855,13 @@ html, body {
 
 .ql-editor {
   background: var(--content-bg) !important;
+  color: var(--content-text) !important;
   font-family: inherit !important;
 }
 
 .ql-toolbar {
   border: none !important;
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--sidebar-border) !important;
   background: var(--content-bg) !important;
 }
 
@@ -869,7 +870,7 @@ html, body {
 }
 
 .ql-toolbar button {
-  color: var(--text) !important;
+  color: var(--content-text) !important;
 }
 
 .ql-toolbar button:hover {
@@ -881,11 +882,11 @@ html, body {
 }
 
 .ql-toolbar .ql-stroke {
-  stroke: var(--text) !important;
+  stroke: var(--content-text) !important;
 }
 
 .ql-toolbar .ql-fill {
-  fill: var(--text) !important;
+  fill: var(--content-text) !important;
 }
 
 .ql-toolbar button:hover .ql-stroke {
@@ -905,11 +906,11 @@ html, body {
 }
 
 .ql-picker {
-  color: var(--text) !important;
+  color: var(--content-text) !important;
 }
 
 .ql-picker-label {
-  color: var(--text) !important;
+  color: var(--content-text) !important;
 }
 
 .ql-picker-label:hover {
@@ -918,15 +919,20 @@ html, body {
 
 .ql-picker-options {
   background: var(--content-bg) !important;
-  border: 1px solid var(--border) !important;
+  border: 1px solid var(--sidebar-border) !important;
 }
 
 /* Quill syntax highlighting block */
 .ql-editor pre.ql-syntax {
-  background: var(--code-bg) !important;
-  color: var(--code-color) !important;
+  background: #1c1d20 !important;
+  color: #e3e3e3 !important;
   font-family: 'Consolas', 'Monaco', monospace;
   padding: 12px;
   border-radius: 4px;
   overflow-x: auto;
+}
+
+[data-theme="light"] .ql-editor pre.ql-syntax {
+  background: #f1f3f6 !important;
+  color: #1a1b1e !important;
 }
