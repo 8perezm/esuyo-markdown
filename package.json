@@ -14,7 +14,8 @@
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "highlight.js": "^11.9.0",
     "marked": "^18.0.0",
-    "marked-highlight": "^2.2.0"
+    "marked-highlight": "^2.2.0",
+    "tinymce": "^8.6.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

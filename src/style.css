@@ -516,12 +516,36 @@ html, body {
   background: var(--sidebar-bg);
   border-bottom: 1px solid var(--sidebar-border);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .file-path {
   font-size: 12px;
   color: #888;
   font-family: var(--font-mono);
+}
+
+/* Edit toggle button */
+.edit-toggle {
+  position: relative;
+  width: 36px;
+  height: 28px;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.edit-toggle:hover {
+  background: var(--icon-btn-bg-hover);
+}
+
+.edit-toggle[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.edit-toggle svg {
+  transition: opacity 0.15s ease;
 }
 
 /* ===== Rendered Content ===== */
@@ -813,4 +837,27 @@ html, body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ===== Editor Container ===== */
+#editor-container {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  background: var(--content-bg);
+}
+
+/* TinyMCE overrides for theme consistency */
+.tox.tox-tinymce {
+  border: none !important;
+  border-radius: 0 !important;
+  font-family: inherit !important;
+}
+
+.tox .tox-statusbar {
+  border: none !important;
+}
+
+.tox .tox-edit-area__iframe {
+  background: var(--content-bg) !important;
 }

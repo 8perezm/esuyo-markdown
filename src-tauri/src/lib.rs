@@ -250,6 +250,30 @@ fn read_file(file_path: &str) -> Result<String, String> {
     fs::read_to_string(path).map_err(|e| format!("Failed to read file: {}", e))
 }
 
+/// Writes content to a file at the given absolute path.
+#[tauri::command]
+fn write_file(file_path: &str, content: &str) -> Result<(), String> {
+    let path = Path::new(file_path);
+    fs::write(path, content).map_err(|e| format!("Failed to write file: {}", e))
+}
+
+/// Opens a save dialog and returns the selected file path.
+#[tauri::command]
+async fn pick_save_file() -> Result<Option<String>, String> {
+    let window = tauri::WebviewWindow::current();
+    let result = tauri_plugin_dialog::DialogBuilder::new()
+        .title("Save As")
+        .set_file_filter("Markdown", "md,markdown")
+        .set_filename("untitled.md")
+        .save(&window);
+
+    match result {
+        Ok(Some(path)) => Ok(Some(path.to_string_lossy().to_string())),
+        Ok(None) => Ok(None),
+        Err(e) => Err(format!("Save dialog failed: {}", e)),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -258,6 +282,8 @@ pub fn run() {
             pick_folder,
             scan_md_files,
             read_file,
+            write_file,
+            pick_save_file,
             get_settings,
             save_settings
         ])

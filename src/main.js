@@ -1,8 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
+import { Editor } from "tinymce/tinymce";
 
 // ── Markdown setup ──────────────────────────────────────────────────────────
 
@@ -95,6 +96,8 @@ let currentFolder = null;
 let currentFiles = [];
 let currentFileIndex = -1;
 let settings = { recent_folders: [], theme: "dark", use_gitignore: true };
+let isEditMode = false;
+let hasUnsavedChanges = false;
 
 // ── DOM references ──────────────────────────────────────────────────────────
 
@@ -129,6 +132,13 @@ const fontCodeSize = document.getElementById("font-code-size");
 const useGitignoreCheckbox = document.getElementById("use-gitignore-checkbox");
 const currentFolderBar = document.getElementById("current-folder-bar");
 const currentFolderName = document.getElementById("current-folder-name");
+const editToggleBtn = document.getElementById("edit-toggle-btn");
+const editIconPen = document.getElementById("edit-icon-pen");
+const editIconCheck = document.getElementById("edit-icon-check");
+const editorContainer = document.getElementById("editor-container");
+const menuSaveItem = document.getElementById("menu-save-item");
+const menuSaveAsItem = document.getElementById("menu-save-as-item");
+const menuEditDivider = document.getElementById("menu-edit-divider");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -739,8 +749,187 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         const prev = Math.max(currentFileIndex - 1, 0);
         selectFile(prev);
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        if (isEditMode) {
+            saveCurrentFile();
+        }
     }
 });
+
+// ── Edit Mode ────────────────────────────────────────────────────────────────
+
+let tinymceEditor = null;
+
+editToggleBtn.addEventListener("click", async () => {
+    if (!currentFileIndex || currentFileIndex < 0) return;
+
+    if (isEditMode) {
+        // Exit edit mode
+        exitEditMode();
+    } else {
+        // Enter edit mode
+        await enterEditMode();
+    }
+});
+
+async function enterEditMode() {
+    const file = currentFiles[currentFileIndex];
+    try {
+        const content = await invoke("read_file", { filePath: file.path });
+
+        // Hide rendered content
+        renderedContent.style.display = "none";
+
+        // Show editor container
+        editorContainer.style.display = "block";
+
+        // Initialize TinyMCE if not already initialized
+        if (!tinymceEditor) {
+            tinymceEditor = new Editor("editor-container", {
+                plugins: "markdown",
+                toolbar: "undo redo | formatbold formatitalic | link image | alignleft aligncenter alignright | numlist bullist | removeformat",
+                menubar: false,
+                statusbar: true,
+                markdown: {
+                    lib: marked,
+                },
+                content_style: `
+                    body {
+                        font-family: var(--font-default, Inter);
+                        font-size: ${settings.default_font_size || 16}px;
+                        color: var(--content-text, #e0e0e0);
+                        background: var(--content-bg, #1a1b1e);
+                    }
+                `,
+                setup: (editor) => {
+                    editor.on('init', () => {
+                        editor.setContent(content);
+                    });
+                    editor.on('change', () => {
+                        hasUnsavedChanges = true;
+                    });
+                },
+            });
+        } else {
+            tinymceEditor.setContent(content);
+        }
+
+        // Update UI
+        isEditMode = true;
+        editToggleBtn.setAttribute("aria-pressed", "true");
+        editIconPen.style.display = "none";
+        editIconCheck.style.display = "block";
+        menuSaveItem.classList.remove("hidden");
+        menuSaveAsItem.classList.remove("hidden");
+        menuEditDivider.classList.remove("hidden");
+
+    } catch (error) {
+        console.error("Failed to enter edit mode:", error);
+    }
+}
+
+function exitEditMode() {
+    if (!tinymceEditor) return;
+
+    // Destroy TinyMCE editor
+    tinymceEditor.destroy();
+    tinymceEditor = null;
+
+    // Hide editor container
+    editorContainer.style.display = "none";
+
+    // Show rendered content
+    renderedContent.style.display = "block";
+
+    // Update UI
+    isEditMode = false;
+    hasUnsavedChanges = false;
+    editToggleBtn.setAttribute("aria-pressed", "false");
+    editIconPen.style.display = "block";
+    editIconCheck.style.display = "none";
+    menuSaveItem.classList.add("hidden");
+    menuSaveAsItem.classList.add("hidden");
+    menuEditDivider.classList.add("hidden");
+}
+
+// ── Save/Save As ─────────────────────────────────────────────────────────────
+
+menuSaveItem.addEventListener("click", async () => {
+    await saveCurrentFile();
+});
+
+menuSaveAsItem.addEventListener("click", async () => {
+    await saveFileAs();
+});
+
+async function saveCurrentFile() {
+    if (!tinymceEditor || currentFileIndex < 0) return;
+
+    const file = currentFiles[currentFileIndex];
+    const content = tinymceEditor.getContent();
+
+    try {
+        await invoke("write_file", { filePath: file.path, content });
+        hasUnsavedChanges = false;
+
+        // Re-render markdown
+        renderMarkdown(content);
+
+        // Exit edit mode
+        exitEditMode();
+    } catch (error) {
+        console.error("Failed to save file:", error);
+    }
+}
+
+async function saveFileAs() {
+    if (!tinymceEditor) return;
+
+    const content = tinymceEditor.getContent();
+
+    try {
+        const path = await save({
+            filters: [{
+                name: "Markdown",
+                extensions: ["md", "markdown"],
+            }],
+            defaultPath: "untitled.md",
+        });
+
+        if (path) {
+            await invoke("write_file", { filePath: path, content });
+
+            // Re-render markdown
+            renderMarkdown(content);
+
+            // Exit edit mode
+            exitEditMode();
+        }
+    } catch (error) {
+        console.error("Failed to save file as:", error);
+    }
+}
+
+// ── Unsaved Changes Warning ──────────────────────────────────────────────────
+
+function checkUnsavedChanges() {
+    if (hasUnsavedChanges && isEditMode) {
+        if (!confirm("You have unsaved changes. Do you want to discard them?")) {
+            return false;
+        }
+        // Discard changes and exit edit mode
+        exitEditMode();
+    }
+    return true;
+}
+
+// Override selectFile to check for unsaved changes
+const originalSelectFile = selectFile;
+selectFile = async function (index) {
+    if (!checkUnsavedChanges()) return;
+    await originalSelectFile(index);
+};
 
 // ── Highlight.js theme ──────────────────────────────────────────────────────
 

@@ -12,6 +12,7 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="stylesheet" href="/src/markdown-theme.css" />
+    <script src="/node_modules/tinymce/tinymce.min.js"></script>
 </head>
 
 <body>
@@ -63,6 +64,27 @@
                     Open Folder
                 </button>
                 <div id="menu-dropdown" class="menu-dropdown hidden">
+                    <div id="menu-save-item" class="menu-item hidden" data-action="save">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17,21 17,13 7,13 7,21" />
+                            <polyline points="7,3 7,8 15,8" />
+                        </svg>
+                        <span>Save</span>
+                    </div>
+                    <div id="menu-save-as-item" class="menu-item hidden" data-action="save-as">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17,21 17,13 7,13 7,21" />
+                            <polyline points="7,3 7,8 15,8" />
+                            <path d="M12 13v8" />
+                            <path d="M9 16h6" />
+                        </svg>
+                        <span>Save As</span>
+                    </div>
+                    <div id="menu-edit-divider" class="menu-divider hidden"></div>
                     <div id="menu-open-folder-item" class="menu-item hidden" data-action="open-folder">
                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                             <path
@@ -119,10 +141,23 @@
             <div id="markdown-viewer" class="hidden">
                 <div id="editor-bar">
                     <span id="current-file-path" class="file-path"></span>
+                    <button id="edit-toggle-btn" class="icon-btn edit-toggle" title="Toggle edit mode"
+                        aria-label="Toggle edit mode">
+                        <svg id="edit-icon-pen" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        </svg>
+                        <svg id="edit-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="display:none">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                    </button>
                 </div>
                 <div id="rendered-content" class="markdown-body">
                     <div id="rendered-content-inner"></div>
                 </div>
+                <div id="editor-container" class="hidden"></div>
             </div>
             <div id="loading-indicator" class="hidden">
                 <div class="spinner"></div>
