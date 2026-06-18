@@ -50,3 +50,5 @@ System Volume Information/
 *.tar.gz
 *.zip
 *.rar
+
+.playwright-mcp/*

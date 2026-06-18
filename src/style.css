@@ -929,7 +929,31 @@ html, body {
 }
 
 /* ---- Quill Editor Content — Match Markdown Theme ---- */
+/* Mirror markdown-theme.css variables so they resolve inside .ql-editor */
 .ql-editor {
+  /* Font vars */
+  --md-font-sans: var(--user-font-sans, 'Merriweather', Georgia, 'Times New Roman', serif);
+  --md-font-mono: var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+  --md-font-heading: var(--user-font-heading, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  /* Dark theme color vars (matching markdown-theme.css defaults) */
+  --md-text-color: #d1d1d1;
+  --md-heading-color: #ffffff;
+  --md-link-color: #6c8cff;
+  --md-link-hover: #8ba3ff;
+  --md-code-bg: #1c1d20;
+  --md-code-text: #e3e3e3;
+  --md-blockquote-border: #6c8cff;
+  --md-blockquote-bg: #15161a;
+  --md-blockquote-text: #a0a0a0;
+  --md-table-border: #2c2e33;
+  --md-table-header-bg: #1a1b1e;
+  --md-table-alt-bg: #141518;
+  --md-hr-color: #2c2e33;
+  --md-inline-code-bg: #1c1d20;
+  --md-heading-base-size: 32px;
+  --md-font-size: 16px;
+  --md-code-font-size: 14px;
+
   background: var(--content-bg) !important;
   color: var(--md-text-color) !important;
   font-family: var(--md-font-sans, 'Merriweather', Georgia, serif) !important;
@@ -1212,6 +1236,22 @@ html, body {
 
 /* ---- Light Theme Overrides for Editor ---- */
 [data-theme="light"] .ql-editor {
+  /* Light theme color vars */
+  --md-text-color: #2a2c30;
+  --md-heading-color: #1a1b1e;
+  --md-link-color: #4a6cf7;
+  --md-link-hover: #3a5ce7;
+  --md-code-bg: #f1f3f6;
+  --md-code-text: #1a1b1e;
+  --md-blockquote-border: #4a6cf7;
+  --md-blockquote-bg: #f8f9fa;
+  --md-blockquote-text: #5a5c60;
+  --md-table-border: #e0e0e0;
+  --md-table-header-bg: #f1f3f6;
+  --md-table-alt-bg: #f8f9fa;
+  --md-hr-color: #e0e0e0;
+  --md-inline-code-bg: #f1f3f6;
+
   color: #2a2c30 !important;
 }
 
