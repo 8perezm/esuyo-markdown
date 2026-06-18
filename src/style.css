@@ -898,6 +898,10 @@ html, body {
   background: var(--content-bg);
 }
 
+#editor-container.hidden {
+  display: none;
+}
+
 /* Quill overrides for theme consistency */
 .ql-container {
   border: none !important;
