@@ -102,6 +102,8 @@ let currentFileIndex = -1;
 let settings = { recent_folders: [], theme: "dark", use_gitignore: true };
 let isEditMode = false;
 let hasUnsavedChanges = false;
+let isSourceMode = false;
+let rawMarkdownContent = "";
 
 // ── DOM references ──────────────────────────────────────────────────────────
 
@@ -145,6 +147,8 @@ const editorContainer = document.getElementById("editor-container");
 const menuSaveItem = document.getElementById("menu-save-item");
 const menuSaveAsItem = document.getElementById("menu-save-as-item");
 const menuEditDivider = document.getElementById("menu-edit-divider");
+const sourceCheckbox = document.getElementById("source-checkbox");
+const sourceCheckboxLabel = document.getElementById("source-checkbox-label");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -796,6 +800,127 @@ cancelBtn.addEventListener("click", () => {
     exitEditMode();
 });
 
+sourceCheckbox.addEventListener("change", () => {
+    if (sourceCheckbox.checked) {
+        switchToSourceMode();
+    } else {
+        switchToWysiwygMode();
+    }
+});
+
+function switchToSourceMode() {
+    isSourceMode = true;
+
+    // Get current markdown content from Quill
+    let md = rawMarkdownContent;
+    if (quillEditor) {
+        const htmlContent = quillEditor.root.innerHTML;
+        md = turndown.turndown(htmlContent);
+    }
+
+    // Destroy Quill editor
+    if (quillMarkdown) {
+        try { quillMarkdown.destroy(); } catch (err) { /* ignore */ }
+        quillMarkdown = null;
+    }
+    quillEditor = null;
+
+    // Replace editor container with textarea
+    editorContainer.innerHTML = '<textarea id="source-editor" placeholder="Edit raw Markdown source..."></textarea>';
+    const textarea = document.getElementById("source-editor");
+    textarea.value = md;
+
+    // Track changes
+    textarea.addEventListener("input", () => {
+        hasUnsavedChanges = true;
+    });
+
+    // Handle Tab key for indentation
+    textarea.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value = textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + 4;
+            hasUnsavedChanges = true;
+        }
+    });
+}
+
+function switchToWysiwygMode() {
+    isSourceMode = false;
+
+    // Get current markdown from textarea
+    const textarea = document.getElementById("source-editor");
+    const md = textarea ? textarea.value : rawMarkdownContent;
+    rawMarkdownContent = md;
+
+    // Clear container and recreate Quill
+    editorContainer.innerHTML = '<div id="quill-editor"></div>';
+
+    // Recreate toolbar
+    const toolbarContainer = document.createElement('div');
+    toolbarContainer.id = 'quill-toolbar';
+    toolbarContainer.innerHTML = `
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-blockquote"></button>
+            <button class="ql-code-block"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-header" value="1"></button>
+            <button class="ql-header" value="2"></button>
+            <button class="ql-header" value="3"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-link"></button>
+            <button class="ql-image"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-clean"></button>
+        </span>
+    `;
+    editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
+
+    // Convert Markdown to HTML for Quill
+    const htmlContent = marked.parse(md);
+
+    // Initialize Quill
+    quillEditor = new Quill('#quill-editor', {
+        modules: { toolbar: '#quill-toolbar' },
+        theme: 'snow',
+        placeholder: 'Start writing Markdown...',
+    });
+
+    quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
+
+    try {
+        quillMarkdown = new QuillMarkdown(quillEditor, {
+            markdownShortcut: true,
+            markdownShortcutSpaces: 1,
+            quoteText: true,
+            deleteOnBackspace: true,
+            undoLikeWord: true,
+        });
+    } catch (err) {
+        console.warn("QuillMarkdown initialization failed:", err);
+    }
+
+    quillEditor.on('text-change', () => {
+        hasUnsavedChanges = true;
+    });
+}
+
 async function enterEditMode() {
     const file = currentFiles[currentFileIndex];
     try {
@@ -803,6 +928,9 @@ async function enterEditMode() {
 
         // Hide rendered content
         renderedContent.style.display = "none";
+
+        // Store raw markdown for source mode
+        rawMarkdownContent = markdownContent;
 
         // Show editor container
         editorContainer.style.display = "block";
@@ -878,8 +1006,11 @@ async function enterEditMode() {
 
         // Update UI
         isEditMode = true;
+        isSourceMode = false;
+        sourceCheckbox.checked = false;
         editToggleBtn.style.display = "none";
         editActions.style.display = "flex";
+        sourceCheckboxLabel.style.display = "";
         menuSaveItem.classList.remove("hidden");
         menuSaveAsItem.classList.remove("hidden");
         menuEditDivider.classList.remove("hidden");
@@ -916,8 +1047,11 @@ function exitEditMode() {
 
     // Update UI
     isEditMode = false;
+    isSourceMode = false;
     hasUnsavedChanges = false;
+    sourceCheckbox.checked = false;
     editActions.style.display = "none";
+    sourceCheckboxLabel.style.display = "none";
     editToggleBtn.style.display = "";
     menuSaveItem.classList.add("hidden");
     menuSaveAsItem.classList.add("hidden");
@@ -935,13 +1069,20 @@ menuSaveAsItem.addEventListener("click", async () => {
 });
 
 async function saveCurrentFile() {
-    if (!quillEditor || currentFileIndex < 0) return;
+    if (currentFileIndex < 0) return;
 
     const file = currentFiles[currentFileIndex];
 
-    // Get HTML from Quill, convert to Markdown using turndown
-    const htmlContent = quillEditor.root.innerHTML;
-    const markdownContent = turndown.turndown(htmlContent);
+    let markdownContent;
+    if (isSourceMode) {
+        // Source mode: read directly from textarea — no conversion needed
+        const sourceTextarea = document.getElementById("source-editor");
+        markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
+    } else {
+        // WYSIWYG mode: get HTML from Quill, convert to Markdown using turndown
+        const htmlContent = quillEditor.root.innerHTML;
+        markdownContent = turndown.turndown(htmlContent);
+    }
 
     try {
         await invoke("write_file", { filePath: file.path, content: markdownContent });
@@ -964,11 +1105,14 @@ async function saveCurrentFile() {
 }
 
 async function saveFileAs() {
-    if (!quillEditor) return;
-
-    // Get HTML from Quill, convert to Markdown using turndown
-    const htmlContent = quillEditor.root.innerHTML;
-    const markdownContent = turndown.turndown(htmlContent);
+    let markdownContent;
+    if (isSourceMode) {
+        const sourceTextarea = document.getElementById("source-editor");
+        markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
+    } else {
+        const htmlContent = quillEditor.root.innerHTML;
+        markdownContent = turndown.turndown(htmlContent);
+    }
 
     try {
         const path = await save({
