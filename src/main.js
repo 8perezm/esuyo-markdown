@@ -1021,8 +1021,6 @@ async function enterEditMode() {
 }
 
 function exitEditMode() {
-    if (!quillEditor) return;
-
     // Clean up QuillMarkdown if initialized
     if (quillMarkdown) {
         try {
