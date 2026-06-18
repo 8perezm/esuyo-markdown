@@ -21,6 +21,51 @@ const marked = new Marked(
     })
 );
 
+/**
+ * Parse Markdown to HTML suitable for pasting into the Quill editor.
+ *
+ * Quill 2.x's clipboard matcher only understands <tbody><tr><td> table
+ * structure with a single <tbody> per <table>. When marked emits the
+ * semantically correct <thead>/<th> alongside an existing <tbody>, the
+ * header is pasted as a separate, detached table above the body table
+ * (with an empty paragraph in between), and the header cells appear
+ * empty. Flatten the header into the same <tbody> as the body rows so
+ * Quill's TableCell blot handles it like a single multi-row table. The
+ * first row is styled as a header via CSS.
+ */
+function parseMarkdownForEditor(md) {
+    const html = marked.parse(md);
+    if (!html.includes("<thead") && !html.includes("<th")) return html;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    doc.querySelectorAll("thead").forEach((thead) => {
+        // Convert <th> to <td>, preserving any attributes (e.g. style, colspan).
+        thead.querySelectorAll("th").forEach((th) => {
+            const td = doc.createElement("td");
+            for (const attr of th.attributes) {
+                td.setAttribute(attr.name, attr.value);
+            }
+            td.innerHTML = th.innerHTML;
+            th.replaceWith(td);
+        });
+
+        // Quill 2.x's table blot only accepts a single <tbody> per <table>.
+        // Move the header rows into the same <tbody> as the body rows.
+        const table = thead.closest("table");
+        let targetTbody = table && table.querySelector("tbody");
+        if (targetTbody == null) {
+            targetTbody = doc.createElement("tbody");
+            thead.replaceWith(targetTbody);
+        } else {
+            // Insert header rows at the top of the body, then remove thead.
+            while (thead.firstChild) {
+                targetTbody.insertBefore(thead.firstChild, targetTbody.firstChild);
+            }
+            thead.remove();
+        }
+    });
+    return doc.body.innerHTML;
+}
+
 marked.use({
     renderer: {
         heading({ tokens, depth }) {
@@ -892,7 +937,7 @@ function switchToWysiwygMode() {
     editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
 
     // Convert Markdown to HTML for Quill
-    const htmlContent = marked.parse(md);
+    const htmlContent = parseMarkdownForEditor(md);
 
     // Initialize Quill
     quillEditor = new Quill('#quill-editor', {
@@ -972,7 +1017,7 @@ async function enterEditMode() {
         editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
 
         // Convert Markdown to HTML for Quill display
-        const htmlContent = marked.parse(markdownContent);
+        const htmlContent = parseMarkdownForEditor(markdownContent);
 
         // Initialize Quill editor
         quillEditor = new Quill('#quill-editor', {

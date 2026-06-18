@@ -1282,7 +1282,11 @@ html, body {
   text-align: left !important;
 }
 
-.ql-editor th {
+.ql-editor th,
+/* Quill 2.x's clipboard cannot parse <thead>/<th>, so the header row is
+   pasted as a normal first <tr><td>. Style the first row's cells to
+   match the header look. */
+.ql-editor table tbody tr:first-child > td {
   background: var(--md-table-header-bg) !important;
   font-family: var(--md-font-heading, 'Inter', sans-serif) !important;
   font-weight: 600 !important;
