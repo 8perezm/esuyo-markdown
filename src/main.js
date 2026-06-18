@@ -811,12 +811,10 @@ sourceCheckbox.addEventListener("change", () => {
 function switchToSourceMode() {
     isSourceMode = true;
 
-    // Get current markdown content from Quill
+    // Use rawMarkdownContent directly — do NOT round-trip through Quill HTML → Turndown,
+    // because that corrupts tables, code blocks, fenced blocks, and other complex structures.
+    // rawMarkdownContent is kept current by the text-change handler in WYSIWYG mode.
     let md = rawMarkdownContent;
-    if (quillEditor) {
-        const htmlContent = quillEditor.root.innerHTML;
-        md = turndown.turndown(htmlContent);
-    }
 
     // Destroy Quill editor
     if (quillMarkdown) {
@@ -918,6 +916,7 @@ function switchToWysiwygMode() {
 
     quillEditor.on('text-change', () => {
         hasUnsavedChanges = true;
+        rawMarkdownContent = turndown.turndown(quillEditor.root.innerHTML);
     });
 }
 
@@ -999,9 +998,10 @@ async function enterEditMode() {
             console.warn("QuillMarkdown initialization failed, continuing without it:", err);
         }
 
-        // Track changes
+        // Track changes — keep rawMarkdownContent in sync so source mode shows current content
         quillEditor.on('text-change', () => {
             hasUnsavedChanges = true;
+            rawMarkdownContent = turndown.turndown(quillEditor.root.innerHTML);
         });
 
         // Update UI
