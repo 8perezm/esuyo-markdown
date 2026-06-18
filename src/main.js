@@ -751,11 +751,12 @@ function escapeHtml(text) {
 document.addEventListener("keydown", (e) => {
     if (currentFiles.length === 0) return;
 
-    if (e.key === "ArrowDown") {
+    // Don't intercept arrow keys while in edit mode — let the editor handle them
+    if (!isEditMode && e.key === "ArrowDown") {
         e.preventDefault();
         const next = Math.min(currentFileIndex + 1, currentFiles.length - 1);
         selectFile(next);
-    } else if (e.key === "ArrowUp") {
+    } else if (!isEditMode && e.key === "ArrowUp") {
         e.preventDefault();
         const prev = Math.max(currentFileIndex - 1, 0);
         selectFile(prev);
