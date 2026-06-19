@@ -307,10 +307,12 @@ const loadingIndicator = document.getElementById("loading-indicator");
 const themeToggle = document.getElementById("theme-toggle");
 const themeIconSun = document.getElementById("theme-icon-sun");
 const themeIconMoon = document.getElementById("theme-icon-moon");
+const newFileBtn = document.getElementById("new-file-btn");
 const reloadBtn = document.getElementById("reload-btn");
 const menuBtn = document.getElementById("menu-btn");
 const menuDropdown = document.getElementById("menu-dropdown");
 const recentFoldersList = document.getElementById("recent-folders-list");
+const menuNewFileItem = document.getElementById("menu-new-file-item");
 const menuOpenFolderItem = document.getElementById("menu-open-folder-item");
 const menuSettingsItem = document.getElementById("menu-settings-item");
 const settingsOverlay = document.getElementById("settings-overlay");
@@ -387,6 +389,8 @@ themeToggle.addEventListener("click", () => {
 });
 
 // ── Reload ────────────────────────────────────────────────────────────────────
+
+newFileBtn.addEventListener("click", createNewFile);
 
 reloadBtn.addEventListener("click", async () => {
     if (!currentFolder) return;
@@ -490,6 +494,8 @@ function updateOpenFolderBtnVisibility() {
     const hasFolder = currentFolder !== null;
     // Show/hide the standalone "Open Folder" button
     openFolderBtn.style.display = hasFolder ? "none" : "";
+    // Show/hide the new file button
+    newFileBtn.style.display = hasFolder ? "" : "none";
     // Show/hide the reload button
     reloadBtn.style.display = hasFolder ? "" : "none";
     // Show/hide the menu item
@@ -497,6 +503,11 @@ function updateOpenFolderBtnVisibility() {
 }
 
 // Menu item actions
+menuNewFileItem.addEventListener("click", () => {
+    menuDropdown.classList.add("hidden");
+    createNewFile();
+});
+
 menuOpenFolderItem.addEventListener("click", () => {
     menuDropdown.classList.add("hidden");
     openFolder();
@@ -710,8 +721,10 @@ function renderRecentFolders() {
 }
 
 function pushRecent(folderPath) {
-    const list = (settings.recent_folders || []).filter((p) => p !== folderPath);
-    list.unshift(folderPath);
+    // Normalize to forward slashes so paths don't duplicate due to \ vs /
+    const normalized = folderPath.replace(/\\/g, "/");
+    const list = (settings.recent_folders || []).filter((p) => p !== normalized);
+    list.unshift(normalized);
     settings.recent_folders = list.slice(0, 10);
     persistSettings();
 }
@@ -759,6 +772,44 @@ async function openFolderByPath(folderPath) {
         showLoading(false);
         console.error("Failed to open folder:", error);
         alert(`Error opening folder: ${error}`);
+    }
+}
+
+// ── New File ────────────────────────────────────────────────────────────────
+
+async function createNewFile() {
+    try {
+        const path = await save({
+            filters: [{
+                name: "Markdown",
+                extensions: ["md", "markdown"],
+            }],
+            defaultPath: currentFolder
+                ? `${currentFolder}/untitled.md`
+                : "untitled.md",
+        });
+
+        if (!path) return;
+
+        // Extract filename without extension for the template heading
+        const parts = path.replace(/\\/g, "/").split("/").pop() || "untitled";
+        const title = parts.replace(/\.(md|markdown)$/i, "");
+        const content = `# ${title}\n\n`;
+
+        await invoke("write_file", { filePath: path, content });
+
+        // Open the parent folder of the new file as the current context
+        const parentDir = path.replace(/\\/g, "/").replace(/\/[^/]+$/, "");
+        await openFolderByPath(parentDir);
+
+        // Find and select the newly created file
+        const newIndex = currentFiles.findIndex((f) => f.path === path);
+        if (newIndex >= 0) {
+            await selectFile(newIndex);
+        }
+    } catch (error) {
+        console.error("Failed to create new file:", error);
+        alert(`Error creating file: ${error}`);
     }
 }
 
@@ -972,6 +1023,9 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         const prev = Math.max(currentFileIndex - 1, 0);
         selectFile(prev);
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+        e.preventDefault();
+        createNewFile();
     } else if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         e.preventDefault();
         if (isEditMode) {

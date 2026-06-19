@@ -101,8 +101,11 @@ fn get_settings(app: tauri::AppHandle) -> Result<AppSettings, String> {
 fn save_settings(app: tauri::AppHandle, settings: AppSettings) -> Result<(), String> {
     let path = settings_path(&app)?;
     let mut settings = settings;
-    // Dedupe and cap recent folders to 10
+    // Normalize path separators and dedupe, cap to 10
     let mut seen = HashSet::new();
+    for p in &mut settings.recent_folders {
+        *p = p.replace('\\', "/");
+    }
     settings.recent_folders.retain(|p| seen.insert(p.clone()));
     settings.recent_folders.truncate(10);
     let json =
