@@ -337,6 +337,11 @@ const menuSaveAsItem = document.getElementById("menu-save-as-item");
 const menuEditDivider = document.getElementById("menu-edit-divider");
 const sourceCheckbox = document.getElementById("source-checkbox");
 const sourceCheckboxLabel = document.getElementById("source-checkbox-label");
+const deleteFileBtn = document.getElementById("delete-file-btn");
+const confirmOverlay = document.getElementById("confirm-overlay");
+const confirmFileName = document.getElementById("confirm-file-name");
+const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -762,6 +767,7 @@ async function openFolderByPath(folderPath) {
         });
         currentFiles = files;
         currentFileIndex = -1;
+        updateDeleteBtnVisibility();
 
         showLoading(false);
         pushRecent(folderPath);
@@ -840,9 +846,11 @@ async function rescanCurrentFolder() {
                 renderMarkdown(content);
             } else {
                 currentFileIndex = -1;
+                updateDeleteBtnVisibility();
             }
         } else {
             currentFileIndex = -1;
+            updateDeleteBtnVisibility();
         }
 
         showLoading(false);
@@ -937,6 +945,14 @@ function updateActiveFile(index) {
 
 // ── File Selection ──────────────────────────────────────────────────────────
 
+function updateDeleteBtnVisibility() {
+    if (currentFileIndex >= 0 && currentFiles.length > 0) {
+        deleteFileBtn.style.display = "";
+    } else {
+        deleteFileBtn.style.display = "none";
+    }
+}
+
 async function selectFile(index) {
     if (index < 0 || index >= currentFiles.length) return;
 
@@ -945,6 +961,7 @@ async function selectFile(index) {
 
     const file = currentFiles[index];
     currentFilePath.textContent = file.relative_path;
+    updateDeleteBtnVisibility();
 
     try {
         const content = await invoke("read_file", { filePath: file.path });
@@ -1062,6 +1079,65 @@ saveBtn.addEventListener("click", async () => {
 
 cancelBtn.addEventListener("click", () => {
     exitEditMode();
+});
+
+// ── Delete File ──────────────────────────────────────────────────────────────
+
+function showDeleteConfirm() {
+    if (currentFileIndex < 0) return;
+    const file = currentFiles[currentFileIndex];
+    confirmFileName.textContent = file.relative_path;
+    confirmOverlay.classList.remove("hidden");
+}
+
+function closeDeleteConfirm() {
+    confirmOverlay.classList.add("hidden");
+}
+
+deleteFileBtn.addEventListener("click", showDeleteConfirm);
+
+confirmCancelBtn.addEventListener("click", closeDeleteConfirm);
+
+confirmOverlay.addEventListener("click", (e) => {
+    if (e.target === confirmOverlay) closeDeleteConfirm();
+});
+
+confirmDeleteBtn.addEventListener("click", async () => {
+    if (currentFileIndex < 0) return;
+    const file = currentFiles[currentFileIndex];
+    const deletedPath = file.path;
+
+    closeDeleteConfirm();
+
+    try {
+        await invoke("delete_file", { filePath: deletedPath });
+
+        // Remove the file from the current list
+        currentFiles = currentFiles.filter((f) => f.path !== deletedPath);
+
+        // If the list is now empty, show empty state
+        if (currentFiles.length === 0) {
+            currentFileIndex = -1;
+            updateDeleteBtnVisibility();
+            renderFileList(currentFiles);
+            welcome.classList.remove("hidden");
+            markdownViewer.classList.add("hidden");
+            return;
+        }
+
+        // Otherwise, select the file at the same index (or the last one)
+        const newIndex = Math.min(currentFileIndex, currentFiles.length - 1);
+
+        // Reset index temporarily to avoid stale state during re-render
+        currentFileIndex = -1;
+        updateDeleteBtnVisibility();
+
+        renderFileList(currentFiles);
+        await selectFile(newIndex);
+    } catch (error) {
+        console.error("Failed to delete file:", error);
+        alert(`Error deleting file: ${error}`);
+    }
 });
 
 sourceCheckbox.addEventListener("change", () => {

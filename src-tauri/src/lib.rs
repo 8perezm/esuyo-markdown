@@ -260,6 +260,17 @@ fn write_file(file_path: &str, content: &str) -> Result<(), String> {
     fs::write(path, content).map_err(|e| format!("Failed to write file: {}", e))
 }
 
+/// Moves a file to the OS Recycle Bin / Trash.
+#[tauri::command]
+fn delete_file(file_path: &str) -> Result<(), String> {
+    let path = Path::new(file_path);
+    if !path.exists() || !path.is_file() {
+        return Err(format!("File not found: {}", file_path));
+    }
+    trash::delete(path).map_err(|e| format!("Failed to move file to trash: {}", e))?;
+    Ok(())
+}
+
 /// Opens a save dialog and returns the selected file path.
 #[tauri::command]
 async fn pick_save_file(app: tauri::AppHandle) -> Result<Option<String>, String> {
@@ -291,6 +302,7 @@ pub fn run() {
             scan_md_files,
             read_file,
             write_file,
+            delete_file,
             pick_save_file,
             get_settings,
             save_settings
