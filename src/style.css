@@ -1182,6 +1182,104 @@ html, body {
   color: var(--accent) !important;
 }
 
+/* ===== quill-better-table overrides ===== */
+
+/* Insert table toolbar button */
+#insert-table-btn,
+#table-add-row-btn,
+#table-del-row-btn,
+#table-add-col-btn,
+#table-del-col-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--content-text);
+  border-radius: 3px;
+}
+
+#insert-table-btn:hover,
+#table-add-row-btn:hover,
+#table-del-row-btn:hover,
+#table-add-col-btn:hover,
+#table-del-col-btn:hover {
+  color: var(--accent) !important;
+  background: var(--sidebar-hover);
+}
+
+/* Table cells in editor */
+.ql-editor table.quill-better-table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 0.5em 0 !important;
+}
+
+.ql-editor table.quill-better-table td,
+.ql-editor table.quill-better-table th {
+  border: 1px solid var(--md-table-border, #3a3b3e) !important;
+  padding: 6px 10px !important;
+  min-width: 60px !important;
+  vertical-align: top !important;
+}
+
+/* Column resize toolbar - hidden to avoid visual clutter */
+.qlbt-col-tool {
+  display: none !important;
+}
+
+/* Selection corners */
+.qlbt-selection-line-left::before,
+.qlbt-selection-line-right::before {
+  background-color: var(--accent) !important;
+}
+
+/* Right-click operation menu */
+.qlbt-operation-menu {
+  background: var(--menu-bg, #25262b) !important;
+  border: 1px solid var(--menu-border, #2c2e33) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  z-index: 10000 !important;
+  position: fixed !important;
+  min-width: 180px !important;
+}
+
+.qlbt-operation-menu .qlbt-operation-menu-item {
+  color: var(--content-text) !important;
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  background: var(--menu-bg, #25262b) !important;
+}
+
+.qlbt-operation-menu .qlbt-operation-menu-item:hover {
+  background: var(--menu-hover, #2c2e33) !important;
+  color: var(--accent) !important;
+}
+
+.qlbt-operation-menu .qlbt-operation-menu-dividing {
+  background-color: var(--sidebar-border, #2c2e33) !important;
+}
+
+.qlbt-operation-menu .qlbt-operation-menu-subtitle {
+  color: var(--sidebar-text, #888) !important;
+}
+
+.qlbt-operation-menu .qlbt-operation-color-picker {
+  background: var(--menu-bg, #25262b) !important;
+}
+
+/* Wrapper for scrollable tables */
+.quill-better-table-wrapper {
+  overflow-x: auto !important;
+  margin: 0.5em 0 !important;
+}
+
 .ql-picker-options {
   background: var(--content-bg) !important;
   border: 1px solid var(--sidebar-border) !important;

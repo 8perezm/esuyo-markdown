@@ -7,7 +7,14 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import QuillMarkdown from "quilljs-markdown";
 import "quilljs-markdown/dist/quilljs-markdown-common-style.css";
+import QuillBetterTable from "quill-better-table";
+import "quill-better-table/dist/quill-better-table.css";
 import TurndownService from "turndown";
+
+// Register quill-better-table module
+Quill.register({
+    "modules/better-table": QuillBetterTable,
+}, true);
 
 // ── Markdown setup ──────────────────────────────────────────────────────────
 
@@ -931,6 +938,53 @@ function switchToWysiwygMode() {
             <button class="ql-image"></button>
         </span>
         <span class="ql-formats">
+            <button id="insert-table-btn" title="Insert table">
+                <svg viewBox="0 0 18 18" width="16" height="16">
+                    <rect x="1" y="1" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="1" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="12" y1="1" x2="12" y2="17" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+            </button>
+        </span>
+        <span class="ql-formats">
+            <button id="table-add-row-btn" title="Add row below">
+                <svg viewBox="0 0 18 18" width="16" height="16">
+                    <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                    <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
+                    <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                </svg>
+            </button>
+            <button id="table-del-row-btn" title="Delete row">
+                <svg viewBox="0 0 18 18" width="16" height="16">
+                    <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                    <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
+                    <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                </svg>
+            </button>
+        </span>
+        <span class="ql-formats">
+            <button id="table-add-col-btn" title="Add column right">
+                <svg viewBox="0 0 18 18" width="16" height="16">
+                    <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                    <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
+                    <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                </svg>
+            </button>
+            <button id="table-del-col-btn" title="Delete column">
+                <svg viewBox="0 0 18 18" width="16" height="16">
+                    <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                    <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
+                    <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                </svg>
+            </button>
+        </span>
+        <span class="ql-formats">
             <button class="ql-clean"></button>
         </span>
     `;
@@ -941,12 +995,33 @@ function switchToWysiwygMode() {
 
     // Initialize Quill
     quillEditor = new Quill('#quill-editor', {
-        modules: { toolbar: '#quill-toolbar' },
+        modules: {
+            toolbar: '#quill-toolbar',
+            'better-table': {},
+            keyboard: {
+                bindings: QuillBetterTable.keyboardBindings,
+            },
+        },
         theme: 'snow',
         placeholder: 'Start writing Markdown...',
     });
 
+    // Wire table operation buttons
+    setupTableButtons(quillEditor);
+
+    // Workaround: Tauri webview blocks native contextmenu events.
+    // Intercept right-click on tables and show the operation menu programmatically.
+    setupTableContextMenu(quillEditor);
+
     quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
+
+    // After pasting, ensure all tables have the quill-better-table class
+    // so the module's click handler recognizes them
+    requestAnimationFrame(() => {
+        quillEditor.root.querySelectorAll('table:not(.quill-better-table)').forEach(t => {
+            t.classList.add('quill-better-table');
+        });
+    });
 
     try {
         quillMarkdown = new QuillMarkdown(quillEditor, {
@@ -964,6 +1039,166 @@ function switchToWysiwygMode() {
         hasUnsavedChanges = true;
         rawMarkdownContent = turndown.turndown(quillEditor.root.innerHTML);
     });
+}
+
+/**
+ * Wire up table operation toolbar buttons.
+ * These replicate the handlers inside quill-better-table's operation menu,
+ * using the same internal blot APIs that the module uses.
+ */
+function setupTableButtons(quill) {
+    const getTableModule = () => quill.getModule('better-table');
+
+    // Insert table
+    const insertBtn = document.getElementById('insert-table-btn');
+    if (insertBtn) {
+        insertBtn.addEventListener('click', () => {
+            const mod = getTableModule();
+            mod.insertTable(3, 3);
+        });
+    }
+
+    /**
+     * Ensure the module's table tools are active for the given table node.
+     * This is normally triggered by clicking on a table, but toolbar buttons
+     * need to ensure it programmatically.
+     */
+    function ensureTableToolsActive(tableNode) {
+        const mod = getTableModule();
+        if (!mod || !tableNode) return false;
+        // If no table is active, or a different table is active, activate this one
+        if (!mod.table || mod.table !== tableNode) {
+            if (mod.table) mod.hideTableTools();
+            mod.showTableTools(tableNode, quill, {});
+        }
+        return !!mod.tableSelection;
+    }
+
+    /**
+     * Execute a table operation using the same pattern as the operation menu handlers.
+     * Replicates: https://github.com/soccerloway/quill-better-table/blob/master/src/table_operation_menu.js
+     */
+    function executeTableOperation(operation) {
+        const mod = getTableModule();
+        if (!mod) return;
+
+        // Get current cell from cursor position
+        const [table, row, cell] = mod.getTable();
+        if (!table || !cell) return;
+
+        // Ensure table tools are active
+        if (!ensureTableToolsActive(table)) return;
+
+        const tableContainer = Quill.find(table);
+        if (!tableContainer) return;
+
+        const cellRect = cell.domNode.getBoundingClientRect();
+        // Set selection on the current cell
+        mod.tableSelection.setSelection(cellRect, cellRect);
+
+        switch (operation) {
+            case 'insertRowDown': {
+                const affectedCells = tableContainer.insertRow(mod.tableSelection.boundary, true, quill.root.parentNode);
+                mod.tableColumnTool.updateToolCells();
+                quill.update(Quill.sources.USER);
+                if (affectedCells && affectedCells[0]) {
+                    quill.setSelection(quill.getIndex(affectedCells[0]), 0, Quill.sources.SILENT);
+                    mod.tableSelection.setSelection(affectedCells[0].domNode.getBoundingClientRect(), affectedCells[0].domNode.getBoundingClientRect());
+                }
+                break;
+            }
+            case 'deleteRow': {
+                tableContainer.deleteRow(mod.tableSelection.boundary, quill.root.parentNode);
+                quill.update(Quill.sources.USER);
+                mod.tableSelection.clearSelection();
+                break;
+            }
+            case 'insertColumnRight': {
+                const colIndex = parseInt(cell.domNode.getAttribute('data-cell')) || 1;
+                const newColumn = tableContainer.insertColumn(mod.tableSelection.boundary, colIndex, true, quill.root.parentNode);
+                mod.tableColumnTool.updateToolCells();
+                quill.update(Quill.sources.USER);
+                if (newColumn && newColumn[0]) {
+                    quill.setSelection(quill.getIndex(newColumn[0]), 0, Quill.sources.SILENT);
+                    mod.tableSelection.setSelection(newColumn[0].domNode.getBoundingClientRect(), newColumn[0].domNode.getBoundingClientRect());
+                }
+                break;
+            }
+            case 'deleteColumn': {
+                const colIndex = parseInt(cell.domNode.getAttribute('data-cell')) || 1;
+                const isDeleteTable = tableContainer.deleteColumns(mod.tableSelection.boundary, [colIndex], quill.root.parentNode);
+                if (!isDeleteTable) {
+                    mod.tableColumnTool.updateToolCells();
+                    quill.update(Quill.sources.USER);
+                    mod.tableSelection.clearSelection();
+                }
+                break;
+            }
+        }
+    }
+
+    // Add row below current cell
+    const addRowBtn = document.getElementById('table-add-row-btn');
+    if (addRowBtn) {
+        addRowBtn.addEventListener('click', () => executeTableOperation('insertRowDown'));
+    }
+
+    // Delete current row
+    const delRowBtn = document.getElementById('table-del-row-btn');
+    if (delRowBtn) {
+        delRowBtn.addEventListener('click', () => executeTableOperation('deleteRow'));
+    }
+
+    // Add column right of current cell
+    const addColBtn = document.getElementById('table-add-col-btn');
+    if (addColBtn) {
+        addColBtn.addEventListener('click', () => executeTableOperation('insertColumnRight'));
+    }
+
+    // Delete current column
+    const delColBtn = document.getElementById('table-del-col-btn');
+    if (delColBtn) {
+        delColBtn.addEventListener('click', () => executeTableOperation('deleteColumn'));
+    }
+}
+
+/**
+ * Workaround for Tauri webview blocking native contextmenu events.
+ *
+ * quill-better-table listens for 'contextmenu' on the editor root to show
+ * its operation menu. Some webviews (Tauri, Electron) may swallow these events.
+ * Instead, we listen for right-click via 'mousedown' (button 2) and dispatch
+ * a synthetic 'contextmenu' event that the module's handler will catch.
+ */
+function setupTableContextMenu(quill) {
+    quill.root.addEventListener('mousedown', (evt) => {
+        // Only handle right-click (button 2)
+        if (evt.button !== 2) return;
+
+        // Check if click is inside a quill-better-table
+        const path = evt.composedPath ? evt.composedPath() : evt.path || [];
+        const tableNode = path.find(node => node.tagName === 'TABLE' && node.classList.contains('quill-better-table'));
+        if (!tableNode) return;
+
+        // Prevent default and dispatch a synthetic contextmenu event
+        // at the same position so the module's handler picks it up.
+        evt.preventDefault();
+
+        const syntheticEvent = new MouseEvent('contextmenu', {
+            bubbles: true,
+            cancelable: true,
+            button: 2,
+            buttons: 2,
+            clientX: evt.clientX,
+            clientY: evt.clientY,
+            pageX: evt.pageX,
+            pageY: evt.pageY,
+            composed: true
+        });
+
+        // Dispatch on the same target so evt.composedPath() works
+        evt.target.dispatchEvent(syntheticEvent);
+    }, true);
 }
 
 async function enterEditMode() {
@@ -1011,6 +1246,53 @@ async function enterEditMode() {
                 <button class="ql-image"></button>
             </span>
             <span class="ql-formats">
+                <button id="insert-table-btn" title="Insert table">
+                    <svg viewBox="0 0 18 18" width="16" height="16">
+                        <rect x="1" y="1" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="1" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="12" y1="1" x2="12" y2="17" stroke="currentColor" stroke-width="1.2" />
+                    </svg>
+                </button>
+            </span>
+            <span class="ql-formats">
+                <button id="table-add-row-btn" title="Add row below">
+                    <svg viewBox="0 0 18 18" width="16" height="16">
+                        <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                        <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
+                        <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                    </svg>
+                </button>
+                <button id="table-del-row-btn" title="Delete row">
+                    <svg viewBox="0 0 18 18" width="16" height="16">
+                        <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                        <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
+                        <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                    </svg>
+                </button>
+            </span>
+            <span class="ql-formats">
+                <button id="table-add-col-btn" title="Add column right">
+                    <svg viewBox="0 0 18 18" width="16" height="16">
+                        <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                        <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
+                        <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                    </svg>
+                </button>
+                <button id="table-del-col-btn" title="Delete column">
+                    <svg viewBox="0 0 18 18" width="16" height="16">
+                        <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
+                        <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
+                        <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
+                        <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+                    </svg>
+                </button>
+            </span>
+            <span class="ql-formats">
                 <button class="ql-clean"></button>
             </span>
         `;
@@ -1023,13 +1305,32 @@ async function enterEditMode() {
         quillEditor = new Quill('#quill-editor', {
             modules: {
                 toolbar: '#quill-toolbar',
+                'better-table': {},
+                keyboard: {
+                    bindings: QuillBetterTable.keyboardBindings,
+                },
             },
             theme: 'snow',
             placeholder: 'Start writing Markdown...',
         });
 
+        // Wire table operation buttons
+        setupTableButtons(quillEditor);
+
+        // Workaround: Tauri webview blocks native contextmenu events.
+        // Intercept right-click on tables and show the operation menu programmatically.
+        setupTableContextMenu(quillEditor);
+
         // Set content
         quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
+
+        // After pasting, ensure all tables have the quill-better-table class
+        // so the module's click handler recognizes them
+        requestAnimationFrame(() => {
+            quillEditor.root.querySelectorAll('table:not(.quill-better-table)').forEach(t => {
+                t.classList.add('quill-better-table');
+            });
+        });
 
         // Enable QuillMarkdown plugin for Markdown shortcuts
         try {

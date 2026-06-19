@@ -16,6 +16,7 @@
     "marked": "^18.0.0",
     "marked-highlight": "^2.2.0",
     "quill": "^2.0.0",
+    "quill-better-table": "^1.2.10",
     "quilljs-markdown": "^1.2.0",
     "turndown": "^7.1.2"
   },
