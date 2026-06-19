@@ -16,9 +16,10 @@
     "marked": "^18.0.0",
     "marked-highlight": "^2.2.0",
     "quill": "^2.0.0",
-    "quill-better-table": "^1.2.10",
+    "quill-table-better": "^1.2.3",
     "quilljs-markdown": "^1.2.0",
-    "turndown": "^7.1.2"
+    "turndown": "^7.1.2",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

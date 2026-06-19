@@ -7,13 +7,14 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import QuillMarkdown from "quilljs-markdown";
 import "quilljs-markdown/dist/quilljs-markdown-common-style.css";
-import QuillBetterTable from "quill-better-table";
-import "quill-better-table/dist/quill-better-table.css";
+import QuillTableBetter from "quill-table-better";
+import "quill-table-better/dist/quill-table-better.css";
 import TurndownService from "turndown";
+import { gfm } from "turndown-plugin-gfm";
 
-// Register quill-better-table module
+// Register quill-table-better module
 Quill.register({
-    "modules/better-table": QuillBetterTable,
+    "modules/table-better": QuillTableBetter,
 }, true);
 
 // ── Markdown setup ──────────────────────────────────────────────────────────
@@ -31,21 +32,37 @@ const marked = new Marked(
 /**
  * Parse Markdown to HTML suitable for pasting into the Quill editor.
  *
- * Quill 2.x's clipboard matcher only understands <tbody><tr><td> table
- * structure with a single <tbody> per <table>. When marked emits the
- * semantically correct <thead>/<th> alongside an existing <tbody>, the
- * header is pasted as a separate, detached table above the body table
- * (with an empty paragraph in between), and the header cells appear
- * empty. Flatten the header into the same <tbody> as the body rows so
- * Quill's TableCell blot handles it like a single multi-row table. The
- * first row is styled as a header via CSS.
+ * Two adjustments are needed before the HTML reaches Quill's clipboard:
+ *
+ * 1. **Tables**: Quill 2.x's table blot only accepts a single `<tbody>`
+ *    per `<table>`. When marked emits the semantically correct
+ *    `<thead>`/`<th>` alongside an existing `<tbody>`, the header is
+ *    pasted as a separate, detached table above the body table. Flatten
+ *    the header into the same `<tbody>` as the body rows. The first row
+ *    is styled as a header via CSS.
+ *
+ * 2. **Code blocks**: `marked` emits `<pre><code class="language-xxx">`
+ *    — the language lives in the `<code>`'s class. But Quill 2.x's
+ *    clipboard converter discards that class and defaults `data-language`
+ *    to `"plain"`, so the language is lost on the editor side and the
+ *    Source toggle then produces ` ```plain `. Quill only preserves the
+ *    language if the input already has `data-language="xxx"` on the
+ *    `<pre>`. Lift the language out of the `<code>`'s class onto the
+ *    `<pre>`'s `data-language` so Quill keeps it.
  */
 function parseMarkdownForEditor(md) {
     const html = marked.parse(md);
-    if (!html.includes("<thead") && !html.includes("<th")) return html;
+    if (
+        !html.includes("<thead") &&
+        !html.includes("<th") &&
+        !html.includes("<pre>")
+    ) {
+        return html;
+    }
     const doc = new DOMParser().parseFromString(html, "text/html");
+
+    // 1. Flatten <thead>/<th> into the same <tbody> as body rows.
     doc.querySelectorAll("thead").forEach((thead) => {
-        // Convert <th> to <td>, preserving any attributes (e.g. style, colspan).
         thead.querySelectorAll("th").forEach((th) => {
             const td = doc.createElement("td");
             for (const attr of th.attributes) {
@@ -54,22 +71,30 @@ function parseMarkdownForEditor(md) {
             td.innerHTML = th.innerHTML;
             th.replaceWith(td);
         });
-
-        // Quill 2.x's table blot only accepts a single <tbody> per <table>.
-        // Move the header rows into the same <tbody> as the body rows.
         const table = thead.closest("table");
         let targetTbody = table && table.querySelector("tbody");
         if (targetTbody == null) {
             targetTbody = doc.createElement("tbody");
             thead.replaceWith(targetTbody);
         } else {
-            // Insert header rows at the top of the body, then remove thead.
             while (thead.firstChild) {
                 targetTbody.insertBefore(thead.firstChild, targetTbody.firstChild);
             }
             thead.remove();
         }
     });
+
+    // 2. Lift `language-xxx` from the <code>'s class onto the <pre>'s
+    //    `data-language` so Quill 2.x keeps it.
+    doc.querySelectorAll("pre > code").forEach((code) => {
+        const pre = code.parentNode;
+        if (pre.nodeName !== "PRE") return;
+        const match = (code.getAttribute("class") || "").match(/language-(\S+)/);
+        if (match) {
+            pre.setAttribute("data-language", match[1]);
+        }
+    });
+
     return doc.body.innerHTML;
 }
 
@@ -156,6 +181,114 @@ let isEditMode = false;
 let hasUnsavedChanges = false;
 let isSourceMode = false;
 let rawMarkdownContent = "";
+
+/**
+ * Convert the current Quill editor contents to Markdown.
+ *
+ * The quill-table-better module (attoae) uses internal `table-temporary`
+ * blots as row separators. When you call `quill.getSemanticHTML()` directly,
+ * those blots serialise as `<temporary>` elements *inside* the `<table>`
+ * (not valid HTML structure), and each cell's content is wrapped in
+ * `<p class="ql-table-block">…</p>` — both of which break turndown's
+ * table handling. `turndown-plugin-gfm` also requires a `<thead>` to
+ * recognise a table.
+ *
+ * We pre-process the HTML to:
+ *   1. Remove the `<temporary>` blots
+ *   2. Unwrap `<p>` inside `<td>`/`<th>` so cells contain plain text
+ *   3. Synthesise a `<thead>` from the first row (GFM requires one)
+ *   4. Drop any empty trailing paragraphs
+ *
+ * The pre-processing is non-destructive — the live editor keeps its
+ * cursor, selection, and table interactivity.
+ */
+function getEditorMarkdown() {
+    if (!quillEditor) return rawMarkdownContent;
+
+    const rawHtml = quillEditor.getSemanticHTML();
+    const cleanedHtml = stripTableTemporaryArtifacts(rawHtml);
+    return turndown.turndown(cleanedHtml);
+}
+
+/**
+ * Pre-process a Quill HTML string to make it turndown-friendly.
+ * See `getEditorMarkdown` for the rationale behind each step.
+ *
+ * Always runs (DOMParser is cheap) — the attoae table fix and the
+ * `<pre>` → `<pre><code>` fix are independent of each other, and the
+ * latter applies to code blocks even when no tables are present.
+ */
+function stripTableTemporaryArtifacts(html) {
+    if (!html) return html;
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    // 1. Drop the attoae module's row-separator blots. DOMParser may
+    //    have re-parented <temporary> outside <table> (it's not a valid
+    //    child), so querySelectorAll finds them wherever they landed.
+    doc.querySelectorAll("temporary.ql-table-temporary").forEach((el) => el.remove());
+
+    // 2. Unwrap <p> inside cells so turndown sees plain text. (Markdown
+    //    tables don't support multi-line cells anyway.)
+    doc.querySelectorAll("td > p, th > p").forEach((p) => {
+        p.replaceWith(doc.createTextNode(p.textContent));
+    });
+
+    // 3. Synthesise a <thead> from the first <tbody> row. GFM tables
+    //    require a header row; the attoae module flattens <thead>
+    //    into <tbody> (see parseMarkdownForEditor), so we have to
+    //    re-elevate the first row to recover a valid GFM table.
+    //    Drop tables with no rows at all — DOMParser re-parents
+    //    <temporary> out of <table> (it's not a valid child), so a
+    //    table that lost its temporaries can be left empty, and
+    //    turndown-plugin-gfm's isHeadingRow() crashes on those.
+    doc.querySelectorAll("table").forEach((table) => {
+        if (table.querySelectorAll("tr").length === 0) {
+            table.remove();
+            return;
+        }
+        if (table.querySelector("thead")) return;
+        const tbody = table.querySelector("tbody");
+        const firstRow = tbody && tbody.querySelector("tr");
+        if (!firstRow) return;
+        const thead = doc.createElement("thead");
+        firstRow.querySelectorAll("td").forEach((td) => {
+            const th = doc.createElement("th");
+            for (const attr of td.attributes) th.setAttribute(attr.name, attr.value);
+            th.textContent = td.textContent;
+            td.replaceWith(th);
+        });
+        thead.appendChild(firstRow);
+        table.insertBefore(thead, tbody);
+    });
+
+    // 4. Quill 2 emits code blocks as bare `<pre data-language="…">…</pre>`.
+    //    Turndown 7.x's default code-block rule only matches
+    //    `<pre><code>…</code></pre>`, so a bare `<pre>` falls through and
+    //    gets emitted as plain text — losing the ``` fence. Wrap the
+    //    content in a <code> element (carrying the language as a class
+    //    so marked will pick it up on re-parse).
+    doc.querySelectorAll("pre").forEach((pre) => {
+        if (pre.querySelector("code")) return;
+        const code = doc.createElement("code");
+        const lang = pre.getAttribute("data-language");
+        if (lang) code.className = `language-${lang}`;
+        while (pre.firstChild) code.appendChild(pre.firstChild);
+        pre.appendChild(code);
+    });
+
+    // 5. Drop trailing empty paragraphs left behind by removed temporaries.
+    const body = doc.body;
+    while (
+        body.lastElementChild &&
+        body.lastElementChild.tagName === "P" &&
+        body.lastElementChild.innerHTML.trim() === ""
+    ) {
+        body.removeChild(body.lastElementChild);
+    }
+
+    return doc.body.innerHTML;
+}
 
 // ── DOM references ──────────────────────────────────────────────────────────
 
@@ -832,6 +965,10 @@ const turndown = new TurndownService({
     strongDelimiter: '**',
     linkStyle: 'inlined',
 });
+// GFM plugin gives us proper pipe-table output for `<table>` elements
+// (the default turndown table rule ignores cells whose content is wrapped
+// in `<p>`, which is exactly how quill-table-better serialises cells).
+turndown.use(gfm);
 
 editToggleBtn.addEventListener("click", async () => {
     if (!currentFileIndex || currentFileIndex < 0) return;
@@ -864,10 +1001,10 @@ sourceCheckbox.addEventListener("change", () => {
 function switchToSourceMode() {
     isSourceMode = true;
 
-    // Use rawMarkdownContent directly — do NOT round-trip through Quill HTML → Turndown,
-    // because that corrupts tables, code blocks, fenced blocks, and other complex structures.
-    // rawMarkdownContent is kept current by the text-change handler in WYSIWYG mode.
-    let md = rawMarkdownContent;
+    // Convert the live editor contents to Markdown. `getEditorMarkdown()`
+    // strips the attoae table-temporary blots so tables come out as
+    // proper GFM pipe-tables in the source view.
+    let md = getEditorMarkdown();
 
     // Destroy Quill editor
     if (quillMarkdown) {
@@ -938,51 +1075,7 @@ function switchToWysiwygMode() {
             <button class="ql-image"></button>
         </span>
         <span class="ql-formats">
-            <button id="insert-table-btn" title="Insert table">
-                <svg viewBox="0 0 18 18" width="16" height="16">
-                    <rect x="1" y="1" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="1" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="12" y1="1" x2="12" y2="17" stroke="currentColor" stroke-width="1.2" />
-                </svg>
-            </button>
-        </span>
-        <span class="ql-formats">
-            <button id="table-add-row-btn" title="Add row below">
-                <svg viewBox="0 0 18 18" width="16" height="16">
-                    <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                    <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
-                    <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                </svg>
-            </button>
-            <button id="table-del-row-btn" title="Delete row">
-                <svg viewBox="0 0 18 18" width="16" height="16">
-                    <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                    <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
-                    <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                </svg>
-            </button>
-        </span>
-        <span class="ql-formats">
-            <button id="table-add-col-btn" title="Add column right">
-                <svg viewBox="0 0 18 18" width="16" height="16">
-                    <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                    <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
-                    <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                </svg>
-            </button>
-            <button id="table-del-col-btn" title="Delete column">
-                <svg viewBox="0 0 18 18" width="16" height="16">
-                    <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                    <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
-                    <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                </svg>
-            </button>
+            <button class="ql-table-better"></button>
         </span>
         <span class="ql-formats">
             <button class="ql-clean"></button>
@@ -997,31 +1090,30 @@ function switchToWysiwygMode() {
     quillEditor = new Quill('#quill-editor', {
         modules: {
             toolbar: '#quill-toolbar',
-            'better-table': {},
+            'table-better': {
+                language: 'en_US',
+                menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'copy', 'delete'],
+                toolbarTable: true,
+            },
             keyboard: {
-                bindings: QuillBetterTable.keyboardBindings,
+                bindings: QuillTableBetter.keyboardBindings,
             },
         },
         theme: 'snow',
         placeholder: 'Start writing Markdown...',
     });
 
-    // Wire table operation buttons
-    setupTableButtons(quillEditor);
-
-    // Workaround: Tauri webview blocks native contextmenu events.
-    // Intercept right-click on tables and show the operation menu programmatically.
-    setupTableContextMenu(quillEditor);
-
-    quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
-
-    // After pasting, ensure all tables have the quill-better-table class
-    // so the module's click handler recognizes them
-    requestAnimationFrame(() => {
-        quillEditor.root.querySelectorAll('table:not(.quill-better-table)').forEach(t => {
-            t.classList.add('quill-better-table');
-        });
-    });
+    // Populate the editor. Use clipboard.convert + updateContents so the
+    // table-better module recognises the resulting table blots.
+    // (setContents/dangerouslyPasteHTML would leave tables inert.)
+    const delta = quillEditor.clipboard.convert({ html: htmlContent });
+    const [range] = quillEditor.selection.getRange();
+    quillEditor.updateContents(delta, Quill.sources.USER);
+    quillEditor.setSelection(
+        delta.length() - (range?.length || 0),
+        Quill.sources.SILENT
+    );
+    quillEditor.scrollSelectionIntoView();
 
     try {
         quillMarkdown = new QuillMarkdown(quillEditor, {
@@ -1037,168 +1129,7 @@ function switchToWysiwygMode() {
 
     quillEditor.on('text-change', () => {
         hasUnsavedChanges = true;
-        rawMarkdownContent = turndown.turndown(quillEditor.root.innerHTML);
     });
-}
-
-/**
- * Wire up table operation toolbar buttons.
- * These replicate the handlers inside quill-better-table's operation menu,
- * using the same internal blot APIs that the module uses.
- */
-function setupTableButtons(quill) {
-    const getTableModule = () => quill.getModule('better-table');
-
-    // Insert table
-    const insertBtn = document.getElementById('insert-table-btn');
-    if (insertBtn) {
-        insertBtn.addEventListener('click', () => {
-            const mod = getTableModule();
-            mod.insertTable(3, 3);
-        });
-    }
-
-    /**
-     * Ensure the module's table tools are active for the given table node.
-     * This is normally triggered by clicking on a table, but toolbar buttons
-     * need to ensure it programmatically.
-     */
-    function ensureTableToolsActive(tableNode) {
-        const mod = getTableModule();
-        if (!mod || !tableNode) return false;
-        // If no table is active, or a different table is active, activate this one
-        if (!mod.table || mod.table !== tableNode) {
-            if (mod.table) mod.hideTableTools();
-            mod.showTableTools(tableNode, quill, {});
-        }
-        return !!mod.tableSelection;
-    }
-
-    /**
-     * Execute a table operation using the same pattern as the operation menu handlers.
-     * Replicates: https://github.com/soccerloway/quill-better-table/blob/master/src/table_operation_menu.js
-     */
-    function executeTableOperation(operation) {
-        const mod = getTableModule();
-        if (!mod) return;
-
-        // Get current cell from cursor position
-        const [table, row, cell] = mod.getTable();
-        if (!table || !cell) return;
-
-        // Ensure table tools are active
-        if (!ensureTableToolsActive(table)) return;
-
-        const tableContainer = Quill.find(table);
-        if (!tableContainer) return;
-
-        const cellRect = cell.domNode.getBoundingClientRect();
-        // Set selection on the current cell
-        mod.tableSelection.setSelection(cellRect, cellRect);
-
-        switch (operation) {
-            case 'insertRowDown': {
-                const affectedCells = tableContainer.insertRow(mod.tableSelection.boundary, true, quill.root.parentNode);
-                mod.tableColumnTool.updateToolCells();
-                quill.update(Quill.sources.USER);
-                if (affectedCells && affectedCells[0]) {
-                    quill.setSelection(quill.getIndex(affectedCells[0]), 0, Quill.sources.SILENT);
-                    mod.tableSelection.setSelection(affectedCells[0].domNode.getBoundingClientRect(), affectedCells[0].domNode.getBoundingClientRect());
-                }
-                break;
-            }
-            case 'deleteRow': {
-                tableContainer.deleteRow(mod.tableSelection.boundary, quill.root.parentNode);
-                quill.update(Quill.sources.USER);
-                mod.tableSelection.clearSelection();
-                break;
-            }
-            case 'insertColumnRight': {
-                const colIndex = parseInt(cell.domNode.getAttribute('data-cell')) || 1;
-                const newColumn = tableContainer.insertColumn(mod.tableSelection.boundary, colIndex, true, quill.root.parentNode);
-                mod.tableColumnTool.updateToolCells();
-                quill.update(Quill.sources.USER);
-                if (newColumn && newColumn[0]) {
-                    quill.setSelection(quill.getIndex(newColumn[0]), 0, Quill.sources.SILENT);
-                    mod.tableSelection.setSelection(newColumn[0].domNode.getBoundingClientRect(), newColumn[0].domNode.getBoundingClientRect());
-                }
-                break;
-            }
-            case 'deleteColumn': {
-                const colIndex = parseInt(cell.domNode.getAttribute('data-cell')) || 1;
-                const isDeleteTable = tableContainer.deleteColumns(mod.tableSelection.boundary, [colIndex], quill.root.parentNode);
-                if (!isDeleteTable) {
-                    mod.tableColumnTool.updateToolCells();
-                    quill.update(Quill.sources.USER);
-                    mod.tableSelection.clearSelection();
-                }
-                break;
-            }
-        }
-    }
-
-    // Add row below current cell
-    const addRowBtn = document.getElementById('table-add-row-btn');
-    if (addRowBtn) {
-        addRowBtn.addEventListener('click', () => executeTableOperation('insertRowDown'));
-    }
-
-    // Delete current row
-    const delRowBtn = document.getElementById('table-del-row-btn');
-    if (delRowBtn) {
-        delRowBtn.addEventListener('click', () => executeTableOperation('deleteRow'));
-    }
-
-    // Add column right of current cell
-    const addColBtn = document.getElementById('table-add-col-btn');
-    if (addColBtn) {
-        addColBtn.addEventListener('click', () => executeTableOperation('insertColumnRight'));
-    }
-
-    // Delete current column
-    const delColBtn = document.getElementById('table-del-col-btn');
-    if (delColBtn) {
-        delColBtn.addEventListener('click', () => executeTableOperation('deleteColumn'));
-    }
-}
-
-/**
- * Workaround for Tauri webview blocking native contextmenu events.
- *
- * quill-better-table listens for 'contextmenu' on the editor root to show
- * its operation menu. Some webviews (Tauri, Electron) may swallow these events.
- * Instead, we listen for right-click via 'mousedown' (button 2) and dispatch
- * a synthetic 'contextmenu' event that the module's handler will catch.
- */
-function setupTableContextMenu(quill) {
-    quill.root.addEventListener('mousedown', (evt) => {
-        // Only handle right-click (button 2)
-        if (evt.button !== 2) return;
-
-        // Check if click is inside a quill-better-table
-        const path = evt.composedPath ? evt.composedPath() : evt.path || [];
-        const tableNode = path.find(node => node.tagName === 'TABLE' && node.classList.contains('quill-better-table'));
-        if (!tableNode) return;
-
-        // Prevent default and dispatch a synthetic contextmenu event
-        // at the same position so the module's handler picks it up.
-        evt.preventDefault();
-
-        const syntheticEvent = new MouseEvent('contextmenu', {
-            bubbles: true,
-            cancelable: true,
-            button: 2,
-            buttons: 2,
-            clientX: evt.clientX,
-            clientY: evt.clientY,
-            pageX: evt.pageX,
-            pageY: evt.pageY,
-            composed: true
-        });
-
-        // Dispatch on the same target so evt.composedPath() works
-        evt.target.dispatchEvent(syntheticEvent);
-    }, true);
 }
 
 async function enterEditMode() {
@@ -1246,51 +1177,7 @@ async function enterEditMode() {
                 <button class="ql-image"></button>
             </span>
             <span class="ql-formats">
-                <button id="insert-table-btn" title="Insert table">
-                    <svg viewBox="0 0 18 18" width="16" height="16">
-                        <rect x="1" y="1" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="1" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="12" y1="1" x2="12" y2="17" stroke="currentColor" stroke-width="1.2" />
-                    </svg>
-                </button>
-            </span>
-            <span class="ql-formats">
-                <button id="table-add-row-btn" title="Add row below">
-                    <svg viewBox="0 0 18 18" width="16" height="16">
-                        <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                        <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
-                        <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                    </svg>
-                </button>
-                <button id="table-del-row-btn" title="Delete row">
-                    <svg viewBox="0 0 18 18" width="16" height="16">
-                        <rect x="1" y="1" width="16" height="5" fill="none" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="1" y1="3.5" x2="17" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                        <text x="9" y="5.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
-                        <rect x="1" y="7" width="16" height="10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                    </svg>
-                </button>
-            </span>
-            <span class="ql-formats">
-                <button id="table-add-col-btn" title="Add column right">
-                    <svg viewBox="0 0 18 18" width="16" height="16">
-                        <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                        <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">+</text>
-                        <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                    </svg>
-                </button>
-                <button id="table-del-col-btn" title="Delete column">
-                    <svg viewBox="0 0 18 18" width="16" height="16">
-                        <rect x="1" y="1" width="5" height="16" fill="none" stroke="currentColor" stroke-width="1.2" />
-                        <line x1="3.5" y1="1" x2="3.5" y2="17" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1" />
-                        <text x="5.5" y="9.5" text-anchor="middle" font-size="5" fill="currentColor">−</text>
-                        <rect x="7" y="1" width="10" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
-                    </svg>
-                </button>
+                <button class="ql-table-better"></button>
             </span>
             <span class="ql-formats">
                 <button class="ql-clean"></button>
@@ -1305,32 +1192,30 @@ async function enterEditMode() {
         quillEditor = new Quill('#quill-editor', {
             modules: {
                 toolbar: '#quill-toolbar',
-                'better-table': {},
+                'table-better': {
+                    language: 'en_US',
+                    menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'copy', 'delete'],
+                    toolbarTable: true,
+                },
                 keyboard: {
-                    bindings: QuillBetterTable.keyboardBindings,
+                    bindings: QuillTableBetter.keyboardBindings,
                 },
             },
             theme: 'snow',
             placeholder: 'Start writing Markdown...',
         });
 
-        // Wire table operation buttons
-        setupTableButtons(quillEditor);
-
-        // Workaround: Tauri webview blocks native contextmenu events.
-        // Intercept right-click on tables and show the operation menu programmatically.
-        setupTableContextMenu(quillEditor);
-
-        // Set content
-        quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
-
-        // After pasting, ensure all tables have the quill-better-table class
-        // so the module's click handler recognizes them
-        requestAnimationFrame(() => {
-            quillEditor.root.querySelectorAll('table:not(.quill-better-table)').forEach(t => {
-                t.classList.add('quill-better-table');
-            });
-        });
+        // Populate the editor. Use clipboard.convert + updateContents so the
+        // table-better module recognises the resulting table blots.
+        // (setContents/dangerouslyPasteHTML would leave tables inert.)
+        const delta = quillEditor.clipboard.convert({ html: htmlContent });
+        const [range] = quillEditor.selection.getRange();
+        quillEditor.updateContents(delta, Quill.sources.USER);
+        quillEditor.setSelection(
+            delta.length() - (range?.length || 0),
+            Quill.sources.SILENT
+        );
+        quillEditor.scrollSelectionIntoView();
 
         // Enable QuillMarkdown plugin for Markdown shortcuts
         try {
@@ -1345,10 +1230,12 @@ async function enterEditMode() {
             console.warn("QuillMarkdown initialization failed, continuing without it:", err);
         }
 
-        // Track changes — keep rawMarkdownContent in sync so source mode shows current content
+        // Track changes — `rawMarkdownContent` is refreshed on demand by
+        // `getEditorMarkdown()` (used by save and source-mode toggle), not on
+        // every keystroke, because round-tripping through turndown destroys
+        // the attoae module's table format if the temp blots are present.
         quillEditor.on('text-change', () => {
             hasUnsavedChanges = true;
-            rawMarkdownContent = turndown.turndown(quillEditor.root.innerHTML);
         });
 
         // Update UI
@@ -1424,9 +1311,9 @@ async function saveCurrentFile() {
         const sourceTextarea = document.getElementById("source-editor");
         markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
     } else {
-        // WYSIWYG mode: get HTML from Quill, convert to Markdown using turndown
-        const htmlContent = quillEditor.root.innerHTML;
-        markdownContent = turndown.turndown(htmlContent);
+        // WYSIWYG mode: get clean HTML from Quill (strips table-temporary
+        // blots so turndown produces a proper GFM table), then convert.
+        markdownContent = getEditorMarkdown();
     }
 
     try {
@@ -1455,8 +1342,7 @@ async function saveFileAs() {
         const sourceTextarea = document.getElementById("source-editor");
         markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
     } else {
-        const htmlContent = quillEditor.root.innerHTML;
-        markdownContent = turndown.turndown(htmlContent);
+        markdownContent = getEditorMarkdown();
     }
 
     try {

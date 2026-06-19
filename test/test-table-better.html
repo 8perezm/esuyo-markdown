@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>quill-table-better test</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
+    <link href="/node_modules/quill-table-better/dist/quill-table-better.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #1a1b1e;
+            color: #ddd;
+            font-family: sans-serif;
+            padding: 16px;
+        }
+
+        #root {
+            background: #fff;
+            color: #111;
+            max-width: 900px;
+            margin: 16px auto;
+        }
+
+        .ql-toolbar.ql-snow {
+            background: #f4f4f5;
+        }
+
+        pre {
+            background: #0f0f11;
+            color: #bada55;
+            padding: 8px;
+            font-size: 12px;
+            max-height: 120px;
+            overflow: auto;
+        }
+
+        h3 {
+            margin-top: 24px;
+        }
+
+        .controls button {
+            background: #2c2e33;
+            color: #ddd;
+            border: 1px solid #555;
+            padding: 4px 10px;
+            margin-right: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background: #3a3c43;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>quill-table-better test</h2>
+    <p>Loaded directly from local node_modules. Used to verify the module initialises, the toolbar button is rendered,
+        and pasting an existing table works.</p>
+
+    <div class="controls">
+        <button id="insert-3x3">Insert 3x3</button>
+        <button id="insert-5x2">Insert 5x2</button>
+        <button id="paste-table">Paste table HTML (via clipboard.convert + updateContents)</button>
+        <button id="log-delta">Log delta</button>
+        <button id="fill-cells">Fill cells with realistic content</button>
+        <button id="insert-code">Insert a code block with ``` content</button>
+        <button id="convert-md">Convert to Markdown (simulate Source toggle)</button>
+        <button id="roundtrip">Round-trip: MD → editor (simulate toggling back from Source)</button>
+    </div>
+
+    <div id="root"></div>
+
+    <h3>Delta</h3>
+    <pre id="delta-out">(empty)</pre>
+
+    <h3>Markdown (what Source mode / Save would write)</h3>
+    <pre id="md-out">(empty)</pre>
+
+    <script type="module">
+        import Quill from 'quill';
+        import QuillTableBetter from 'quill-table-better';
+        import TurndownService from 'turndown';
+        import { gfm } from 'turndown-plugin-gfm';
+
+        Quill.register({ 'modules/table-better': QuillTableBetter }, true);
+
+        const toolbarOptions = [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image'],
+            ['table-better'],
+            ['clean'],
+        ];
+
+        const quill = new Quill('#root', {
+            theme: 'snow',
+            modules: {
+                table: false,
+                toolbar: toolbarOptions,
+                'table-better': {
+                    language: 'en_US',
+                    menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'copy', 'delete'],
+                    toolbarTable: true,
+                },
+                keyboard: { bindings: QuillTableBetter.keyboardBindings },
+            },
+        });
+
+        const tableMod = () => quill.getModule('table-better');
+        const deltaOut = document.getElementById('delta-out');
+
+        document.getElementById('insert-3x3').onclick = () => tableMod().insertTable(3, 3);
+        document.getElementById('insert-5x2').onclick = () => tableMod().insertTable(5, 2);
+        document.getElementById('log-delta').onclick = () => {
+            deltaOut.textContent = JSON.stringify(quill.getContents(), null, 2);
+        };
+
+        document.getElementById('paste-table').onclick = () => {
+            const html = `
+                <table>
+                    <tbody>
+                        <tr><td>Header A</td><td>Header B</td><td>Header C</td></tr>
+                        <tr><td>Cell 1</td><td>Cell 2</td><td>Cell 3</td></tr>
+                        <tr><td>Cell 4</td><td>Cell 5</td><td>Cell 6</td></tr>
+                    </tbody>
+                </table>
+                <p>After table paragraph.</p>
+            `;
+            const delta = quill.clipboard.convert({ html });
+            const [range] = quill.selection.getRange();
+            quill.updateContents(delta, Quill.sources.USER);
+            quill.setSelection(delta.length() - (range?.length || 0), Quill.sources.SILENT);
+            quill.scrollSelectionIntoView();
+        };
+
+        quill.on('text-change', () => {
+            deltaOut.textContent = JSON.stringify(quill.getContents(), null, 2);
+        });
+
+        // Reproduce the exact conversion flow used in main.js for Source
+        // mode / Save. Strips the attoae `table-temporary` blots, reads
+        // `getSemanticHTML()`, runs turndown, then restores the editor.
+        document.getElementById('convert-md').onclick = () => {
+            // Same logic as main.js getEditorMarkdown + stripTableTemporaryArtifacts
+            const rawHtml = quill.getSemanticHTML();
+            let cleanHtml = rawHtml;
+            // Always run (DOMParser is cheap) — the attoae table fix and
+            // the <pre> → <pre><code> fix are independent.
+            {
+                const doc = new DOMParser().parseFromString(cleanHtml, 'text/html');
+                doc.querySelectorAll('temporary.ql-table-temporary').forEach((el) => el.remove());
+                doc.querySelectorAll('td > p, th > p').forEach((p) => {
+                    p.replaceWith(doc.createTextNode(p.textContent));
+                });
+                doc.querySelectorAll('table').forEach((table) => {
+                    if (table.querySelector('thead')) return;
+                    const tbody = table.querySelector('tbody');
+                    const firstRow = tbody && tbody.querySelector('tr');
+                    if (!firstRow) return;
+                    const thead = doc.createElement('thead');
+                    firstRow.querySelectorAll('td').forEach((td) => {
+                        const th = doc.createElement('th');
+                        for (const attr of td.attributes) th.setAttribute(attr.name, attr.value);
+                        th.textContent = td.textContent;
+                        td.replaceWith(th);
+                    });
+                    thead.appendChild(firstRow);
+                    table.insertBefore(thead, tbody);
+                });
+                doc.querySelectorAll('pre').forEach((pre) => {
+                    if (pre.querySelector('code')) return;
+                    const code = doc.createElement('code');
+                    const lang = pre.getAttribute('data-language');
+                    if (lang) code.className = 'language-' + lang;
+                    while (pre.firstChild) code.appendChild(pre.firstChild);
+                    pre.appendChild(code);
+                });
+                const body = doc.body;
+                while (
+                    body.lastElementChild &&
+                    body.lastElementChild.tagName === 'P' &&
+                    body.lastElementChild.innerHTML.trim() === ''
+                ) {
+                    body.removeChild(body.lastElementChild);
+                }
+                cleanHtml = body.innerHTML;
+            }
+            const td = new TurndownService({
+                headingStyle: 'atx',
+                codeBlockStyle: 'fenced',
+                bulletListMarker: '-',
+                emDelimiter: '*',
+                strongDelimiter: '**',
+                linkStyle: 'inlined',
+            });
+            td.use(gfm);
+            const md = td.turndown(cleanHtml);
+            const editorStillHasTemporary = !!document.querySelector('.ql-editor temporary.ql-table-temporary');
+            document.getElementById('md-out').textContent =
+                '--- editor HTML (raw, before cleanup) ---\n' +
+                rawHtml +
+                '\n\n--- editor HTML (after stripTableTemporaryArtifacts) ---\n' +
+                cleanHtml +
+                '\n\n--- markdown (after turndown) ---\n' +
+                md +
+                '\n\n--- editor still has <temporary> after convert? ' + editorStillHasTemporary + ' ---\n';
+        };
+
+        // Fill cells with content using the attoae module's table-cell API.
+        // Walks the editor delta directly to find each cell's text range and
+        // replaces the <br> placeholder with real text.
+        document.getElementById('fill-cells').onclick = () => {
+            const tm = quill.getModule('table-better');
+            const labels = [
+                ['A1', 'B1', 'C1'],
+                ['A2', 'B2', 'C2'],
+                ['A3', 'B3', 'C3'],
+            ];
+            // Set cursor into first cell, then use keyboard simulation to fill
+            // all cells. Simpler approach: directly set the editor delta.
+            // Build a delta with the table content filled in.
+            const html = `
+                <table>
+                    <tbody>
+                        ${labels.map(row => `<tr>${row.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}
+                    </tbody>
+                </table>
+            `;
+            const delta = quill.clipboard.convert({ html });
+            quill.setContents(delta, Quill.sources.USER);
+        };
+
+        // Round-trip test: take the generated markdown, parse it with
+        // `marked`, put it back into the editor, and verify the table
+        // is still interactive.
+        document.getElementById('roundtrip').onclick = () => {
+            // First generate the markdown
+            const rawHtml = quill.getSemanticHTML();
+            // (reuse the cleanup logic from convert-md, simplified)
+            const doc = new DOMParser().parseFromString(rawHtml, 'text/html');
+            doc.querySelectorAll('temporary.ql-table-temporary').forEach((el) => el.remove());
+            doc.querySelectorAll('td > p, th > p').forEach((p) => {
+                p.replaceWith(doc.createTextNode(p.textContent));
+            });
+            doc.querySelectorAll('table').forEach((table) => {
+                if (table.querySelector('thead')) return;
+                const tbody = table.querySelector('tbody');
+                const firstRow = tbody && tbody.querySelector('tr');
+                if (!firstRow) return;
+                const thead = doc.createElement('thead');
+                firstRow.querySelectorAll('td').forEach((td) => {
+                    const th = doc.createElement('th');
+                    th.textContent = td.textContent;
+                    td.replaceWith(th);
+                });
+                thead.appendChild(firstRow);
+                table.insertBefore(thead, tbody);
+            });
+            const cleanHtml = doc.body.innerHTML;
+            const td = new TurndownService();
+            td.use(gfm);
+            const md = td.turndown(cleanHtml);
+
+            // Now re-parse the markdown with marked (simulating
+            // parseMarkdownForEditor in main.js) and load it back.
+            // We don't have marked loaded here, so just check what
+            // turndown outputs is valid markdown (visually).
+            document.getElementById('md-out').textContent =
+                '--- round-trip: editor → markdown ---\n' + md +
+                '\n\n--- this is the markdown that Source mode would show ---\n' +
+                md;
+        };
+
+        // Insert a code block using the attoae module + Quill's API.
+        // We need to set the editor contents with a code block delta.
+        document.getElementById('insert-code').onclick = () => {
+            // Build a delta manually with a code block
+            const html = `<pre data-language="javascript"><code>const greeting = "hello";
+function add(a, b) {
+  return a + b;
+}
+console.log(add(1, 2));</code></pre>`;
+            const delta = quill.clipboard.convert({ html });
+            quill.setContents(delta, Quill.sources.USER);
+        };
+
+        window.__quill = quill; // for console debugging
+    </script>
+</body>
+
+</html>

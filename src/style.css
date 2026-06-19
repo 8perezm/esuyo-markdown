@@ -272,6 +272,10 @@ html, body {
   margin: 4px 8px;
 }
 
+.menu-divider.hidden {
+  display: none;
+}
+
 .menu-section-title {
   font-size: 11px;
   font-weight: 600;
@@ -1291,13 +1295,13 @@ html, body {
   background: var(--md-code-bg) !important;
   border: 1px solid var(--md-table-border) !important;
   border-radius: 8px !important;
-  padding: 16px 20px !important;
+  padding: 2px 8px !important;
   overflow-x: auto !important;
   margin-bottom: 1em !important;
   color: var(--md-code-text) !important;
   font-family: var(--md-font-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace) !important;
   font-size: var(--md-code-font-size, 14px) !important;
-  line-height: 1.6 !important;
+  line-height: 1.4 !important;
   tab-size: 2 !important;
 }
 
