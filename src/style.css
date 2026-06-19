@@ -967,16 +967,18 @@ html, body {
   display: none;
 }
 
-/* Match scrollbar styling with #rendered-content */
-.ql-editor::-webkit-scrollbar {
+/* Match scrollbar styling with #rendered-content.
+   Scroll lives on .ql-container (full content width) so the scrollbar sits at
+   the right edge of the window — not at the right edge of the centered ql-editor. */
+.ql-container::-webkit-scrollbar {
   width: 12px !important;
 }
 
-.ql-editor::-webkit-scrollbar-track {
+.ql-container::-webkit-scrollbar-track {
   background: var(--scrollbar-track) !important;
 }
 
-.ql-editor::-webkit-scrollbar-thumb {
+.ql-container::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb) !important;
   border-radius: 6px !important;
 }
@@ -989,6 +991,8 @@ html, body {
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
+  overflow-y: auto !important;          /* scrollbar at right edge of window */
+  padding-right: 5px;                   /* keep content clear of the scrollbar */
 }
 
 /* ---- Quill Editor Content — Match Markdown Theme ---- */
@@ -1025,6 +1029,9 @@ html, body {
   padding: 32px 48px !important;
   max-width: 800px;
   margin: 0 auto;
+  flex: 0 0 auto;                       /* size to content, don't stretch in ql-container flex */
+  height: auto !important;              /* override Quill's height: 100% */
+  overflow: visible !important;         /* scrolling now happens on .ql-container */
 }
 
 /* Headings */
