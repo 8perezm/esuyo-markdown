@@ -247,3 +247,32 @@ jobs:
           files: release-artifacts/**/*
           make_latest: true
           generate_release_notes: true
+
+      # ── GitHub Pages (direct download URL for Microsoft Store) ──
+      - name: Prepare GitHub Pages download folder
+        shell: pwsh
+        run: |
+          $version = "${{ needs.version.outputs.new_version }}"
+          $installer = Get-ChildItem -Path "release-artifacts/artifacts-windows" -Filter "*setup.exe" | Select-Object -First 1
+          if (-not $installer) {
+            Write-Warning "No NSIS installer found in artifacts"
+            exit 1
+          }
+
+          # Create versioned download folder
+          New-Item -Path "pages/download/v$version" -ItemType Directory -Force | Out-Null
+          Copy-Item $installer.FullName "pages/download/v$version/$($installer.Name)"
+
+          # Also copy as latest (version-agnostic URL)
+          Copy-Item $installer.FullName "pages/download/$($installer.Name)" -Force
+
+          Write-Host "Pages folder structure:"
+          Get-ChildItem -Path "pages/download" -Recurse -File
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./pages
+          destination_dir: ./
+          keep_files: true
