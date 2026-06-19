@@ -253,7 +253,7 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ needs.version.outputs.new_version }}"
-          $installer = Get-ChildItem -Path "release-artifacts/artifacts-windows" -Filter "*setup.exe" | Select-Object -First 1
+          $installer = Get-ChildItem -Path "release-artifacts/artifacts-windows" -Filter "*setup.exe" -Recurse | Select-Object -First 1
           if (-not $installer) {
             Write-Warning "No NSIS installer found in artifacts"
             exit 1
