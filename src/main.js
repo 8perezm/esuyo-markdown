@@ -181,6 +181,7 @@ let isEditMode = false;
 let hasUnsavedChanges = false;
 let isSourceMode = false;
 let rawMarkdownContent = "";
+let savedScrollRatio = 0;
 
 /**
  * Convert the current Quill editor contents to Markdown.
@@ -931,6 +932,32 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+/**
+ * Capture the current scroll ratio from the active editor (WYSIWYG .ql-editor
+ * or source textarea). Returns a number 0..1, or 0 if not scrollable.
+ */
+function captureEditorScrollRatio() {
+    if (isSourceMode) {
+        const textarea = document.getElementById("source-editor");
+        if (!textarea || textarea.scrollHeight <= textarea.clientHeight) return 0;
+        return textarea.scrollTop / (textarea.scrollHeight - textarea.clientHeight);
+    }
+    const qlEditor = document.querySelector('.ql-editor');
+    if (!qlEditor || qlEditor.scrollHeight <= qlEditor.clientHeight) return 0;
+    return qlEditor.scrollTop / (qlEditor.scrollHeight - qlEditor.clientHeight);
+}
+
+/**
+ * Restore a scroll ratio (0..1) on the #rendered-content container.
+ */
+function restoreRenderedScrollPosition(ratio) {
+    if (ratio <= 0) return;
+    const maxScroll = renderedContent.scrollHeight - renderedContent.clientHeight;
+    if (maxScroll > 0) {
+        renderedContent.scrollTop = ratio * maxScroll;
+    }
+}
+
 // ── Keyboard navigation ─────────────────────────────────────────────────────
 
 document.addEventListener("keydown", (e) => {
@@ -971,15 +998,8 @@ const turndown = new TurndownService({
 turndown.use(gfm);
 
 editToggleBtn.addEventListener("click", async () => {
-    if (!currentFileIndex || currentFileIndex < 0) return;
-
-    if (isEditMode) {
-        // Toggle button just enters edit mode; it's always "enter" from view mode
-        await enterEditMode();
-    } else {
-        // Enter edit mode
-        await enterEditMode();
-    }
+    if (currentFileIndex < 0) return;
+    await enterEditMode();
 });
 
 saveBtn.addEventListener("click", async () => {
@@ -1107,13 +1127,10 @@ function switchToWysiwygMode() {
     // table-better module recognises the resulting table blots.
     // (setContents/dangerouslyPasteHTML would leave tables inert.)
     const delta = quillEditor.clipboard.convert({ html: htmlContent });
-    const [range] = quillEditor.selection.getRange();
     quillEditor.updateContents(delta, Quill.sources.USER);
-    quillEditor.setSelection(
-        delta.length() - (range?.length || 0),
-        Quill.sources.SILENT
-    );
-    quillEditor.scrollSelectionIntoView();
+
+    // Set cursor at the beginning so the editor doesn't scroll to the bottom
+    quillEditor.setSelection(0, Quill.sources.SILENT);
 
     try {
         quillMarkdown = new QuillMarkdown(quillEditor, {
@@ -1135,6 +1152,13 @@ function switchToWysiwygMode() {
 async function enterEditMode() {
     const file = currentFiles[currentFileIndex];
     try {
+        // Save scroll position as a ratio before hiding rendered content
+        if (renderedContent.scrollHeight > renderedContent.clientHeight) {
+            savedScrollRatio = renderedContent.scrollTop / (renderedContent.scrollHeight - renderedContent.clientHeight);
+        } else {
+            savedScrollRatio = 0;
+        }
+
         const markdownContent = await invoke("read_file", { filePath: file.path });
 
         // Hide rendered content
@@ -1209,13 +1233,22 @@ async function enterEditMode() {
         // table-better module recognises the resulting table blots.
         // (setContents/dangerouslyPasteHTML would leave tables inert.)
         const delta = quillEditor.clipboard.convert({ html: htmlContent });
-        const [range] = quillEditor.selection.getRange();
         quillEditor.updateContents(delta, Quill.sources.USER);
-        quillEditor.setSelection(
-            delta.length() - (range?.length || 0),
-            Quill.sources.SILENT
-        );
-        quillEditor.scrollSelectionIntoView();
+
+        // Set cursor at the beginning so the editor doesn't scroll to the bottom
+        quillEditor.setSelection(0, Quill.sources.SILENT);
+
+        // Restore the saved scroll position in the editor
+        const qlEditorEl = document.querySelector('.ql-editor');
+        if (qlEditorEl && savedScrollRatio > 0) {
+            requestAnimationFrame(() => {
+                // Need to wait for layout to settle after content is rendered
+                const maxScroll = qlEditorEl.scrollHeight - qlEditorEl.clientHeight;
+                if (maxScroll > 0) {
+                    qlEditorEl.scrollTop = savedScrollRatio * maxScroll;
+                }
+            });
+        }
 
         // Enable QuillMarkdown plugin for Markdown shortcuts
         try {
@@ -1326,8 +1359,14 @@ async function saveCurrentFile() {
         }
         currentFiles[currentFileIndex] = file;
 
+        // Save editor scroll ratio before re-rendering
+        const editorScrollRatio = captureEditorScrollRatio();
+
         // Re-render markdown
         renderMarkdown(markdownContent);
+
+        // Restore scroll position on rendered content
+        restoreRenderedScrollPosition(editorScrollRatio);
 
         // Exit edit mode
         exitEditMode();
@@ -1362,8 +1401,14 @@ async function saveFileAs() {
                 currentFiles[currentFileIndex].path = path;
             }
 
+            // Save editor scroll ratio before re-rendering
+            const editorScrollRatio = captureEditorScrollRatio();
+
             // Re-render markdown
             renderMarkdown(markdownContent);
+
+            // Restore scroll position on rendered content
+            restoreRenderedScrollPosition(editorScrollRatio);
 
             // Exit edit mode
             exitEditMode();
