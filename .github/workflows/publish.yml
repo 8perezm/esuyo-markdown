@@ -248,9 +248,14 @@ jobs:
           make_latest: true
           generate_release_notes: true
 
-      # ── GitHub Pages (direct download URL for Microsoft Store) ──
-      - name: Prepare GitHub Pages download folder
+      # ── Object Storage (direct download URL for Microsoft Store) ──
+      # Requires repo secrets: STORAGE_ACCESS_KEY, STORAGE_SECRET_KEY,
+      #                        STORAGE_CONTAINER, STORAGE_ENDPOINT
+      - name: Upload installer to object storage
         shell: pwsh
+        env:
+          ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
+          SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
         run: |
           $version = "${{ needs.version.outputs.new_version }}"
           $installer = Get-ChildItem -Path "release-artifacts/artifacts-windows" -Filter "*setup.exe" -Recurse | Select-Object -First 1
@@ -259,20 +264,19 @@ jobs:
             exit 1
           }
 
-          # Create versioned download folder
-          New-Item -Path "pages/download/v$version" -ItemType Directory -Force | Out-Null
-          Copy-Item $installer.FullName "pages/download/v$version/$($installer.Name)"
+          $key = "download/v$version/$($installer.Name)"
+          $bucket = "${{ secrets.STORAGE_CONTAINER }}"
+          $endpoint = "${{ secrets.STORAGE_ENDPOINT }}"
 
-          # Also copy as latest (version-agnostic URL)
-          Copy-Item $installer.FullName "pages/download/$($installer.Name)" -Force
+          aws s3 cp "$($installer.FullName)" "s3://$bucket/$key" --endpoint-url "$endpoint" --acl public-read
 
-          Write-Host "Pages folder structure:"
-          Get-ChildItem -Path "pages/download" -Recurse -File
+          # Also upload as latest (version-agnostic URL)
+          aws s3 cp "$($installer.FullName)" "s3://$bucket/download/$($installer.Name)" --endpoint-url "$endpoint" --acl public-read
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./pages
-          destination_dir: ./
-          keep_files: true
+          $url = "$endpoint/$bucket/download/v$version/$($installer.Name)"
+          Write-Host "Store installer URL: $url"
+          echo "STORE_URL=$url" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Print Store URL
+        if: env.STORE_URL != ''
+        run: echo "Package URL for Microsoft Store -> ${{ env.STORE_URL }}"
