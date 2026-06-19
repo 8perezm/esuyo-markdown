@@ -138,7 +138,14 @@ jobs:
         run: npm ci
 
       - name: Build Tauri application
-        run: npx tauri build
+        run: npx tauri build --no-bundle
+
+      - name: Bundle with default config
+        run: npx tauri bundle
+
+      - name: Bundle with Microsoft Store config (offline WebView2)
+        if: matrix.os == 'windows-latest'
+        run: npx tauri bundle --config src-tauri/tauri.microsoftstore.conf.json
 
       # ── Upload platform artifacts ──
       - name: Upload Windows artifacts
