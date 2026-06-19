@@ -157,6 +157,10 @@ html, body {
   text-overflow: ellipsis;
 }
 
+#new-file-btn {
+  display: none !important;
+}
+
 #current-folder-bar.hidden {
   display: none;
 }
@@ -618,15 +622,13 @@ html, body {
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
   flex-shrink: 0;
+  margin-left: auto;
+  margin-right: 10px;
 }
 
 .delete-btn:hover {
   background: rgba(220, 53, 69, 0.15);
   color: #dc3545;
-}
-
-#edit-actions ~ .delete-btn {
-  margin-right: 4px;
 }
 
 /* ===== Confirm Delete Overlay ===== */
