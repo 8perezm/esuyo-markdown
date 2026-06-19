@@ -100,6 +100,11 @@ html, body {
 #header-actions {
   display: flex;
   gap: 4px;
+  flex: 1;
+}
+
+#theme-toggle {
+  margin-left: auto;
 }
 
 #app-title {
