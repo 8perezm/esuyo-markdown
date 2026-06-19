@@ -761,6 +761,7 @@ html, body {
   user-select: none;
   padding: 0 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 [data-theme="light"] .source-toggle {
