@@ -555,6 +555,7 @@ html, body {
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   background: var(--icon-btn-bg);
   color: var(--icon-btn-color);
+  margin-left: 10px;
 }
 
 .edit-toggle:hover {
@@ -574,6 +575,7 @@ html, body {
   display: none;
   gap: 6px;
   align-items: center;
+  padding-left: 10px;
 }
 
 .edit-actions .btn {
@@ -612,6 +614,12 @@ html, body {
   color: #4a4d52;
 }
 
+/* Push all right-side editor-bar controls (Source, Delete, Save, Cancel, Edit)
+   to the right edge, leaving the file path on the left. */
+.source-checkbox-label {
+  margin-left: auto;
+}
+
 /* Delete button — icon-only bin icon in editor bar */
 .delete-btn {
   display: inline-flex;
@@ -628,7 +636,6 @@ html, body {
   transition: background 0.15s ease, color 0.15s ease;
   flex-shrink: 0;
   margin-left: auto;
-  margin-right: 10px;
 }
 
 .delete-btn:hover {

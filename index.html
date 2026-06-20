@@ -112,12 +112,11 @@
                         <span>Open Folder</span>
                     </div>
                     <div id="menu-settings-item" class="menu-item" data-action="settings">
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                            <path d="M8 10a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" stroke-width="1.5"
-                                fill="none" />
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3" />
                             <path
-                                d="M13.5 8a5.5 5.5 0 01-.3 1.8l1.7 1.2-1.4 2.4-2-.3a5.5 5.5 0 01-3 0l-2 .3-1.4-2.4 1.7-1.2A5.5 5.5 0 016.5 8a5.5 5.5 0 01.3-1.8L5.1 5l1.4-2.4 2 .3a5.5 5.5 0 013 0l2-.3L14.9 5l-1.7 1.2A5.5 5.5 0 0113.5 8z"
-                                stroke="currentColor" stroke-width="1.5" fill="none" />
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
                         <span>Settings</span>
                     </div>
@@ -163,22 +162,6 @@
                         <input type="checkbox" id="source-checkbox" />
                         <span>Source</span>
                     </label>
-                    <div id="edit-actions" class="edit-actions">
-                        <button id="save-btn" class="btn btn-save" title="Save" aria-label="Save">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 6 9 17l-5-5" />
-                            </svg>
-                            Save
-                        </button>
-                        <button id="cancel-btn" class="btn btn-cancel" title="Cancel" aria-label="Cancel">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18M6 6l12 12" />
-                            </svg>
-                            Cancel
-                        </button>
-                    </div>
                     <button id="delete-file-btn" class="btn delete-btn" title="Delete file" aria-label="Delete file"
                         style="display:none">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -189,6 +172,22 @@
                             <line x1="14" y1="11" x2="14" y2="17" />
                         </svg>
                     </button>
+                    <div id="edit-actions" class="edit-actions">
+                        <button id="cancel-btn" class="btn btn-cancel" title="Cancel" aria-label="Cancel">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button id="save-btn" class="btn btn-save" title="Save" aria-label="Save">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                            Save
+                        </button>
+                    </div>
                     <button id="edit-toggle-btn" class="btn edit-toggle" title="Toggle edit mode"
                         aria-label="Toggle edit mode">
                         <svg id="edit-icon-pen" width="14" height="14" viewBox="0 0 24 24" fill="none"
