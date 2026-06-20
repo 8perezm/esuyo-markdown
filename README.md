@@ -4,6 +4,17 @@ A desktop markdown reader built with [Tauri](https://v2.tauri.app/) v2, [Vite](h
 
 Browse a folder of markdown files, read them with a clean rendered view, customize the theme and fonts, and navigate with keyboard shortcuts.
 
+## Screenshots
+
+| | |
+| :---: | :---: |
+| ![Normal view — folder tree and rendered markdown side by side](images/normal-view.png) | ![Dark mode — same layout with a dark theme](images/dark-mode.png) |
+| **Normal view** | **Dark mode** |
+| ![Editing mode — rich text editor with toolbar](images/editing-mode.png) | ![Raw source editing — markdown source with syntax highlighting](images/raw-source-editing.png) |
+| **Editing mode** | **Raw source editing** |
+| ![Welcome screen — pick a folder to start browsing](images/welcome.png) | ![Settings — theme, font, and reading preferences](images/settings.png) |
+| **Welcome** | **Settings** |
+
 ## Prerequisites
 
 - **Node.js** 18+ and npm
