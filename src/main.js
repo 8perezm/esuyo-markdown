@@ -978,6 +978,29 @@ function renderMarkdown(content) {
 
     welcome.classList.add("hidden");
     markdownViewer.classList.remove("hidden");
+
+    // Intercept clicks on internal markdown links to navigate within the app
+    renderedContentInner.querySelectorAll("a[href$='.md']").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("http://") || href.startsWith("https://")) return;
+
+            // Resolve the link target relative to the current file's folder
+            const currentFile = currentFiles[currentFileIndex];
+            if (!currentFile) return;
+
+            const currentDir = currentFile.relative_path.split("/").slice(0, -1).join("/");
+            const targetPath = (currentDir ? currentDir + "/" : "") + href;
+
+            // Find the matching file in the current file list
+            const targetIndex = currentFiles.findIndex((f) => f.relative_path === targetPath);
+            if (targetIndex >= 0) {
+                e.preventDefault();
+                selectFile(targetIndex);
+            }
+            // If no match, let the browser handle it normally
+        });
+    });
 }
 
 // ── Loading State ───────────────────────────────────────────────────────────
