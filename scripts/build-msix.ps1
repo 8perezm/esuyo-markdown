@@ -7,7 +7,7 @@
   1. Resolves the 4-part MSIX version from a 3-part semver (appends .0).
   2. Finds the built exe in src-tauri/target/release.
   3. Copies exe + required logos into a staging dir.
-  4. Expands src-tauri/gen/windows/AppxManifest.template.xml tokens.
+  4. Expands src-tauri/msix/AppxManifest.template.xml tokens.
   5. Runs makeappx.exe pack (unsigned — the Store signs on submission).
 
 .PARAMETER Version
@@ -78,7 +78,7 @@ foreach ($p in $quadVersion.Split('.')) {
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $releaseDir = Join-Path $repoRoot "src-tauri/target/release"
-$templatePath = Join-Path $repoRoot "src-tauri/gen/windows/AppxManifest.template.xml"
+$templatePath = Join-Path $repoRoot "src-tauri/msix/AppxManifest.template.xml"
 $iconsDir = Join-Path $repoRoot "src-tauri/icons"
 $stagingDir = Join-Path $repoRoot "src-tauri/target/msix/staging"
 $outDir = Join-Path $repoRoot "src-tauri/target/msix"
