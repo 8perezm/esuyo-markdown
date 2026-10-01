@@ -150,10 +150,11 @@ jobs:
       # ── MSIX (unsigned, for Microsoft Store submission) ──
       # Packs the release exe from `tauri build --no-bundle` with
       # makeappx.exe (Windows SDK, preinstalled on windows-latest).
-      # Identity/Publisher default to dev values; override by setting
-      # GitHub repo Variables MSIX_IDENTITY_NAME, MSIX_PUBLISHER and
-      # MSIX_PUBLISHER_DISPLAY_NAME to the Package Name / Publisher /
-      # Publisher display name from Partner Center once reserved.
+      # Identity/Publisher/DisplayName default to dev values; override
+      # by setting GitHub repo Variables MSIX_IDENTITY_NAME,
+      # MSIX_PUBLISHER, MSIX_PUBLISHER_DISPLAY_NAME, MSIX_DISPLAY_NAME
+      # and MSIX_DESCRIPTION. DisplayName MUST exactly match a name
+      # reserved in Partner Center (Manage product names).
       - name: Build unsigned MSIX for Microsoft Store
         if: matrix.os == 'windows-latest'
         shell: pwsh
@@ -161,6 +162,8 @@ jobs:
           MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
           MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
           MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+          MSIX_DISPLAY_NAME: ${{ vars.MSIX_DISPLAY_NAME }}
+          MSIX_DESCRIPTION: ${{ vars.MSIX_DESCRIPTION }}
         run: |
           ./scripts/build-msix.ps1 -Version "${{ needs.version.outputs.new_version }}"
 
@@ -272,3 +275,68 @@ jobs:
           files: release-artifacts/**/*
           make_latest: true
           generate_release_notes: true
+
+  # ────────────────────────────────────────────────────────────────
+  # Job 4  –  Store submit (MSIX → Microsoft Store)
+  # ────────────────────────────────────────────────────────────────
+  # Publishes the unsigned MSIX built above to the Store via the
+  # official msstore CLI. Skips gracefully when Store credentials
+  # are not configured (manual Partner Center upload fallback).
+  #
+  # One-time setup (after your FIRST manual Partner Center submission,
+  # the API cannot create the very first one):
+  #   1. Partner Center → Account settings → Tenants → associate your
+  #      Microsoft Entra tenant (required even for Individual accounts).
+  #   2. Partner Center → Account settings → Users → add an Entra app
+  #      (or Azure Portal → App registrations → New registration →
+  #      assign it to your Seller account with Submissions role).
+  #   3. GitHub repo → Settings → Secrets and variables → Actions:
+  #      Secrets:  AZURE_AD_TENANT_ID, SELLER_ID,
+  #                AZURE_AD_APPLICATION_CLIENT_ID,
+  #                AZURE_AD_APPLICATION_SECRET
+  #      Variable: STORE_PRODUCT_ID (the 9… ID from Product identity,
+  #                e.g. 9PNLTPXGHN79)
+  # App update via API is supported for free products only.
+  # ────────────────────────────────────────────────────────────────
+  store-submit:
+    needs: [version, build, release]
+    runs-on: windows-latest
+    env:
+      HAVE_CREDS: ${{ secrets.AZURE_AD_TENANT_ID != '' }}
+      PRODUCT_ID: ${{ vars.STORE_PRODUCT_ID }}
+    steps:
+      - name: Download MSIX artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: artifacts-msix
+          path: msix
+
+      - name: Configure Microsoft Store CLI
+        if: env.HAVE_CREDS == 'true' && env.PRODUCT_ID != ''
+        uses: microsoft/microsoft-store-apppublisher@v1.4
+
+      - name: Submit MSIX to Microsoft Store
+        if: env.HAVE_CREDS == 'true' && env.PRODUCT_ID != ''
+        shell: pwsh
+        env:
+          AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          SELLER_ID: ${{ secrets.SELLER_ID }}
+          AZURE_AD_APPLICATION_CLIENT_ID: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+          AZURE_AD_APPLICATION_SECRET: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+        run: |
+          msstore reconfigure `
+            --tenantId $env:AZURE_AD_TENANT_ID `
+            --sellerId $env:SELLER_ID `
+            --clientId $env:AZURE_AD_APPLICATION_CLIENT_ID `
+            --clientSecret $env:AZURE_AD_APPLICATION_SECRET
+          $msix = Get-ChildItem -LiteralPath "msix" -Filter "*.msix" -File | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $msix) { throw "No .msix found in msix/." }
+          Write-Host "Publishing $msix to Store product $env:PRODUCT_ID"
+          msstore publish "$msix" -id $env:PRODUCT_ID
+
+      - name: Manual-upload reminder (no Store credentials)
+        if: env.HAVE_CREDS != 'true' || env.PRODUCT_ID == ''
+        shell: pwsh
+        run: |
+          Write-Host "Store auto-submit skipped (secrets/STORE_PRODUCT_ID not set)."
+          Write-Host "Upload the .msix from the GitHub Release to Partner Center by hand (~2 min)."
