@@ -115,8 +115,7 @@ $requiredLogos = @(
   "StoreLogo.png",
   "Square44x44Logo.png",
   "Square150x150Logo.png",
-  "Square71x71Logo.png",
-  "Square310x310Logo.png"
+  "Square71x71Logo.png"
 )
 foreach ($logo in $requiredLogos) {
   $src = Join-Path $iconsDir $logo
