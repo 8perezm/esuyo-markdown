@@ -37,10 +37,20 @@ pub struct AppSettings {
     /// `settings.json` files that predate this field.
     #[serde(default = "default_true")]
     pub use_gitignore: bool,
+    /// "list" (flat file list) or "tree" (file-explorer style).
+    #[serde(default = "default_file_view")]
+    pub file_view: String,
+    /// In tree view, include directories that contain no markdown files.
+    #[serde(default)]
+    pub tree_show_all_dirs: bool,
 }
 
 fn default_true() -> bool {
     true
+}
+
+fn default_file_view() -> String {
+    "list".to_string()
 }
 
 // ── Built-in ignore list ────────────────────────────────────────────────────
@@ -169,6 +179,29 @@ fn is_ignored(rel: &str, name: &str, patterns: &[String]) -> bool {
     false
 }
 
+/// Shared entry filter. Both the file scan and the directory scan use this
+/// so the flat list and the tree view always agree on what exists.
+fn should_visit(
+    entry: &walkdir::DirEntry,
+    root: &Path,
+    use_gitignore: bool,
+    ignore_patterns: &[String],
+) -> bool {
+    if !use_gitignore || entry.depth() == 0 {
+        return true;
+    }
+    if !entry.file_type().is_dir() {
+        return true;
+    }
+    let name = entry.file_name().to_string_lossy();
+    let rel = entry
+        .path()
+        .strip_prefix(root)
+        .unwrap_or(entry.path())
+        .to_string_lossy();
+    !is_ignored(&rel, &name, ignore_patterns)
+}
+
 /// Recursively scans a directory for markdown (.md) files.
 /// When `use_gitignore` is true, honors `.gitignore` patterns and a
 /// built-in ignore list. When false, returns every markdown file
@@ -192,22 +225,7 @@ fn scan_md_files(folder_path: &str, use_gitignore: bool) -> Result<Vec<MarkdownF
     for entry in WalkDir::new(folder_path)
         .follow_links(true)
         .into_iter()
-        .filter_entry(|e| {
-            if !use_gitignore || e.depth() == 0 {
-                return true;
-            }
-            let name = e.file_name().to_string_lossy();
-            let rel = e
-                .path()
-                .strip_prefix(folder_path)
-                .unwrap_or(e.path())
-                .to_string_lossy();
-            if e.file_type().is_dir() {
-                !is_ignored(&rel, &name, &ignore_patterns)
-            } else {
-                true
-            }
-        })
+        .filter_entry(|e| should_visit(e, root, use_gitignore, &ignore_patterns))
         .filter_map(|e| e.ok())
     {
         let entry_path = entry.path();
@@ -240,6 +258,45 @@ fn scan_md_files(folder_path: &str, use_gitignore: bool) -> Result<Vec<MarkdownF
     files.sort_by(|a, b| a.relative_path.to_lowercase().cmp(&b.relative_path.to_lowercase()));
 
     Ok(files)
+}
+
+/// Lists every directory under a folder as a relative path, using the same
+/// ignore rules as `scan_md_files`. Needed by the tree view's "all folders"
+/// mode; directories with no markdown files are included here.
+#[tauri::command]
+fn scan_dirs(folder_path: &str, use_gitignore: bool) -> Result<Vec<String>, String> {
+    let root = Path::new(folder_path);
+    if !root.exists() || !root.is_dir() {
+        return Err(format!("Directory not found: {}", folder_path));
+    }
+
+    let ignore_patterns = if use_gitignore {
+        load_gitignore(root)
+    } else {
+        Vec::new()
+    };
+    let mut dirs: Vec<String> = Vec::new();
+
+    for entry in WalkDir::new(folder_path)
+        .follow_links(true)
+        .into_iter()
+        .filter_entry(|e| should_visit(e, root, use_gitignore, &ignore_patterns))
+        .filter_map(|e| e.ok())
+    {
+        if entry.depth() == 0 || !entry.file_type().is_dir() {
+            continue;
+        }
+        let relative = entry
+            .path()
+            .strip_prefix(folder_path)
+            .unwrap_or(entry.path())
+            .to_string_lossy()
+            .to_string();
+        dirs.push(relative);
+    }
+
+    dirs.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase()));
+    Ok(dirs)
 }
 
 /// Reads the content of a file at the given absolute path.
@@ -300,6 +357,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             pick_folder,
             scan_md_files,
+            scan_dirs,
             read_file,
             write_file,
             delete_file,

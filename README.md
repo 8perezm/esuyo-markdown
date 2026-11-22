@@ -17,7 +17,7 @@ Esuyo Markdown is a desktop app for people who keep notes, docs, or wikis as Mar
 
 ## Features
 
-- Open any folder and browse all `.md` and `.markdown` files recursively
+- Open any folder and browse all `.md` and `.markdown` files recursively, as a flat list or a collapsible folder tree (with an option to show folders that contain no Markdown)
 - Clean rendered reading view with syntax-highlighted code blocks and GFM tables
 - Rich-text editing (bold, lists, tables, code) plus a raw Markdown source mode
 - New file, Save, Save As, and Delete (deleted files go to the Recycle Bin / Trash)
@@ -62,7 +62,7 @@ No environment variables or config files are required. Everything is set inside 
 ## Quick Start / Usage
 
 1. Click **Open Folder** in the sidebar (or `···` → **Open Folder**) and pick a directory containing Markdown files.
-2. Browse files in the left sidebar; click one to read it. Use `↑` / `↓` to move between files.
+2. Browse files in the left sidebar; click one to read it. Use `↑` / `↓` to move between files. Switch between the flat list and the folder tree with the two buttons above the file list; in tree view, **All folders** also shows directories without Markdown files. Right-click a folder and choose **New markdown file here** to create a file in it.
 3. Click **Edit** (top-right of the reading view) to edit in rich text. Check **Source** to edit raw Markdown instead; uncheck to return to rich text.
 4. Click **Save** (or `Ctrl/⌘ + S`) to write back to disk, **Save As** from the `···` menu to save a copy, or **Cancel** to discard changes.
 5. Click **New File** (`···` → **New File**, or `Ctrl/⌘ + N`) to create a file, or the trash icon to delete the current file (it moves to the Recycle Bin / Trash, not permanent delete).

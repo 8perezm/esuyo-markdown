@@ -135,12 +135,43 @@
                 </svg>
                 <span id="current-folder-name"></span>
             </div>
+            <div id="file-view-bar" class="hidden">
+                <div class="view-toggle" role="group" aria-label="File navigation view">
+                    <button type="button" id="view-list-btn" class="view-toggle-btn" title="Flat list"
+                        aria-label="Flat list" aria-pressed="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6" />
+                            <line x1="8" y1="12" x2="21" y2="12" />
+                            <line x1="8" y1="18" x2="21" y2="18" />
+                            <line x1="3" y1="6" x2="3.01" y2="6" />
+                            <line x1="3" y1="12" x2="3.01" y2="12" />
+                            <line x1="3" y1="18" x2="3.01" y2="18" />
+                        </svg>
+                    </button>
+                    <button type="button" id="view-tree-btn" class="view-toggle-btn" title="Tree view"
+                        aria-label="Tree view" aria-pressed="false">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 4v6a2 2 0 0 0 2 2h5" />
+                            <path d="M3 20v-4a2 2 0 0 1 2-2" />
+                            <rect x="10" y="9" width="11" height="6" rx="1" />
+                            <line x1="13" y1="12" x2="18" y2="12" />
+                        </svg>
+                    </button>
+                </div>
+                <label id="tree-all-dirs" class="tree-all-dirs hidden" title="Show folders without markdown files">
+                    <input type="checkbox" id="tree-all-dirs-checkbox" />
+                    <span>All folders</span>
+                </label>
+            </div>
             <div id="file-list-container">
                 <div id="empty-state" class="empty-state">
                     <p>No folder selected</p>
                     <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
                 </div>
                 <ul id="file-list" class="hidden"></ul>
+                <ul id="file-tree" class="hidden"></ul>
             </div>
         </aside>
         <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle sidebar" aria-label="Toggle sidebar">
@@ -286,6 +317,20 @@
             </div>
         </main>
     </div>
+
+    <div id="folder-context-menu" class="folder-context-menu hidden">
+        <button type="button" id="context-new-file" class="folder-context-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="12" x2="12" y2="18" />
+                <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            <span>New markdown file here</span>
+        </button>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
 </body>
 

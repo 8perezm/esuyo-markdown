@@ -170,6 +170,82 @@ html, body {
   display: none;
 }
 
+/* ===== File View Bar ===== */
+#file-view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+
+#file-view-bar.hidden {
+  display: none;
+}
+
+.view-toggle {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  background: var(--sidebar-hover);
+  border-radius: 6px;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  opacity: 0.65;
+  transition: background 0.1s ease, opacity 0.1s ease;
+}
+
+.view-toggle-btn:hover {
+  opacity: 1;
+}
+
+.view-toggle-btn.active {
+  background: var(--sidebar-active);
+  color: var(--accent);
+  opacity: 1;
+}
+
+:root[data-theme="light"] .view-toggle-btn.active {
+  color: var(--accent);
+}
+
+.tree-all-dirs {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+.tree-all-dirs.hidden {
+  display: none;
+}
+
+.tree-all-dirs input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 /* ===== Sidebar Toggle ===== */
 .sidebar-toggle {
   position: absolute;
@@ -217,7 +293,8 @@ html, body {
   transform: scaleX(-1);
 }
 
-#app.sidebar-hidden .menu-dropdown {
+#app.sidebar-hidden .menu-dropdown,
+#app.sidebar-hidden .folder-context-menu {
   display: none !important;
 }
 
@@ -464,6 +541,138 @@ html, body {
 
 .file-item:hover .file-path-hint {
   display: inline;
+}
+
+/* ===== File Tree ===== */
+#file-tree {
+  list-style: none;
+}
+
+#file-tree.hidden {
+  display: none;
+}
+
+.tree-children {
+  list-style: none;
+}
+
+.tree-children.hidden {
+  display: none;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding-right: 12px;
+  font-size: 13px;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  user-select: none;
+  border-left: 3px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tree-row:hover {
+  background: var(--sidebar-hover);
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .tree-row:hover {
+  color: #1a1b1e;
+}
+
+.tree-row.active {
+  background: var(--sidebar-active);
+  color: #ffffff;
+  border-left-color: var(--accent);
+}
+
+:root[data-theme="light"] .tree-row.active {
+  color: #1a1b1e;
+}
+
+.tree-chevron {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+  transition: transform 0.1s ease;
+}
+
+.tree-dir.collapsed .tree-chevron {
+  transform: rotate(-90deg);
+}
+
+.tree-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.75;
+}
+
+.tree-dir .tree-icon {
+  color: var(--accent);
+}
+
+.tree-file .tree-icon {
+  color: var(--accent);
+}
+
+.tree-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Folder Context Menu ===== */
+.folder-context-menu {
+  position: fixed;
+  min-width: 210px;
+  background: var(--menu-bg);
+  border: 1px solid var(--menu-border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  padding: 5px 0;
+}
+
+:root[data-theme="light"] .folder-context-menu {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.folder-context-menu.hidden {
+  display: none;
+}
+
+.folder-context-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--sidebar-text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folder-context-item:hover {
+  background: var(--menu-hover);
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .folder-context-item:hover {
+  color: #1a1b1e;
+}
+
+.folder-context-item svg {
+  flex-shrink: 0;
+  opacity: 0.8;
 }
 
 /* ===== Empty State ===== */

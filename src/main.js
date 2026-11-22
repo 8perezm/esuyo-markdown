@@ -176,7 +176,21 @@ function loadGoogleFont(family) {
 let currentFolder = null;
 let currentFiles = [];
 let currentFileIndex = -1;
-let settings = { recent_folders: [], theme: "dark", use_gitignore: true };
+// Tree-view state. `treeExpanded` holds relative directory paths (forward
+// slashes); `null` means "expand everything on the next render".
+let treeExpanded = null;
+let treeExpandedAuto = true;
+let treeDirs = null;
+let treeDirsFolder = null;
+let treeDirsLoading = null;
+let contextDir = "";
+let settings = {
+    recent_folders: [],
+    theme: "dark",
+    use_gitignore: true,
+    file_view: "list",
+    tree_show_all_dirs: false,
+};
 let isEditMode = false;
 let hasUnsavedChanges = false;
 let isSourceMode = false;
@@ -297,6 +311,15 @@ const app = document.getElementById("app");
 const openFolderBtn = document.getElementById("open-folder-btn");
 const sidebarToggle = document.getElementById("sidebar-toggle");
 const fileList = document.getElementById("file-list");
+const fileListContainer = document.getElementById("file-list-container");
+const fileTree = document.getElementById("file-tree");
+const fileViewBar = document.getElementById("file-view-bar");
+const viewListBtn = document.getElementById("view-list-btn");
+const viewTreeBtn = document.getElementById("view-tree-btn");
+const treeAllDirs = document.getElementById("tree-all-dirs");
+const treeAllDirsCheckbox = document.getElementById("tree-all-dirs-checkbox");
+const folderContextMenu = document.getElementById("folder-context-menu");
+const contextNewFileBtn = document.getElementById("context-new-file");
 const emptyState = document.getElementById("empty-state");
 const welcome = document.getElementById("welcome");
 const markdownViewer = document.getElementById("markdown-viewer");
@@ -362,6 +385,9 @@ async function loadSettings() {
     // Ensure use_gitignore is a boolean (Rust serde default is `true`, but
     // guard against any `undefined` from cached or legacy state).
     settings.use_gitignore = settings.use_gitignore !== false;
+    settings.file_view = settings.file_view === "tree" ? "tree" : "list";
+    settings.tree_show_all_dirs = settings.tree_show_all_dirs === true;
+    updateViewControls();
     applyTheme(settings.theme);
     applyFonts(settings.default_font, settings.header_font, settings.code_font, settings.default_font_size, settings.header_font_size, settings.code_font_size);
     renderRecentFolders();
@@ -759,6 +785,13 @@ async function openFolder() {
 async function openFolderByPath(folderPath) {
     try {
         currentFolder = folderPath;
+        // A new project starts with the tree fully expanded.
+        treeExpanded = null;
+        treeExpandedAuto = true;
+        treeDirs = null;
+        treeDirsFolder = null;
+        treeDirsLoading = null;
+        closeFolderContextMenu();
         showLoading(true);
 
         const files = await invoke("scan_md_files", {
@@ -771,7 +804,7 @@ async function openFolderByPath(folderPath) {
 
         showLoading(false);
         pushRecent(folderPath);
-        renderFileList(files);
+        renderFileView(files);
         updateCurrentFolderBar();
         updateOpenFolderBtnVisibility();
     } catch (error) {
@@ -819,10 +852,60 @@ async function createNewFile() {
     }
 }
 
+/**
+ * Creates a markdown file inside a specific directory of the open project.
+ * Unlike the global New File button this keeps the project root as the
+ * current folder, so the tree stays in context.
+ */
+async function createNewFileInFolder(dirRel) {
+    if (!currentFolder) return;
+    try {
+        const segments = normalizeRelPath(dirRel).split("/").filter(Boolean);
+        const dirAbs = [currentFolder, ...segments].join("/");
+        const path = await save({
+            filters: [{
+                name: "Markdown",
+                extensions: ["md", "markdown"],
+            }],
+            defaultPath: `${dirAbs}/untitled.md`,
+        });
+        if (!path) return;
+
+        const fileName = path.replace(/\\/g, "/").split("/").pop() || "untitled.md";
+        const title = fileName.replace(/\.(md|markdown)$/i, "");
+        await invoke("write_file", { filePath: path, content: `# ${title}\n\n` });
+
+        // Make sure a freshly created folder is visible in the tree.
+        if (treeExpanded) {
+            let acc = "";
+            for (const seg of segments) {
+                acc = acc ? `${acc}/${seg}` : seg;
+                treeExpanded.add(acc);
+            }
+        }
+
+        // Refresh the listing (and the directory cache) so the new file shows
+        // up under the folder that was right-clicked.
+        treeDirs = null;
+        treeDirsFolder = null;
+        await rescanCurrentFolder();
+
+        const normalized = normalizeRelPath(path);
+        const index = currentFiles.findIndex((f) => normalizeRelPath(f.path) === normalized);
+        if (index >= 0) await selectFile(index);
+    } catch (error) {
+        console.error("Failed to create file in folder:", error);
+        alert(`Error creating file: ${error}`);
+    }
+}
+
 // Re-runs the scan against the currently open folder using the latest
 // settings. Used when the user toggles "Use .gitignore" in Settings.
 async function rescanCurrentFolder() {
     if (!currentFolder) return;
+    // Ignore rules may have changed, and files/folders may have been added.
+    treeDirs = null;
+    treeDirsFolder = null;
     try {
         // Remember which file was selected so we can re-render it after rescan
         const selectedRelativePath = currentFileIndex >= 0 ? currentFiles[currentFileIndex]?.relative_path : null;
@@ -854,7 +937,7 @@ async function rescanCurrentFolder() {
         }
 
         showLoading(false);
-        renderFileList(files);
+        renderFileView(files);
     } catch (error) {
         showLoading(false);
         console.error("Failed to rescan folder:", error);
@@ -871,19 +954,45 @@ updateCurrentFolderBar();
 function updateCurrentFolderBar() {
     if (currentFolder) {
         currentFolderBar.classList.remove("hidden");
+        fileViewBar.classList.remove("hidden");
         currentFolderName.textContent = basename(currentFolder);
         currentFolderBar.title = currentFolder;
     } else {
         currentFolderBar.classList.add("hidden");
+        fileViewBar.classList.add("hidden");
         currentFolderName.textContent = "";
         currentFolderBar.title = "";
     }
 }
 
-// ── File List ───────────────────────────────────────────────────────────────
+// ── File List / Tree ─────────────────────────────────────────────────────────
 
-function renderFileList(files) {
+const FILE_ICON_SVG = `
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <line x1="10" y1="9" x2="8" y2="9"/>
+  </svg>`;
+
+const FOLDER_ICON_SVG = `
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M2 4.5V12A1.5 1.5 0 003.5 13.5h9A1.5 1.5 0 0014 12V5.5A1.5 1.5 0 0012.5 4H8.707l-1-1H3.5A1.5 1.5 0 002 4.5z"/>
+  </svg>`;
+
+const CHEVRON_SVG = `
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+  </svg>`;
+
+function normalizeRelPath(p) {
+    return (p || "").replace(/\\/g, "/");
+}
+
+function renderFileView(files) {
     fileList.innerHTML = "";
+    fileTree.innerHTML = "";
 
     if (files.length === 0) {
         emptyState.innerHTML = `
@@ -892,6 +1001,7 @@ function renderFileList(files) {
     `;
         emptyState.classList.remove("hidden");
         fileList.classList.add("hidden");
+        fileTree.classList.add("hidden");
         welcome.classList.add("hidden");
         return;
     }
@@ -901,27 +1011,31 @@ function renderFileList(files) {
       <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
     `;
     emptyState.classList.add("hidden");
-    fileList.classList.remove("hidden");
 
+    if (settings.file_view === "tree") {
+        fileList.classList.add("hidden");
+        fileTree.classList.remove("hidden");
+        renderFileTree(files);
+        maybeLoadTreeDirs();
+    } else {
+        fileTree.classList.add("hidden");
+        fileList.classList.remove("hidden");
+        renderFlatFileList(files);
+    }
+}
+
+function renderFlatFileList(files) {
     files.forEach((file, index) => {
         const li = document.createElement("li");
         li.className = "file-item";
         li.dataset.index = index;
 
-        const dirParts = file.relative_path.split(/[/\\]/);
+        const dirParts = normalizeRelPath(file.relative_path).split("/");
         const fileName = dirParts.pop();
         const dirPath = dirParts.join("/");
 
         li.innerHTML = `
-      <span class="file-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <line x1="10" y1="9" x2="8" y2="9"/>
-        </svg>
-      </span>
+      <span class="file-icon">${FILE_ICON_SVG}</span>
       <span class="file-label">${escapeHtml(fileName)}</span>
       ${dirPath ? `<span class="file-path-hint">${escapeHtml(dirPath)}</span>` : ""}
     `;
@@ -931,17 +1045,277 @@ function renderFileList(files) {
     });
 }
 
+// ── Tree construction ───────────────────────────────────────────────────────
+
+async function loadTreeDirs() {
+    if (!currentFolder) return [];
+    try {
+        treeDirs = await invoke("scan_dirs", {
+            folderPath: currentFolder,
+            useGitignore: settings.use_gitignore,
+        });
+    } catch (err) {
+        console.warn("Failed to scan directories:", err);
+        treeDirs = [];
+    }
+    treeDirsFolder = currentFolder;
+    return treeDirs;
+}
+
+function maybeLoadTreeDirs() {
+    if (settings.file_view !== "tree" || !settings.tree_show_all_dirs || !currentFolder) return;
+    if (treeDirs && treeDirsFolder === currentFolder) return;
+    if (treeDirsLoading === currentFolder) return;
+
+    treeDirsLoading = currentFolder;
+    const folderAtRequest = currentFolder;
+    loadTreeDirs().then(() => {
+        treeDirsLoading = null;
+        if (settings.file_view !== "tree" || currentFolder !== folderAtRequest) return;
+        if (treeExpandedAuto && treeExpanded) {
+            treeDirs.forEach((d) => treeExpanded.add(normalizeRelPath(d)));
+        }
+        renderFileView(currentFiles);
+        if (currentFileIndex >= 0) {
+            updateActiveFile(currentFileIndex);
+            revealTreeFile(currentFileIndex);
+        }
+    });
+}
+
+function buildTree(files, dirs) {
+    const makeNode = (name, path) => ({ name, path, dirs: new Map(), files: [] });
+    const root = makeNode("", "");
+
+    const getDir = (rel) => {
+        if (!rel) return root;
+        let node = root;
+        let acc = "";
+        for (const part of rel.split("/").filter(Boolean)) {
+            acc = acc ? `${acc}/${part}` : part;
+            if (!node.dirs.has(part)) node.dirs.set(part, makeNode(part, acc));
+            node = node.dirs.get(part);
+        }
+        return node;
+    };
+
+    dirs.forEach((d) => getDir(normalizeRelPath(d)));
+    files.forEach((file, index) => {
+        const parts = normalizeRelPath(file.relative_path).split("/");
+        const name = parts.pop();
+        getDir(parts.join("/")).files.push({ index, name });
+    });
+    return root;
+}
+
+function collectDirPaths(node) {
+    const paths = [];
+    node.dirs.forEach((dir) => {
+        paths.push(dir.path);
+        paths.push(...collectDirPaths(dir));
+    });
+    return paths;
+}
+
+function renderFileTree(files) {
+    const dirs = settings.tree_show_all_dirs && treeDirs && treeDirsFolder === currentFolder
+        ? treeDirs
+        : [];
+    const root = buildTree(files, dirs);
+    // A new folder starts with everything expanded; after that, respect the
+    // user's collapsed choices (they survive rescans and new files).
+    if (treeExpanded === null) treeExpanded = new Set(collectDirPaths(root));
+
+    const fragment = document.createDocumentFragment();
+    appendTreeNodes(root, fragment, 0);
+    fileTree.appendChild(fragment);
+}
+
+function appendTreeNodes(node, parent, depth) {
+    const dirs = [...node.dirs.values()].sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
+    dirs.forEach((dir) => parent.appendChild(createDirRow(dir, depth)));
+    node.files.forEach((file) => parent.appendChild(createFileRow(file, depth)));
+}
+
+function createDirRow(dir, depth) {
+    const li = document.createElement("li");
+    const row = document.createElement("div");
+    const expanded = treeExpanded.has(dir.path);
+
+    row.className = `tree-row tree-dir${expanded ? "" : " collapsed"}`;
+    row.dataset.dir = dir.path;
+    row.title = dir.path;
+    row.style.paddingLeft = `${10 + depth * 14}px`;
+    row.innerHTML = `
+      <span class="tree-chevron">${CHEVRON_SVG}</span>
+      <span class="tree-icon">${FOLDER_ICON_SVG}</span>
+      <span class="tree-label"></span>
+    `;
+    row.querySelector(".tree-label").textContent = dir.name;
+
+    const children = document.createElement("ul");
+    children.className = `tree-children${expanded ? "" : " hidden"}`;
+    appendTreeNodes(dir, children, depth + 1);
+
+    row.addEventListener("click", () => setDirExpanded(dir.path, !treeExpanded.has(dir.path)));
+    row.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openFolderContextMenu(e.clientX, e.clientY, dir.path);
+    });
+
+    li.appendChild(row);
+    li.appendChild(children);
+    return li;
+}
+
+function createFileRow(file, depth) {
+    const li = document.createElement("li");
+    const row = document.createElement("div");
+
+    row.className = "tree-row tree-file";
+    row.dataset.index = file.index;
+    row.title = file.name;
+    row.style.paddingLeft = `${24 + depth * 14}px`;
+    row.innerHTML = `
+      <span class="tree-icon">${FILE_ICON_SVG}</span>
+      <span class="tree-label"></span>
+    `;
+    row.querySelector(".tree-label").textContent = file.name;
+    if (file.index === currentFileIndex) row.classList.add("active");
+
+    row.addEventListener("click", () => selectFile(file.index));
+    li.appendChild(row);
+    return li;
+}
+
+function setDirExpanded(path, expanded) {
+    treeExpandedAuto = false;
+    if (expanded) treeExpanded.add(path);
+    else treeExpanded.delete(path);
+
+    for (const row of fileTree.querySelectorAll(".tree-dir")) {
+        if (row.dataset.dir !== path) continue;
+        row.classList.toggle("collapsed", !expanded);
+        const children = row.nextElementSibling;
+        if (children && children.classList.contains("tree-children")) {
+            children.classList.toggle("hidden", !expanded);
+        }
+    }
+}
+
+function revealTreeFile(index) {
+    const file = currentFiles[index];
+    if (!file || settings.file_view !== "tree") return;
+    const parts = normalizeRelPath(file.relative_path).split("/");
+    parts.pop();
+    let rel = "";
+    for (const part of parts) {
+        rel = rel ? `${rel}/${part}` : part;
+        setDirExpanded(rel, true);
+    }
+}
+
 function updateActiveFile(index) {
-    document.querySelectorAll(".file-item").forEach((el) => {
+    document.querySelectorAll(".file-item.active, .tree-file.active").forEach((el) => {
         el.classList.remove("active");
     });
 
-    const items = document.querySelectorAll(".file-item");
-    if (items[index]) {
-        items[index].classList.add("active");
-        items[index].scrollIntoView({ block: "nearest" });
+    let item = null;
+    if (settings.file_view === "tree") {
+        item = fileTree.querySelector(`.tree-file[data-index="${index}"]`);
+    } else {
+        item = fileList.querySelectorAll(".file-item")[index];
+    }
+    if (item) {
+        item.classList.add("active");
+        item.scrollIntoView({ block: "nearest" });
     }
 }
+
+// ── View controls ───────────────────────────────────────────────────────────
+
+function updateViewControls() {
+    const isTree = settings.file_view === "tree";
+    viewListBtn.classList.toggle("active", !isTree);
+    viewTreeBtn.classList.toggle("active", isTree);
+    viewListBtn.setAttribute("aria-pressed", String(!isTree));
+    viewTreeBtn.setAttribute("aria-pressed", String(isTree));
+    treeAllDirs.classList.toggle("hidden", !isTree);
+    treeAllDirsCheckbox.checked = settings.tree_show_all_dirs;
+}
+
+function switchFileView(view) {
+    if (settings.file_view === view) return;
+    settings.file_view = view;
+    updateViewControls();
+    persistSettings();
+    closeFolderContextMenu();
+    renderFileView(currentFiles);
+    if (currentFileIndex >= 0) {
+        updateActiveFile(currentFileIndex);
+        if (view === "tree") revealTreeFile(currentFileIndex);
+    }
+}
+
+viewListBtn.addEventListener("click", () => switchFileView("list"));
+viewTreeBtn.addEventListener("click", () => switchFileView("tree"));
+
+treeAllDirsCheckbox.addEventListener("change", () => {
+    settings.tree_show_all_dirs = treeAllDirsCheckbox.checked;
+    persistSettings();
+    renderFileView(currentFiles);
+    if (currentFileIndex >= 0) {
+        updateActiveFile(currentFileIndex);
+        revealTreeFile(currentFileIndex);
+    }
+});
+
+// ── Folder context menu ─────────────────────────────────────────────────────
+
+function openFolderContextMenu(x, y, dirPath) {
+    contextDir = dirPath || "";
+    folderContextMenu.classList.remove("hidden");
+    const rect = folderContextMenu.getBoundingClientRect();
+    folderContextMenu.style.left = `${Math.max(8, Math.min(x, window.innerWidth - rect.width - 8))}px`;
+    folderContextMenu.style.top = `${Math.max(8, Math.min(y, window.innerHeight - rect.height - 8))}px`;
+}
+
+function closeFolderContextMenu() {
+    folderContextMenu.classList.add("hidden");
+}
+
+fileTree.addEventListener("contextmenu", (e) => {
+    const dirRow = e.target.closest(".tree-dir");
+    // Right-clicking a file keeps the native menu; folders (and the empty
+    // tree background, meaning the project root) get our custom menu.
+    if (!dirRow && e.target.closest(".tree-file")) return;
+    e.preventDefault();
+    openFolderContextMenu(e.clientX, e.clientY, dirRow ? dirRow.dataset.dir : "");
+});
+
+currentFolderBar.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    openFolderContextMenu(e.clientX, e.clientY, "");
+});
+
+contextNewFileBtn.addEventListener("click", () => {
+    const dir = contextDir;
+    closeFolderContextMenu();
+    createNewFileInFolder(dir);
+});
+
+document.addEventListener("click", (e) => {
+    if (!folderContextMenu.contains(e.target)) closeFolderContextMenu();
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeFolderContextMenu();
+});
+
+fileListContainer.addEventListener("scroll", closeFolderContextMenu);
 
 // ── File Selection ──────────────────────────────────────────────────────────
 
@@ -958,6 +1332,7 @@ async function selectFile(index) {
 
     currentFileIndex = index;
     updateActiveFile(index);
+    revealTreeFile(index);
 
     const file = currentFiles[index];
     currentFilePath.textContent = file.relative_path;
@@ -1142,7 +1517,7 @@ confirmDeleteBtn.addEventListener("click", async () => {
         if (currentFiles.length === 0) {
             currentFileIndex = -1;
             updateDeleteBtnVisibility();
-            renderFileList(currentFiles);
+            renderFileView(currentFiles);
             welcome.classList.remove("hidden");
             markdownViewer.classList.add("hidden");
             return;
@@ -1155,7 +1530,7 @@ confirmDeleteBtn.addEventListener("click", async () => {
         currentFileIndex = -1;
         updateDeleteBtnVisibility();
 
-        renderFileList(currentFiles);
+        renderFileView(currentFiles);
         await selectFile(newIndex);
     } catch (error) {
         console.error("Failed to delete file:", error);
