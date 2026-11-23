@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
@@ -197,6 +198,581 @@ let isSourceMode = false;
 let rawMarkdownContent = "";
 let savedScrollRatio = 0;
 
+// ── Tabs ────────────────────────────────────────────────────────────────────
+// Each tab owns its file identity, draft state and (lazily created) editor
+// pane. Tabs are keyed by absolute path so they survive folder rescans.
+let tabs = [];
+let activeTabId = null;
+let nextTabId = 1;
+let settingsFlushTimer = null;
+let dirtyResolve = null;
+let dirtyDialogOpen = false;
+let closeDialogOpen = false;
+
+// ── Tab model ───────────────────────────────────────────────────────────────
+
+function getTabById(id) {
+    return tabs.find((t) => t.id === id) || null;
+}
+
+function getActiveTab() {
+    return getTabById(activeTabId);
+}
+
+function getTabByPath(path) {
+    const normalized = normalizePath(path);
+    return tabs.find((t) => t.normalizedPath === normalized) || null;
+}
+
+function getTabIndexInFiles(tab) {
+    if (!tab) return -1;
+    return currentFiles.findIndex((f) => normalizePath(f.path) === tab.normalizedPath);
+}
+
+function syncCurrentFileFromTab() {
+    currentFileIndex = getTabIndexInFiles(getActiveTab());
+    updateActiveFile(currentFileIndex);
+    if (currentFileIndex >= 0 && settings.file_view === "tree") revealTreeFile(currentFileIndex);
+    updateDeleteBtnVisibility();
+    updateEditorBar();
+}
+
+function createTab(file) {
+    const tab = {
+        id: nextTabId++,
+        path: file.path,
+        normalizedPath: normalizePath(file.path),
+        fileName: basename(file.path),
+        relativePath: file.relative_path,
+        content: null,
+        dirty: false,
+        missing: false,
+        isEditMode: false,
+        isSourceMode: false,
+        rawMarkdownContent: "",
+        savedScrollRatio: 0,
+        editorScrollRatio: 0,
+        pane: null,
+        quillEditor: null,
+        quillMarkdown: null,
+    };
+    tabs.push(tab);
+    renderTabBar();
+    return tab;
+}
+
+function renderTabBar() {
+    tabBar.innerHTML = "";
+    if (tabs.length === 0) {
+        tabBar.classList.add("hidden");
+        return;
+    }
+    tabBar.classList.remove("hidden");
+    for (const tab of tabs) {
+        const el = document.createElement("div");
+        el.className =
+            "tab-item" +
+            (tab.id === activeTabId ? " active" : "") +
+            (tab.dirty ? " dirty" : "");
+        el.dataset.tabId = String(tab.id);
+        el.setAttribute("role", "tab");
+        el.setAttribute("aria-selected", String(tab.id === activeTabId));
+        el.title = tab.relativePath;
+        el.innerHTML = `
+            <span class="tab-icon">${FILE_ICON_SVG}</span>
+            <span class="tab-name"></span>
+            <span class="tab-dirty-dot"></span>
+            <button class="tab-close" title="Close tab" aria-label="Close tab">×</button>
+        `;
+        el.querySelector(".tab-name").textContent = tab.fileName;
+        el.addEventListener("click", () => activateTab(tab.id));
+        el.addEventListener("auxclick", (e) => {
+            if (e.button === 1) {
+                e.preventDefault();
+                closeTab(tab.id);
+            }
+        });
+        el.querySelector(".tab-close").addEventListener("click", (e) => {
+            e.stopPropagation();
+            closeTab(tab.id);
+        });
+        tabBar.appendChild(el);
+    }
+}
+
+function scrollActiveTabIntoView() {
+    const activeEl = tabBar.querySelector(".tab-item.active");
+    if (activeEl) activeEl.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+
+function captureRenderedScrollRatio() {
+    if (renderedContent.scrollHeight <= renderedContent.clientHeight) return 0;
+    return renderedContent.scrollTop / (renderedContent.scrollHeight - renderedContent.clientHeight);
+}
+
+function showTabPane(tab) {
+    for (const t of tabs) {
+        if (t.pane) {
+            t.pane.style.display = t.id === activeTabId && t.isEditMode ? "flex" : "none";
+        }
+    }
+}
+
+function markTabDirty(tab) {
+    if (!tab || tab.dirty) return;
+    tab.dirty = true;
+    isEditMode = true;
+    hasUnsavedChanges = true;
+    renderTabBar();
+}
+
+function getTabMarkdown(tab) {
+    if (!tab) return "";
+    if (tab.isSourceMode && tab.pane) {
+        const textarea = tab.pane.querySelector("textarea.source-editor-pane");
+        if (textarea) return textarea.value;
+    }
+    if (!tab.isSourceMode && tab.quillEditor) return getEditorMarkdown(tab);
+    return tab.rawMarkdownContent || tab.content || "";
+}
+
+async function saveTabToDisk(tab) {
+    const markdown = getTabMarkdown(tab);
+    try {
+        await invoke("write_file", { filePath: tab.path, content: markdown });
+        tab.dirty = false;
+        tab.content = markdown;
+        const active = getActiveTab();
+        hasUnsavedChanges = active ? active.dirty : false;
+        renderTabBar();
+        return true;
+    } catch (error) {
+        console.error("Failed to save file:", error);
+        return false;
+    }
+}
+
+async function activateTab(id, opts = {}) {
+    const tab = getTabById(id);
+    if (!tab) return;
+
+    const previous = getActiveTab();
+    if (previous && previous.id !== id) {
+        if (previous.isEditMode) previous.editorScrollRatio = captureEditorScrollRatio(previous);
+        else previous.savedScrollRatio = captureRenderedScrollRatio();
+    }
+
+    activeTabId = id;
+    isEditMode = tab.isEditMode;
+    isSourceMode = tab.isSourceMode;
+    hasUnsavedChanges = tab.dirty;
+    renderTabBar();
+    scrollActiveTabIntoView();
+    syncCurrentFileFromTab();
+
+    if (tab.content === null && !tab.missing) {
+        try {
+            tab.content = await invoke("read_file", { filePath: tab.path });
+        } catch (error) {
+            console.error("Failed to read file:", error);
+            tab.missing = true;
+            tab.content = "";
+        }
+    }
+    if (getActiveTab() !== tab) return; // user switched away while loading
+
+    if (tab.isEditMode) {
+        renderedContent.style.display = "none";
+        editorContainer.classList.remove("hidden");
+        editorContainer.style.display = "flex";
+        showTabPane(tab);
+        sourceCheckbox.checked = tab.isSourceMode;
+    } else {
+        showTabPane(null);
+        editorContainer.classList.add("hidden");
+        editorContainer.style.display = "none";
+        renderedContent.style.display = "block";
+        const content = tab.missing
+            ? `<div class="error">File no longer exists: ${escapeHtml(tab.relativePath)}</div>`
+            : tab.content;
+        renderMarkdown(content);
+        restoreRenderedScrollPosition(tab.savedScrollRatio);
+    }
+    if (!opts.skipPersist) persistCurrentTabs();
+}
+
+async function openTabForIndex(index) {
+    if (index < 0 || index >= currentFiles.length) return;
+    const file = currentFiles[index];
+    let tab = getTabByPath(file.path);
+    if (!tab) {
+        tab = createTab(file);
+    } else {
+        tab.relativePath = file.relative_path;
+        tab.fileName = basename(file.path);
+        tab.missing = false;
+    }
+    await activateTab(tab.id);
+}
+
+async function closeTab(id) {
+    const tab = getTabById(id);
+    if (!tab) return;
+    if (tab.dirty) {
+        const result = await resolveDirty("close", [tab]);
+        if (result.action !== "save" && result.action !== "discard") return;
+    }
+    const closedIndex = tabs.indexOf(tab);
+    destroyTabEditor(tab);
+    tabs.splice(closedIndex, 1);
+    if (activeTabId === id) {
+        activeTabId = null;
+        if (tabs.length > 0) {
+            const next = tabs[Math.min(closedIndex, tabs.length - 1)];
+            await activateTab(next.id);
+        } else {
+            showWelcomeState();
+        }
+    }
+    renderTabBar();
+    persistCurrentTabs();
+}
+
+function showWelcomeState() {
+    activeTabId = null;
+    currentFileIndex = -1;
+    welcome.classList.remove("hidden");
+    markdownViewer.classList.add("hidden");
+    loadingIndicator.classList.add("hidden");
+    editorContainer.classList.add("hidden");
+    renderTabBar();
+    updateEditorBar();
+    updateDeleteBtnVisibility();
+}
+
+function updateEditorBar() {
+    const tab = getActiveTab();
+    if (!tab) {
+        currentFilePath.textContent = "";
+        editActions.style.display = "none";
+        editToggleBtn.style.display = "none";
+        sourceCheckboxLabel.style.display = "none";
+        deleteFileBtn.style.display = "none";
+        menuSaveItem.classList.add("hidden");
+        menuSaveAsItem.classList.add("hidden");
+        menuEditDivider.classList.add("hidden");
+        return;
+    }
+    currentFilePath.textContent = tab.relativePath + (tab.missing ? " (missing)" : "");
+    deleteFileBtn.style.display = currentFileIndex >= 0 ? "" : "none";
+    if (tab.isEditMode) {
+        editToggleBtn.style.display = "none";
+        editActions.style.display = "flex";
+        sourceCheckboxLabel.style.display = "";
+        sourceCheckbox.checked = tab.isSourceMode;
+        menuSaveItem.classList.remove("hidden");
+        menuSaveAsItem.classList.remove("hidden");
+        menuEditDivider.classList.remove("hidden");
+    } else {
+        editActions.style.display = "none";
+        editToggleBtn.style.display = "";
+        sourceCheckboxLabel.style.display = "none";
+        menuSaveItem.classList.add("hidden");
+        menuSaveAsItem.classList.add("hidden");
+        menuEditDivider.classList.add("hidden");
+    }
+}
+
+async function restoreTabsForFolder() {
+    const entry = settings.folder_tabs && settings.folder_tabs[normalizePath(currentFolder)];
+    if (!entry || !Array.isArray(entry.tabs)) return;
+    const byPath = new Map(currentFiles.map((f) => [normalizePath(f.path), f]));
+    for (const path of entry.tabs) {
+        const file = byPath.get(normalizePath(path));
+        if (file) createTab(file);
+    }
+    const savedActive = entry.active ? getTabByPath(entry.active) : null;
+    if (savedActive || tabs.length > 0) {
+        await activateTab((savedActive || tabs[0]).id, { skipPersist: true });
+    }
+}
+
+// ── Unsaved-changes dialog ──────────────────────────────────────────────────
+
+function showDirtyDialog(dirtyTabs, verb) {
+    dirtyTitle.textContent = "Unsaved changes";
+    dirtySaveBtn.textContent = `Save selected & ${verb}`;
+    dirtyDiscardBtn.textContent = `Discard & ${verb}`;
+    dirtyMessage.textContent =
+        dirtyTabs.length === 1
+            ? `“${dirtyTabs[0].fileName}” has unsaved changes. What would you like to do?`
+            : `${dirtyTabs.length} files have unsaved changes. Choose which ones to save.`;
+    dirtyFileList.innerHTML = "";
+    for (const tab of dirtyTabs) {
+        const row = document.createElement("label");
+        row.className = "dirty-row";
+        row.dataset.tabId = String(tab.id);
+        row.innerHTML = `
+            <input type="checkbox" checked />
+            <span class="dirty-name"></span>
+            <span class="dirty-path"></span>
+        `;
+        row.querySelector(".dirty-name").textContent = tab.fileName;
+        row.querySelector(".dirty-path").textContent = tab.relativePath;
+        dirtyFileList.appendChild(row);
+    }
+    dirtyOverlay.classList.remove("hidden");
+    dirtyDialogOpen = true;
+    return new Promise((resolve) => {
+        dirtyResolve = resolve;
+    });
+}
+
+function finishDirtyDialog(action) {
+    if (!dirtyDialogOpen || !dirtyResolve) return;
+    const ids = Array.from(dirtyFileList.querySelectorAll(".dirty-row"))
+        .filter((row) => row.querySelector("input").checked)
+        .map((row) => Number(row.dataset.tabId));
+    const resolve = dirtyResolve;
+    dirtyResolve = null;
+    dirtyDialogOpen = false;
+    dirtyOverlay.classList.add("hidden");
+    resolve({ action, ids });
+}
+
+async function resolveDirty(verb, onlyTabs = null) {
+    const dirty = (onlyTabs || tabs).filter((t) => t.dirty);
+    if (dirty.length === 0) return { action: "none", ids: [] };
+    const result = await showDirtyDialog(dirty, verb);
+    if (result.action === "save") {
+        for (const id of result.ids) {
+            const tab = getTabById(id);
+            if (!tab) continue;
+            const ok = await saveTabToDisk(tab);
+            if (!ok) {
+                alert(`Failed to save ${tab.fileName}. The operation was cancelled.`);
+                return { action: "error", ids: [] };
+            }
+        }
+    }
+    return result;
+}
+
+// ── Per-tab editors ─────────────────────────────────────────────────────────
+
+function buildToolbarHtml() {
+    return `
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-blockquote"></button>
+            <button class="ql-code-block"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-header" value="1"></button>
+            <button class="ql-header" value="2"></button>
+            <button class="ql-header" value="3"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-link"></button>
+            <button class="ql-image"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-table-better"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-clean"></button>
+        </span>
+    `;
+}
+
+function ensureTabPane(tab) {
+    if (tab.pane) return tab.pane;
+    const pane = document.createElement("div");
+    pane.className = "editor-pane";
+    pane.style.display = "none";
+    pane.dataset.tabId = String(tab.id);
+    tab.pane = pane;
+    editorContainer.appendChild(pane);
+    return pane;
+}
+
+function destroyQuillOnly(tab) {
+    if (tab.quillMarkdown) {
+        try {
+            tab.quillMarkdown.destroy();
+        } catch (err) {
+            console.warn("Error destroying QuillMarkdown:", err);
+        }
+        tab.quillMarkdown = null;
+    }
+    tab.quillEditor = null;
+}
+
+function destroyTabEditor(tab) {
+    destroyQuillOnly(tab);
+    if (tab.pane) {
+        tab.pane.remove();
+        tab.pane = null;
+    }
+    tab.isEditMode = false;
+    tab.isSourceMode = false;
+    tab.rawMarkdownContent = "";
+}
+
+function initQuillForTab(tab, markdown) {
+    const pane = ensureTabPane(tab);
+    pane.innerHTML = "";
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "quill-toolbar-pane";
+    toolbar.id = `quill-toolbar-${tab.id}`;
+    toolbar.innerHTML = buildToolbarHtml();
+    pane.appendChild(toolbar);
+
+    const host = document.createElement("div");
+    host.className = "quill-host";
+    pane.appendChild(host);
+
+    const htmlContent = parseMarkdownForEditor(markdown);
+    const editor = new Quill(host, {
+        modules: {
+            toolbar: `#quill-toolbar-${tab.id}`,
+            "table-better": {
+                language: "en_US",
+                menus: ["column", "row", "merge", "table", "cell", "wrap", "copy", "delete"],
+                toolbarTable: true,
+            },
+            keyboard: {
+                bindings: QuillTableBetter.keyboardBindings,
+            },
+        },
+        theme: "snow",
+        placeholder: "Start writing Markdown...",
+    });
+    const delta = editor.clipboard.convert({ html: htmlContent });
+    editor.updateContents(delta, Quill.sources.USER);
+    editor.setSelection(0, Quill.sources.SILENT);
+    tab.quillEditor = editor;
+
+    try {
+        tab.quillMarkdown = new QuillMarkdown(editor, {
+            markdownShortcut: true,
+            markdownShortcutSpaces: 1,
+            quoteText: true,
+            deleteOnBackspace: true,
+            undoLikeWord: true,
+        });
+    } catch (err) {
+        console.warn("QuillMarkdown initialization failed:", err);
+    }
+
+    editor.on("text-change", () => markTabDirty(tab));
+    showTabPane(tab);
+}
+
+function switchToSourceMode(tab) {
+    if (!tab) return;
+    const markdown = getEditorMarkdown(tab);
+    destroyQuillOnly(tab);
+
+    const pane = ensureTabPane(tab);
+    pane.innerHTML = "";
+    const textarea = document.createElement("textarea");
+    textarea.id = `source-editor-${tab.id}`;
+    textarea.className = "source-editor-pane";
+    textarea.placeholder = "Edit raw Markdown source...";
+    textarea.value = markdown;
+    textarea.addEventListener("input", () => markTabDirty(tab));
+    textarea.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value =
+                textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + 4;
+            markTabDirty(tab);
+        }
+    });
+    pane.appendChild(textarea);
+    tab.rawMarkdownContent = markdown;
+    tab.isSourceMode = true;
+    sourceCheckbox.checked = true;
+    showTabPane(tab);
+}
+
+function switchToWysiwygMode(tab) {
+    if (!tab) return;
+    const textarea = tab.pane && tab.pane.querySelector("textarea.source-editor-pane");
+    const markdown = textarea ? textarea.value : tab.rawMarkdownContent || tab.content || "";
+    tab.rawMarkdownContent = markdown;
+    tab.isSourceMode = false;
+    sourceCheckbox.checked = false;
+    initQuillForTab(tab, markdown);
+}
+
+async function enterEditMode(tab) {
+    if (!tab) return;
+    try {
+        tab.savedScrollRatio = captureRenderedScrollRatio();
+        if (tab.content === null) {
+            tab.content = await invoke("read_file", { filePath: tab.path });
+        }
+        if (getActiveTab() !== tab) return;
+
+        renderedContent.style.display = "none";
+        editorContainer.classList.remove("hidden");
+        editorContainer.style.display = "flex";
+        tab.isEditMode = true;
+        tab.isSourceMode = false;
+        initQuillForTab(tab, tab.content);
+        sourceCheckbox.checked = false;
+        isEditMode = true;
+        isSourceMode = false;
+        hasUnsavedChanges = tab.dirty;
+        updateEditorBar();
+
+        const qlEditorEl = tab.pane && tab.pane.querySelector(".ql-editor");
+        if (qlEditorEl && tab.editorScrollRatio > 0) {
+            requestAnimationFrame(() => {
+                const maxScroll = qlEditorEl.scrollHeight - qlEditorEl.clientHeight;
+                if (maxScroll > 0) qlEditorEl.scrollTop = tab.editorScrollRatio * maxScroll;
+            });
+        }
+    } catch (error) {
+        console.error("Failed to enter edit mode:", error);
+    }
+}
+
+function exitEditMode(tab, opts = {}) {
+    if (!tab) return;
+    const reRender = opts.reRender !== false;
+    destroyTabEditor(tab);
+    tab.dirty = false;
+    isEditMode = false;
+    isSourceMode = false;
+    hasUnsavedChanges = false;
+    sourceCheckbox.checked = false;
+    if (reRender && getActiveTab() === tab) {
+        editorContainer.classList.add("hidden");
+        editorContainer.style.display = "none";
+        renderedContent.style.display = "block";
+        renderMarkdown(tab.content || "");
+        restoreRenderedScrollPosition(tab.savedScrollRatio);
+    }
+    renderTabBar();
+    updateEditorBar();
+}
+
 /**
  * Convert the current Quill editor contents to Markdown.
  *
@@ -217,10 +793,9 @@ let savedScrollRatio = 0;
  * The pre-processing is non-destructive — the live editor keeps its
  * cursor, selection, and table interactivity.
  */
-function getEditorMarkdown() {
-    if (!quillEditor) return rawMarkdownContent;
-
-    const rawHtml = quillEditor.getSemanticHTML();
+function getEditorMarkdown(tab = getActiveTab()) {
+    if (!tab || !tab.quillEditor) return tab ? tab.rawMarkdownContent : "";
+    const rawHtml = tab.quillEditor.getSemanticHTML();
     const cleanedHtml = stripTableTemporaryArtifacts(rawHtml);
     return turndown.turndown(cleanedHtml);
 }
@@ -326,6 +901,7 @@ const markdownViewer = document.getElementById("markdown-viewer");
 const renderedContent = document.getElementById("rendered-content");
 const renderedContentInner = document.getElementById("rendered-content-inner");
 const currentFilePath = document.getElementById("current-file-path");
+const zoomIndicator = document.getElementById("zoom-indicator");
 const loadingIndicator = document.getElementById("loading-indicator");
 const themeToggle = document.getElementById("theme-toggle");
 const themeIconSun = document.getElementById("theme-icon-sun");
@@ -365,6 +941,14 @@ const confirmOverlay = document.getElementById("confirm-overlay");
 const confirmFileName = document.getElementById("confirm-file-name");
 const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
 const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
+const tabBar = document.getElementById("tab-bar");
+const dirtyOverlay = document.getElementById("dirty-overlay");
+const dirtyTitle = document.getElementById("dirty-title");
+const dirtyMessage = document.getElementById("dirty-message");
+const dirtyFileList = document.getElementById("dirty-file-list");
+const dirtySaveBtn = document.getElementById("dirty-save-btn");
+const dirtyDiscardBtn = document.getElementById("dirty-discard-btn");
+const dirtyCancelBtn = document.getElementById("dirty-cancel-btn");
 
 // ── Settings (theme, recents, fonts) ─────────────────────────────────────────
 
@@ -382,11 +966,17 @@ async function loadSettings() {
     if (!settings.default_font_size) settings.default_font_size = 16;
     if (!settings.header_font_size) settings.header_font_size = 32;
     if (!settings.code_font_size) settings.code_font_size = 14;
+    // Zoom is a multiplier on top of the base font sizes; legacy settings
+    // files simply fall back to 100%.
+    settings.zoom_level = snapZoomToLevel(settings.zoom_level);
     // Ensure use_gitignore is a boolean (Rust serde default is `true`, but
     // guard against any `undefined` from cached or legacy state).
     settings.use_gitignore = settings.use_gitignore !== false;
     settings.file_view = settings.file_view === "tree" ? "tree" : "list";
     settings.tree_show_all_dirs = settings.tree_show_all_dirs === true;
+    if (!settings.folder_tabs || typeof settings.folder_tabs !== "object") {
+        settings.folder_tabs = {};
+    }
     updateViewControls();
     applyTheme(settings.theme);
     applyFonts(settings.default_font, settings.header_font, settings.code_font, settings.default_font_size, settings.header_font_size, settings.code_font_size);
@@ -400,6 +990,39 @@ async function persistSettings() {
     } catch (err) {
         console.warn("Failed to save settings:", err);
     }
+}
+
+function persistSettingsDebounced() {
+    if (settingsFlushTimer) clearTimeout(settingsFlushTimer);
+    settingsFlushTimer = setTimeout(() => {
+        settingsFlushTimer = null;
+        persistSettings();
+    }, 200);
+}
+
+async function flushSettings() {
+    if (settingsFlushTimer) {
+        clearTimeout(settingsFlushTimer);
+        settingsFlushTimer = null;
+    }
+    await persistSettings();
+}
+
+function normalizePath(p) {
+    return (p || "").replace(/\\/g, "/");
+}
+
+/** Remember the open tabs for the current root folder. */
+function persistCurrentTabs(immediate = false) {
+    if (!currentFolder) return;
+    if (!settings.folder_tabs) settings.folder_tabs = {};
+    const active = getActiveTab();
+    settings.folder_tabs[normalizePath(currentFolder)] = {
+        tabs: tabs.map((t) => normalizePath(t.path)),
+        active: active ? normalizePath(active.path) : null,
+    };
+    if (immediate) flushSettings();
+    else persistSettingsDebounced();
 }
 
 // ── Theme ───────────────────────────────────────────────────────────────────
@@ -460,18 +1083,88 @@ function applyFonts(defaultFont, headerFont, codeFont, defaultFontSize, headerFo
     document.documentElement.style.setProperty("--font-mono", `'${codeFont}', 'Consolas', 'Courier New', monospace`);
     document.documentElement.style.setProperty("--md-font-mono", `'${codeFont}', 'Consolas', 'Courier New', monospace`);
 
-    // Apply font sizes
-    document.documentElement.style.setProperty("--md-font-size", `${defaultFontSize}px`);
-    document.documentElement.style.setProperty("--md-heading-base-size", `${headerFontSize}px`);
-    document.documentElement.style.setProperty("--md-code-font-size", `${codeFontSize}px`);
-
+    // Store the base sizes; applyZoom() scales them by the current zoom level
+    // and writes the final --md-* size variables.
     settings.default_font = defaultFont;
     settings.header_font = headerFont;
     settings.code_font = codeFont;
     settings.default_font_size = defaultFontSize;
     settings.header_font_size = headerFontSize;
     settings.code_font_size = codeFontSize;
+    applyZoom();
 }
+
+// ── Zoom ───────────────────────────────────────────────────────────────────
+// Chrome-style discrete zoom steps. 100 is the user's "normal" (the base
+// font sizes configured in Settings); Ctrl+0 always returns here.
+
+const ZOOM_LEVELS = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300];
+const DEFAULT_ZOOM = 100;
+const CONTENT_BASE_WIDTH = 800;
+let lastWheelZoomTime = 0;
+
+function clampZoom(level) {
+    const n = Math.round(Number(level));
+    if (!Number.isFinite(n)) return DEFAULT_ZOOM;
+    return Math.max(ZOOM_LEVELS[0], Math.min(ZOOM_LEVELS[ZOOM_LEVELS.length - 1], n));
+}
+
+function snapZoomToLevel(level) {
+    const n = clampZoom(level);
+    return ZOOM_LEVELS.reduce(
+        (best, candidate) => Math.abs(candidate - n) < Math.abs(best - n) ? candidate : best,
+        DEFAULT_ZOOM
+    );
+}
+
+/** Apply the current zoom level to the markdown/editor font-size variables. */
+function applyZoom() {
+    const zoom = snapZoomToLevel(settings.zoom_level);
+    settings.zoom_level = zoom;
+    const factor = zoom / 100;
+    const scaled = (base) => `${Math.round(base * factor * 100) / 100}px`;
+    document.documentElement.style.setProperty("--md-font-size", scaled(settings.default_font_size ?? 16));
+    document.documentElement.style.setProperty("--md-heading-base-size", scaled(settings.header_font_size ?? 32));
+    document.documentElement.style.setProperty("--md-code-font-size", scaled(settings.code_font_size ?? 14));
+    // Widen the reading column with the text so line lengths stay readable.
+    // CSS caps this at 100% of the available width (see --content-max-width).
+    document.documentElement.style.setProperty("--content-max-width", `${Math.round(CONTENT_BASE_WIDTH * factor)}px`);
+
+    zoomIndicator.textContent = `${zoom}%`;
+    zoomIndicator.classList.toggle("zoomed", zoom !== DEFAULT_ZOOM);
+    zoomIndicator.title = zoom === DEFAULT_ZOOM
+        ? "Zoom: 100% (normal). Ctrl + mouse wheel or Ctrl + / Ctrl - to change."
+        : `Zoom: ${zoom}%. Click or press Ctrl+0 to reset to 100%.`;
+}
+
+function setZoom(level) {
+    const next = snapZoomToLevel(level);
+    if (next === settings.zoom_level) return;
+    settings.zoom_level = next;
+    applyZoom();
+    persistSettingsDebounced();
+}
+
+function changeZoom(direction) {
+    const current = ZOOM_LEVELS.indexOf(settings.zoom_level);
+    const index = current === -1 ? ZOOM_LEVELS.indexOf(DEFAULT_ZOOM) : current;
+    const next = Math.max(0, Math.min(ZOOM_LEVELS.length - 1, index + direction));
+    setZoom(ZOOM_LEVELS[next]);
+}
+
+zoomIndicator.addEventListener("click", () => setZoom(DEFAULT_ZOOM));
+
+// Ctrl/Cmd + wheel zooms anywhere in the app (capture phase so scrollable
+// panes don't swallow it). The time throttle keeps trackpads from racing
+// through every step in a single gesture.
+document.addEventListener("wheel", (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.deltaY === 0) return;
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastWheelZoomTime < 100) return;
+    lastWheelZoomTime = now;
+    changeZoom(e.deltaY < 0 ? 1 : -1);
+}, { passive: false, capture: true });
 
 // ── Sidebar Toggle ──────────────────────────────────────────────────────────
 
@@ -745,7 +1438,7 @@ function renderRecentFolders() {
     `;
         li.addEventListener("click", () => {
             menuDropdown.classList.add("hidden");
-            openFolderByPath(folderPath);
+            requestOpenFolder(folderPath);
         });
         recentFoldersList.appendChild(li);
     });
@@ -764,6 +1457,16 @@ function pushRecent(folderPath) {
 
 openFolderBtn.addEventListener("click", openFolder);
 
+// Genuine project switches resolve dirty tabs first. Internal folder changes
+// (New File) call openFolderByPath directly and deliberately skip this.
+async function requestOpenFolder(folderPath) {
+    if (!folderPath) return;
+    if (currentFolder && normalizePath(folderPath) === normalizePath(currentFolder)) return;
+    const result = await resolveDirty("switch");
+    if (result.action === "cancel" || result.action === "error") return;
+    await openFolderByPath(folderPath);
+}
+
 async function openFolder() {
     try {
         const selected = await open({
@@ -774,7 +1477,7 @@ async function openFolder() {
 
         if (!selected) return;
 
-        await openFolderByPath(selected);
+        await requestOpenFolder(selected);
     } catch (error) {
         showLoading(false);
         console.error("Failed to open folder:", error);
@@ -784,6 +1487,9 @@ async function openFolder() {
 
 async function openFolderByPath(folderPath) {
     try {
+        // Persist the outgoing folder's tab set before anything is cleared.
+        if (currentFolder) persistCurrentTabs(true);
+
         currentFolder = folderPath;
         // A new project starts with the tree fully expanded.
         treeExpanded = null;
@@ -798,6 +1504,12 @@ async function openFolderByPath(folderPath) {
             folderPath,
             useGitignore: settings.use_gitignore,
         });
+
+        // The previous project's tabs were just persisted; drop their editors.
+        for (const tab of tabs) destroyTabEditor(tab);
+        tabs = [];
+        activeTabId = null;
+
         currentFiles = files;
         currentFileIndex = -1;
         updateDeleteBtnVisibility();
@@ -807,6 +1519,8 @@ async function openFolderByPath(folderPath) {
         renderFileView(files);
         updateCurrentFolderBar();
         updateOpenFolderBtnVisibility();
+        await restoreTabsForFolder();
+        if (!getActiveTab()) showWelcomeState();
     } catch (error) {
         showLoading(false);
         console.error("Failed to open folder:", error);
@@ -907,9 +1621,6 @@ async function rescanCurrentFolder() {
     treeDirs = null;
     treeDirsFolder = null;
     try {
-        // Remember which file was selected so we can re-render it after rescan
-        const selectedRelativePath = currentFileIndex >= 0 ? currentFiles[currentFileIndex]?.relative_path : null;
-
         showLoading(true);
         const files = await invoke("scan_md_files", {
             folderPath: currentFolder,
@@ -917,27 +1628,35 @@ async function rescanCurrentFolder() {
         });
         currentFiles = files;
 
-        // Try to restore the previously selected file by relative path
-        if (selectedRelativePath) {
-            const restoredIndex = files.findIndex((f) => f.relative_path === selectedRelativePath);
-            if (restoredIndex >= 0) {
-                currentFileIndex = restoredIndex;
-                updateActiveFile(restoredIndex);
-                const file = files[restoredIndex];
-                currentFilePath.textContent = file.relative_path;
-                const content = await invoke("read_file", { filePath: file.path });
-                renderMarkdown(content);
+        // Reconcile open tabs with the new scan. Dirty tabs whose file has
+        // vanished are kept (with their draft); clean ones are closed.
+        const byPath = new Map(files.map((f) => [normalizePath(f.path), f]));
+        for (const tab of [...tabs]) {
+            const file = byPath.get(tab.normalizedPath);
+            if (file) {
+                tab.relativePath = file.relative_path;
+                tab.fileName = basename(file.path);
+                tab.missing = false;
+                if (!tab.dirty) tab.content = null; // refresh from disk
+            } else if (!tab.dirty) {
+                destroyTabEditor(tab);
+                tabs.splice(tabs.indexOf(tab), 1);
+                if (activeTabId === tab.id) activeTabId = null;
             } else {
-                currentFileIndex = -1;
-                updateDeleteBtnVisibility();
+                tab.missing = true;
             }
-        } else {
-            currentFileIndex = -1;
-            updateDeleteBtnVisibility();
         }
 
         showLoading(false);
         renderFileView(files);
+        syncCurrentFileFromTab();
+        renderTabBar();
+        if (getActiveTab()) {
+            await activateTab(activeTabId, { skipPersist: true });
+        } else {
+            showWelcomeState();
+        }
+        persistCurrentTabs();
     } catch (error) {
         showLoading(false);
         console.error("Failed to rescan folder:", error);
@@ -1328,23 +2047,9 @@ function updateDeleteBtnVisibility() {
 }
 
 async function selectFile(index) {
-    if (index < 0 || index >= currentFiles.length) return;
-
-    currentFileIndex = index;
-    updateActiveFile(index);
-    revealTreeFile(index);
-
-    const file = currentFiles[index];
-    currentFilePath.textContent = file.relative_path;
-    updateDeleteBtnVisibility();
-
-    try {
-        const content = await invoke("read_file", { filePath: file.path });
-        renderMarkdown(content);
-    } catch (error) {
-        console.error("Failed to read file:", error);
-        renderedContentInner.innerHTML = `<div class="error">Error reading file: ${error}</div>`;
-    }
+    // Opening a file from the nav either focuses its existing tab or creates
+    // a new one. Unsaved edits are preserved in their own tabs.
+    await openTabForIndex(index);
 }
 
 function renderMarkdown(content) {
@@ -1402,13 +2107,14 @@ function escapeHtml(text) {
  * Capture the current scroll ratio from the active editor (WYSIWYG .ql-editor
  * or source textarea). Returns a number 0..1, or 0 if not scrollable.
  */
-function captureEditorScrollRatio() {
-    if (isSourceMode) {
-        const textarea = document.getElementById("source-editor");
+function captureEditorScrollRatio(tab = getActiveTab()) {
+    if (!tab || !tab.pane) return 0;
+    if (tab.isSourceMode) {
+        const textarea = tab.pane.querySelector("textarea.source-editor-pane");
         if (!textarea || textarea.scrollHeight <= textarea.clientHeight) return 0;
         return textarea.scrollTop / (textarea.scrollHeight - textarea.clientHeight);
     }
-    const qlEditor = document.querySelector('.ql-editor');
+    const qlEditor = tab.pane.querySelector(".ql-editor");
     if (!qlEditor || qlEditor.scrollHeight <= qlEditor.clientHeight) return 0;
     return qlEditor.scrollTop / (qlEditor.scrollHeight - qlEditor.clientHeight);
 }
@@ -1426,7 +2132,52 @@ function restoreRenderedScrollPosition(ratio) {
 
 // ── Keyboard navigation ─────────────────────────────────────────────────────
 
+function cycleTab(delta) {
+    if (tabs.length < 2) return;
+    const index = tabs.findIndex((t) => t.id === activeTabId);
+    const next = tabs[(index + delta + tabs.length) % tabs.length];
+    activateTab(next.id);
+}
+
 document.addEventListener("keydown", (e) => {
+    const modifier = e.ctrlKey || e.metaKey;
+    if (modifier && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        const tab = getActiveTab();
+        if (tab && tab.isEditMode) saveCurrentFile();
+        return;
+    }
+    if (modifier && e.key.toLowerCase() === "w") {
+        e.preventDefault();
+        if (activeTabId !== null) closeTab(activeTabId);
+        return;
+    }
+    if (modifier && (e.key === "Tab" || e.key === "PageDown")) {
+        e.preventDefault();
+        cycleTab(1);
+        return;
+    }
+    if (modifier && e.key === "PageUp") {
+        e.preventDefault();
+        cycleTab(-1);
+        return;
+    }
+    // Zoom shortcuts work even with no folder open, so they sit above the guard.
+    if (modifier && (e.key === "0" || e.code === "Numpad0")) {
+        e.preventDefault();
+        setZoom(DEFAULT_ZOOM);
+        return;
+    }
+    if (modifier && (e.key === "+" || e.key === "=" || e.code === "Equal" || e.code === "NumpadAdd")) {
+        e.preventDefault();
+        changeZoom(1);
+        return;
+    }
+    if (modifier && (e.key === "-" || e.key === "_" || e.code === "Minus" || e.code === "NumpadSubtract")) {
+        e.preventDefault();
+        changeZoom(-1);
+        return;
+    }
     if (currentFiles.length === 0) return;
 
     // Don't intercept arrow keys while in edit mode — let the editor handle them
@@ -1438,21 +2189,14 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         const prev = Math.max(currentFileIndex - 1, 0);
         selectFile(prev);
-    } else if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+    } else if (modifier && e.key.toLowerCase() === "n") {
         e.preventDefault();
         createNewFile();
-    } else if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-        e.preventDefault();
-        if (isEditMode) {
-            saveCurrentFile();
-        }
     }
 });
 
 // ── Edit Mode ────────────────────────────────────────────────────────────────
 
-let quillEditor = null;
-let quillMarkdown = null;
 const turndown = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
@@ -1467,8 +2211,9 @@ const turndown = new TurndownService({
 turndown.use(gfm);
 
 editToggleBtn.addEventListener("click", async () => {
-    if (currentFileIndex < 0) return;
-    await enterEditMode();
+    const tab = getActiveTab();
+    if (!tab) return;
+    await enterEditMode(tab);
 });
 
 saveBtn.addEventListener("click", async () => {
@@ -1476,7 +2221,14 @@ saveBtn.addEventListener("click", async () => {
 });
 
 cancelBtn.addEventListener("click", () => {
-    exitEditMode();
+    exitEditMode(getActiveTab());
+});
+
+sourceCheckbox.addEventListener("change", () => {
+    const tab = getActiveTab();
+    if (!tab || !tab.isEditMode) return;
+    if (sourceCheckbox.checked) switchToSourceMode(tab);
+    else switchToWysiwygMode(tab);
 });
 
 // ── Delete File ──────────────────────────────────────────────────────────────
@@ -1504,352 +2256,38 @@ confirmDeleteBtn.addEventListener("click", async () => {
     if (currentFileIndex < 0) return;
     const file = currentFiles[currentFileIndex];
     const deletedPath = file.path;
+    const deletedTab = getTabByPath(deletedPath);
+    const tabIndex = deletedTab ? tabs.indexOf(deletedTab) : -1;
 
     closeDeleteConfirm();
 
     try {
         await invoke("delete_file", { filePath: deletedPath });
 
-        // Remove the file from the current list
-        currentFiles = currentFiles.filter((f) => f.path !== deletedPath);
-
-        // If the list is now empty, show empty state
-        if (currentFiles.length === 0) {
-            currentFileIndex = -1;
-            updateDeleteBtnVisibility();
-            renderFileView(currentFiles);
-            welcome.classList.remove("hidden");
-            markdownViewer.classList.add("hidden");
-            return;
+        currentFiles = currentFiles.filter((f) => normalizePath(f.path) !== normalizePath(deletedPath));
+        if (deletedTab) {
+            destroyTabEditor(deletedTab);
+            tabs.splice(tabIndex, 1);
+            if (activeTabId === deletedTab.id) activeTabId = null;
         }
-
-        // Otherwise, select the file at the same index (or the last one)
-        const newIndex = Math.min(currentFileIndex, currentFiles.length - 1);
-
-        // Reset index temporarily to avoid stale state during re-render
-        currentFileIndex = -1;
-        updateDeleteBtnVisibility();
-
         renderFileView(currentFiles);
-        await selectFile(newIndex);
+
+        if (getActiveTab()) {
+            await activateTab(activeTabId, { skipPersist: true });
+        } else if (tabs.length > 0) {
+            await activateTab(tabs[0].id, { skipPersist: true });
+        } else if (currentFiles.length > 0) {
+            const newIndex = Math.min(Math.max(tabIndex, 0), currentFiles.length - 1);
+            await selectFile(newIndex);
+        } else {
+            showWelcomeState();
+        }
+        persistCurrentTabs();
     } catch (error) {
         console.error("Failed to delete file:", error);
         alert(`Error deleting file: ${error}`);
     }
 });
-
-sourceCheckbox.addEventListener("change", () => {
-    if (sourceCheckbox.checked) {
-        switchToSourceMode();
-    } else {
-        switchToWysiwygMode();
-    }
-});
-
-function switchToSourceMode() {
-    isSourceMode = true;
-
-    // Convert the live editor contents to Markdown. `getEditorMarkdown()`
-    // strips the attoae table-temporary blots so tables come out as
-    // proper GFM pipe-tables in the source view.
-    let md = getEditorMarkdown();
-
-    // Destroy Quill editor
-    if (quillMarkdown) {
-        try { quillMarkdown.destroy(); } catch (err) { /* ignore */ }
-        quillMarkdown = null;
-    }
-    quillEditor = null;
-
-    // Replace editor container with textarea
-    editorContainer.innerHTML = '<textarea id="source-editor" placeholder="Edit raw Markdown source..."></textarea>';
-    const textarea = document.getElementById("source-editor");
-    textarea.value = md;
-
-    // Track changes
-    textarea.addEventListener("input", () => {
-        hasUnsavedChanges = true;
-    });
-
-    // Handle Tab key for indentation
-    textarea.addEventListener("keydown", (e) => {
-        if (e.key === "Tab") {
-            e.preventDefault();
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            textarea.value = textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
-            textarea.selectionStart = textarea.selectionEnd = start + 4;
-            hasUnsavedChanges = true;
-        }
-    });
-}
-
-function switchToWysiwygMode() {
-    isSourceMode = false;
-
-    // Get current markdown from textarea
-    const textarea = document.getElementById("source-editor");
-    const md = textarea ? textarea.value : rawMarkdownContent;
-    rawMarkdownContent = md;
-
-    // Clear container and recreate Quill
-    editorContainer.innerHTML = '<div id="quill-editor"></div>';
-
-    // Recreate toolbar
-    const toolbarContainer = document.createElement('div');
-    toolbarContainer.id = 'quill-toolbar';
-    toolbarContainer.innerHTML = `
-        <span class="ql-formats">
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-header" value="1"></button>
-            <button class="ql-header" value="2"></button>
-            <button class="ql-header" value="3"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-list" value="bullet"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-link"></button>
-            <button class="ql-image"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-table-better"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-clean"></button>
-        </span>
-    `;
-    editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
-
-    // Convert Markdown to HTML for Quill
-    const htmlContent = parseMarkdownForEditor(md);
-
-    // Initialize Quill
-    quillEditor = new Quill('#quill-editor', {
-        modules: {
-            toolbar: '#quill-toolbar',
-            'table-better': {
-                language: 'en_US',
-                menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'copy', 'delete'],
-                toolbarTable: true,
-            },
-            keyboard: {
-                bindings: QuillTableBetter.keyboardBindings,
-            },
-        },
-        theme: 'snow',
-        placeholder: 'Start writing Markdown...',
-    });
-
-    // Populate the editor. Use clipboard.convert + updateContents so the
-    // table-better module recognises the resulting table blots.
-    // (setContents/dangerouslyPasteHTML would leave tables inert.)
-    const delta = quillEditor.clipboard.convert({ html: htmlContent });
-    quillEditor.updateContents(delta, Quill.sources.USER);
-
-    // Set cursor at the beginning so the editor doesn't scroll to the bottom
-    quillEditor.setSelection(0, Quill.sources.SILENT);
-
-    try {
-        quillMarkdown = new QuillMarkdown(quillEditor, {
-            markdownShortcut: true,
-            markdownShortcutSpaces: 1,
-            quoteText: true,
-            deleteOnBackspace: true,
-            undoLikeWord: true,
-        });
-    } catch (err) {
-        console.warn("QuillMarkdown initialization failed:", err);
-    }
-
-    quillEditor.on('text-change', () => {
-        hasUnsavedChanges = true;
-    });
-}
-
-async function enterEditMode() {
-    const file = currentFiles[currentFileIndex];
-    try {
-        // Save scroll position as a ratio before hiding rendered content
-        if (renderedContent.scrollHeight > renderedContent.clientHeight) {
-            savedScrollRatio = renderedContent.scrollTop / (renderedContent.scrollHeight - renderedContent.clientHeight);
-        } else {
-            savedScrollRatio = 0;
-        }
-
-        const markdownContent = await invoke("read_file", { filePath: file.path });
-
-        // Hide rendered content
-        renderedContent.style.display = "none";
-
-        // Store raw markdown for source mode
-        rawMarkdownContent = markdownContent;
-
-        // Show editor container
-        editorContainer.style.display = "block";
-
-        // Clear any existing content in the container
-        editorContainer.innerHTML = '<div id="quill-editor"></div>';
-
-        // Create toolbar container
-        const toolbarContainer = document.createElement('div');
-        toolbarContainer.id = 'quill-toolbar';
-        toolbarContainer.innerHTML = `
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-blockquote"></button>
-                <button class="ql-code-block"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-header" value="1"></button>
-                <button class="ql-header" value="2"></button>
-                <button class="ql-header" value="3"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-link"></button>
-                <button class="ql-image"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-table-better"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-clean"></button>
-            </span>
-        `;
-        editorContainer.insertBefore(toolbarContainer, editorContainer.firstChild);
-
-        // Convert Markdown to HTML for Quill display
-        const htmlContent = parseMarkdownForEditor(markdownContent);
-
-        // Initialize Quill editor
-        quillEditor = new Quill('#quill-editor', {
-            modules: {
-                toolbar: '#quill-toolbar',
-                'table-better': {
-                    language: 'en_US',
-                    menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'copy', 'delete'],
-                    toolbarTable: true,
-                },
-                keyboard: {
-                    bindings: QuillTableBetter.keyboardBindings,
-                },
-            },
-            theme: 'snow',
-            placeholder: 'Start writing Markdown...',
-        });
-
-        // Populate the editor. Use clipboard.convert + updateContents so the
-        // table-better module recognises the resulting table blots.
-        // (setContents/dangerouslyPasteHTML would leave tables inert.)
-        const delta = quillEditor.clipboard.convert({ html: htmlContent });
-        quillEditor.updateContents(delta, Quill.sources.USER);
-
-        // Set cursor at the beginning so the editor doesn't scroll to the bottom
-        quillEditor.setSelection(0, Quill.sources.SILENT);
-
-        // Restore the saved scroll position in the editor
-        const qlEditorEl = document.querySelector('.ql-editor');
-        if (qlEditorEl && savedScrollRatio > 0) {
-            requestAnimationFrame(() => {
-                // Need to wait for layout to settle after content is rendered
-                const maxScroll = qlEditorEl.scrollHeight - qlEditorEl.clientHeight;
-                if (maxScroll > 0) {
-                    qlEditorEl.scrollTop = savedScrollRatio * maxScroll;
-                }
-            });
-        }
-
-        // Enable QuillMarkdown plugin for Markdown shortcuts
-        try {
-            quillMarkdown = new QuillMarkdown(quillEditor, {
-                markdownShortcut: true,
-                markdownShortcutSpaces: 1,
-                quoteText: true,
-                deleteOnBackspace: true,
-                undoLikeWord: true,
-            });
-        } catch (err) {
-            console.warn("QuillMarkdown initialization failed, continuing without it:", err);
-        }
-
-        // Track changes — `rawMarkdownContent` is refreshed on demand by
-        // `getEditorMarkdown()` (used by save and source-mode toggle), not on
-        // every keystroke, because round-tripping through turndown destroys
-        // the attoae module's table format if the temp blots are present.
-        quillEditor.on('text-change', () => {
-            hasUnsavedChanges = true;
-        });
-
-        // Update UI
-        isEditMode = true;
-        isSourceMode = false;
-        sourceCheckbox.checked = false;
-        editToggleBtn.style.display = "none";
-        editActions.style.display = "flex";
-        sourceCheckboxLabel.style.display = "";
-        menuSaveItem.classList.remove("hidden");
-        menuSaveAsItem.classList.remove("hidden");
-        menuEditDivider.classList.remove("hidden");
-
-    } catch (error) {
-        console.error("Failed to enter edit mode:", error);
-    }
-}
-
-function exitEditMode() {
-    // Clean up QuillMarkdown if initialized
-    if (quillMarkdown) {
-        try {
-            quillMarkdown.destroy();
-        } catch (err) {
-            console.warn("Error destroying QuillMarkdown:", err);
-        }
-        quillMarkdown = null;
-    }
-
-    // Destroy Quill editor
-    quillEditor = null;
-
-    // Clear editor container
-    editorContainer.innerHTML = '';
-
-    // Hide editor container
-    editorContainer.style.display = "none";
-
-    // Show rendered content
-    renderedContent.style.display = "block";
-
-    // Update UI
-    isEditMode = false;
-    isSourceMode = false;
-    hasUnsavedChanges = false;
-    sourceCheckbox.checked = false;
-    editActions.style.display = "none";
-    sourceCheckboxLabel.style.display = "none";
-    editToggleBtn.style.display = "";
-    menuSaveItem.classList.add("hidden");
-    menuSaveAsItem.classList.add("hidden");
-    menuEditDivider.classList.add("hidden");
-}
 
 // ── Save/Save As ─────────────────────────────────────────────────────────────
 
@@ -1862,109 +2300,118 @@ menuSaveAsItem.addEventListener("click", async () => {
 });
 
 async function saveCurrentFile() {
-    if (currentFileIndex < 0) return;
+    const tab = getActiveTab();
+    if (!tab || currentFileIndex < 0) return;
 
-    const file = currentFiles[currentFileIndex];
-
-    let markdownContent;
-    if (isSourceMode) {
-        // Source mode: read directly from textarea — no conversion needed
-        const sourceTextarea = document.getElementById("source-editor");
-        markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
-    } else {
-        // WYSIWYG mode: get clean HTML from Quill (strips table-temporary
-        // blots so turndown produces a proper GFM table), then convert.
-        markdownContent = getEditorMarkdown();
-    }
-
+    const markdown = getTabMarkdown(tab);
+    const editorScrollRatio = captureEditorScrollRatio(tab);
     try {
-        await invoke("write_file", { filePath: file.path, content: markdownContent });
+        await invoke("write_file", { filePath: tab.path, content: markdown });
+        tab.dirty = false;
+        tab.content = markdown;
         hasUnsavedChanges = false;
 
-        // Update file path if it was new
-        if (file.path.endsWith('.tmp') || !file.path.endsWith('.md')) {
-            file.path = file.path; // Keep the same path
-        }
-        currentFiles[currentFileIndex] = file;
-
-        // Save editor scroll ratio before re-rendering
-        const editorScrollRatio = captureEditorScrollRatio();
-
-        // Re-render markdown
-        renderMarkdown(markdownContent);
-
-        // Restore scroll position on rendered content
+        exitEditMode(tab, { reRender: false });
+        renderedContent.style.display = "block";
+        editorContainer.classList.add("hidden");
+        renderMarkdown(markdown);
         restoreRenderedScrollPosition(editorScrollRatio);
-
-        // Exit edit mode
-        exitEditMode();
+        renderTabBar();
+        persistCurrentTabs();
     } catch (error) {
         console.error("Failed to save file:", error);
+        alert(`Failed to save ${tab.fileName}: ${error}`);
     }
 }
 
 async function saveFileAs() {
-    let markdownContent;
-    if (isSourceMode) {
-        const sourceTextarea = document.getElementById("source-editor");
-        markdownContent = sourceTextarea ? sourceTextarea.value : rawMarkdownContent;
-    } else {
-        markdownContent = getEditorMarkdown();
-    }
+    const tab = getActiveTab();
+    if (!tab) return;
 
+    const markdown = getTabMarkdown(tab);
     try {
         const path = await save({
             filters: [{
                 name: "Markdown",
                 extensions: ["md", "markdown"],
             }],
-            defaultPath: "untitled.md",
+            defaultPath: tab.fileName,
         });
+        if (!path) return;
 
-        if (path) {
-            await invoke("write_file", { filePath: path, content: markdownContent });
+        await invoke("write_file", { filePath: path, content: markdown });
+        const editorScrollRatio = captureEditorScrollRatio(tab);
+        exitEditMode(tab, { reRender: false });
 
-            // Update current file path
-            if (currentFileIndex >= 0) {
-                currentFiles[currentFileIndex].path = path;
-            }
-
-            // Save editor scroll ratio before re-rendering
-            const editorScrollRatio = captureEditorScrollRatio();
-
-            // Re-render markdown
-            renderMarkdown(markdownContent);
-
-            // Restore scroll position on rendered content
-            restoreRenderedScrollPosition(editorScrollRatio);
-
-            // Exit edit mode
-            exitEditMode();
+        // Re-key the tab (and the in-memory file entry) to the new path.
+        const oldNormalized = tab.normalizedPath;
+        tab.path = path;
+        tab.normalizedPath = normalizePath(path);
+        tab.fileName = basename(path);
+        const fileEntry = currentFiles.find((f) => normalizePath(f.path) === oldNormalized);
+        if (fileEntry) {
+            fileEntry.path = path;
+            fileEntry.name = tab.fileName;
         }
+        const index = currentFiles.findIndex((f) => normalizePath(f.path) === tab.normalizedPath);
+        tab.relativePath = index >= 0 ? currentFiles[index].relative_path : tab.fileName + " (outside folder)";
+        tab.missing = false;
+        tab.dirty = false;
+        tab.content = markdown;
+        hasUnsavedChanges = false;
+
+        renderedContent.style.display = "block";
+        editorContainer.classList.add("hidden");
+        renderMarkdown(markdown);
+        restoreRenderedScrollPosition(editorScrollRatio);
+        syncCurrentFileFromTab();
+        renderTabBar();
+        persistCurrentTabs();
     } catch (error) {
         console.error("Failed to save file as:", error);
+        alert(`Failed to save file: ${error}`);
     }
 }
 
-// ── Unsaved Changes Warning ──────────────────────────────────────────────────
+// ── Dirty dialog + app close ─────────────────────────────────────────────────
 
-function checkUnsavedChanges() {
-    if (hasUnsavedChanges && isEditMode) {
-        if (!confirm("You have unsaved changes. Do you want to discard them?")) {
-            return false;
-        }
-        // Discard changes and exit edit mode
-        exitEditMode();
+dirtySaveBtn.addEventListener("click", () => finishDirtyDialog("save"));
+dirtyDiscardBtn.addEventListener("click", () => finishDirtyDialog("discard"));
+dirtyCancelBtn.addEventListener("click", () => finishDirtyDialog("cancel"));
+
+async function setupWindowCloseHandler() {
+    try {
+        const appWindow = getCurrentWindow();
+        await appWindow.onCloseRequested(async (event) => {
+            if (closeDialogOpen) {
+                event.preventDefault();
+                return;
+            }
+            const dirty = tabs.filter((t) => t.dirty);
+            if (dirty.length === 0) {
+                await flushSettings();
+                return; // no preventDefault → Tauri closes the window
+            }
+
+            event.preventDefault();
+            closeDialogOpen = true;
+            try {
+                const result = await resolveDirty("quit");
+                if (result.action === "cancel" || result.action === "error") return;
+                await flushSettings();
+                await appWindow.destroy();
+            } catch (error) {
+                console.error("Failed during application close:", error);
+            } finally {
+                closeDialogOpen = false;
+            }
+        });
+    } catch (error) {
+        console.warn("Window close handler unavailable (browser preview?):", error);
     }
-    return true;
 }
 
-// Override selectFile to check for unsaved changes
-const originalSelectFile = selectFile;
-selectFile = async function (index) {
-    if (!checkUnsavedChanges()) return;
-    await originalSelectFile(index);
-};
+setupWindowCloseHandler();
 
 // ── Highlight.js theme ──────────────────────────────────────────────────────
 

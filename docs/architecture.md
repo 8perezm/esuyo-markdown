@@ -59,6 +59,13 @@ Two edit modes share one save path:
 - On save, live editor HTML is cleaned (`src/main.js:215-280` strips `table-temporary` blots, unwraps `<p>` in cells) then `turndown.turndown(html)` produces GFM Markdown (`src/main.js:207-213`).
 - `write_file({ filePath, content })` writes bytes (`src-tauri/src/lib.rs:258-261`). **Save As** uses `pick_save_file` (default name `untitled.md`, `src-tauri/src/lib.rs:276-294`) then `write_file`.
 
+### Tabs, folder switches and quitting
+
+- The frontend keeps a `tabs[]` array keyed by absolute file path; `selectFile()` opens-or-focuses a tab. Each tab owns its draft state, edit/source mode, scroll ratios and (created lazily on first edit) its own Quill instance in a separate pane, so switching tabs preserves in-progress edits without a Markdown round-trip.
+- Closing a tab, switching to a different root folder, and quitting the app all share one unsaved-changes dialog (Save selected / Discard / Cancel). Folder switches and app exit abort if a file write fails.
+- Open tabs and the active tab are persisted per root folder in `settings.folder_tabs`; they are written on every tab mutation and before a folder switch, and restored in `openFolderByPath()` by matching the stored paths against the fresh scan. Drafts themselves are not persisted — restored tabs reload from disk.
+- Quitting uses `getCurrentWindow().onCloseRequested()`; it requires `core:window:allow-destroy` in `src-tauri/capabilities/default.json` (not part of `core:default`) so the window can actually close after the handler resolves.
+
 ### 4. Other mutations
 
 - **New file:** `createNewFile` (`src/main.js:786`) prompts / saves `untitled.md`-style content via `write_file`, then re-scans the parent folder.

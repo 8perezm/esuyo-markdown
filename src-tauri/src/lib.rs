@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use tauri::Manager;
@@ -12,10 +12,24 @@ pub struct MarkdownFile {
     pub relative_path: String,
 }
 
+/// The set of tabs last open in one root folder. Paths are absolute and
+/// normalized to forward slashes. Stored per folder so reopening a project
+/// restores its working tabs (and which one was active).
+#[derive(Debug, Serialize, Deserialize, Default, Clone)]
+pub struct FolderTabs {
+    #[serde(default)]
+    pub tabs: Vec<String>,
+    #[serde(default)]
+    pub active: Option<String>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct AppSettings {
     /// Last opened folders, newest first. Capped to 10.
     pub recent_folders: Vec<String>,
+    /// Tabs last open in each root folder, keyed by normalized folder path.
+    #[serde(default)]
+    pub folder_tabs: HashMap<String, FolderTabs>,
     /// "light" | "dark"
     pub theme: String,
     /// Google Font name for body text
@@ -30,6 +44,10 @@ pub struct AppSettings {
     pub header_font_size: Option<u32>,
     /// Code font size in px
     pub code_font_size: Option<u32>,
+    /// UI zoom level as a percentage (100 = normal). Applied on top of the
+    /// configured font sizes by Ctrl+wheel / Ctrl++ / Ctrl+- / Ctrl+0.
+    #[serde(default = "default_zoom_level")]
+    pub zoom_level: u32,
     /// When true, `scan_md_files` honors `.gitignore` and the built-in
     /// ignore list. When false, every `.md`/`.markdown` file in the tree
     /// is returned (so the user can peek at docs in `node_modules/`, etc.).
@@ -51,6 +69,10 @@ fn default_true() -> bool {
 
 fn default_file_view() -> String {
     "list".to_string()
+}
+
+fn default_zoom_level() -> u32 {
+    100
 }
 
 // ── Built-in ignore list ────────────────────────────────────────────────────
@@ -118,6 +140,26 @@ fn save_settings(app: tauri::AppHandle, settings: AppSettings) -> Result<(), Str
     }
     settings.recent_folders.retain(|p| seen.insert(p.clone()));
     settings.recent_folders.truncate(10);
+
+    // Normalize per-folder tab paths, cap each list, and drop entries for
+    // folders that are no longer in the recent list so this map cannot grow
+    // without bound.
+    let mut normalized_tabs = HashMap::new();
+    for (folder, mut entry) in std::mem::take(&mut settings.folder_tabs) {
+        let key = folder.replace('\\', "/");
+        for p in &mut entry.tabs {
+            *p = p.replace('\\', "/");
+        }
+        entry.tabs.truncate(30);
+        if let Some(active) = &mut entry.active {
+            *active = active.replace('\\', "/");
+        }
+        normalized_tabs.insert(key, entry);
+    }
+    let allowed: HashSet<String> = settings.recent_folders.iter().cloned().collect();
+    normalized_tabs.retain(|folder, _| allowed.contains(folder));
+    settings.folder_tabs = normalized_tabs;
+
     let json =
         serde_json::to_string_pretty(&settings).map_err(|e| format!("Serialize: {}", e))?;
     fs::write(&path, json).map_err(|e| format!("Write settings: {}", e))?;

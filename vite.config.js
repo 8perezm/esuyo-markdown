@@ -16,6 +16,7 @@ const prebundle = [
     "highlight.js",
     "turndown",
     "turndown-plugin-gfm",
+    "@tauri-apps/api/window",
 ];
 
 export default defineConfig(async () => ({

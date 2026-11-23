@@ -30,7 +30,7 @@
   font-size: var(--md-font-size, 16px);
   line-height: 1.75;
   color: var(--md-text-color);
-  max-width: 800px;
+  max-width: min(var(--content-max-width, 800px), 100%);
   margin: 0 auto;
 }
 

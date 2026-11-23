@@ -62,7 +62,9 @@ Normalizes (`\` → `/`), dedupes, caps `recent_folders` at 10, then pretty-writ
 | `default_font_size` | `number \| null` | px; fallback `16` |
 | `header_font_size` | `number \| null` | px base for h1; fallback `32` |
 | `code_font_size` | `number \| null` | px; fallback `14` |
+| `zoom_level` | `number` | Percentage multiplier on the font sizes above: `50 \| 67 \| 75 \| 80 \| 90 \| 100 \| 110 \| 125 \| 150 \| 175 \| 200 \| 250 \| 300`. `#[serde(default = "default_zoom_level")]` — old files without the key load as `100` |
 | `use_gitignore` | `boolean` | `#[serde(default = "default_true")]` — old files without the key load as `true` |
+| `folder_tabs` | `object` | `#[serde(default)]` — per-folder tab state: normalized folder path → `{ tabs: string[], active: string \| null }`. Paths normalized to `/`, max 30 tabs per folder, entries pruned when the folder leaves `recent_folders` |
 
 JS-side defaults are applied in `src/main.js:356-361`. Storage path is `<app_data_dir>/settings.json` (`src-tauri/src/lib.rs:56-63`).
 
@@ -70,12 +72,21 @@ JS-side defaults are applied in `src/main.js:356-361`. Storage path is `<app_dat
 
 | Keys | Action | Condition |
 |------|--------|-----------|
-| `ArrowDown` / `ArrowUp` | Next / previous file | Read mode only (not while editing) |
+| `ArrowDown` / `ArrowUp` | Next / previous file (opens/focuses its tab) | Read mode only (not while editing) |
 | `Ctrl/⌘ + N` | New file | Always |
-| `Ctrl/⌘ + S` | Save | Edit mode only |
+| `Ctrl/⌘ + S` | Save active tab | Edit mode only |
+| `Ctrl/⌘ + W` | Close active tab (offers to save if dirty) | Always |
+| `Ctrl/⌘ + Tab` / `Ctrl/⌘ + PageDown` | Next tab | Always |
+| `Ctrl/⌘ + PageUp` | Previous tab | Always |
+| `Ctrl/⌘ + +` (or `=`) | Zoom in one step | Always |
+| `Ctrl/⌘ + -` | Zoom out one step | Always |
+| `Ctrl/⌘ + 0` | Reset zoom to `100%` | Always |
+| `Ctrl/⌘ + mouse wheel` | Zoom in / out (up / down), throttled; works anywhere in the app | Always |
 
-Arrow keys are deliberately not intercepted in edit mode so Quill/the textarea keeps them.
+Zoom is applied by scaling `--md-font-size`, `--md-heading-base-size` and `--md-code-font-size` on `:root`, so it affects both the rendered Markdown view and the WYSIWYG/source editors. It also scales `--content-max-width` (from an 800px base) so the reading column widens with the text, capped at `100%` of the available window width via `min()`. The `100%` indicator in the editor bar is clickable to reset.
+
+Arrow keys are deliberately not intercepted in edit mode so Quill/the textarea keeps them. Middle-clicking a tab also closes it.
 
 ## Capabilities (`src-tauri/capabilities/default.json`)
 
-Window `main` is granted `core:default`, `dialog:allow-open`, `dialog:allow-save`, `dialog:default`. No other plugins (shell, http, fs-extra) are enabled — file access goes only through the 8 commands above.
+Window `main` is granted `core:default`, `core:window:allow-destroy` (required so the close-requested handler can quit after resolving unsaved tabs), `dialog:allow-open`, `dialog:allow-save`, `dialog:default`. No other plugins (shell, http, fs-extra) are enabled — file access goes only through the 8 commands above.
