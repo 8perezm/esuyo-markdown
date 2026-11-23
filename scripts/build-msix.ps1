@@ -5,8 +5,12 @@
 
 .DESCRIPTION
   1. Resolves the 4-part MSIX version from a 3-part semver (appends .0).
-  2. Finds the built exe in src-tauri/target/release.
-  3. Copies exe + required logos into a staging dir.
+  2. Finds the built exe (src-tauri/target/release or $env:CARGO_TARGET_DIR/release).
+  3. Copies exe + WebView2Loader.dll + required logos into a staging dir.
+     The GNU Rust toolchain links the WebView2 loader dynamically, so the DLL
+     MUST sit next to the exe or the app fails to start with "WebView2Loader.dll
+     was not found". Tauri's webviewInstallMode only affects MSI/NSIS installers,
+     not this hand-packed MSIX.
   4. Expands src-tauri/msix/AppxManifest.template.xml tokens.
   5. Runs makeappx.exe pack (unsigned — the Store signs on submission).
 
@@ -77,21 +81,34 @@ foreach ($p in $quadVersion.Split('.')) {
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$releaseDir = Join-Path $repoRoot "src-tauri/target/release"
 $templatePath = Join-Path $repoRoot "src-tauri/msix/AppxManifest.template.xml"
+$msixDir = Join-Path $repoRoot "src-tauri/msix"
 $iconsDir = Join-Path $repoRoot "src-tauri/icons"
 $stagingDir = Join-Path $repoRoot "src-tauri/target/msix/staging"
 $outDir = Join-Path $repoRoot "src-tauri/target/msix"
 
+# The Tauri CLI writes to src-tauri/target/release by default, but a global
+# CARGO_TARGET_DIR (common on developer machines) moves it elsewhere.
+$localReleaseDir = Join-Path $repoRoot "src-tauri/target/release"
+$cargoReleaseDir = if ($env:CARGO_TARGET_DIR) { Join-Path $env:CARGO_TARGET_DIR "release" } else { $null }
+$releaseDirs = @($localReleaseDir)
+if ($cargoReleaseDir -and $cargoReleaseDir -ne $localReleaseDir) { $releaseDirs += $cargoReleaseDir }
+$releaseDir = $releaseDirs | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+
 if (-not (Test-Path -LiteralPath $templatePath)) { throw "Manifest template not found: $templatePath" }
-if (-not (Test-Path -LiteralPath $releaseDir)) { throw "Release dir not found: $releaseDir. Run 'npx tauri build --no-bundle' first." }
+if (-not $releaseDir) {
+  throw "Release dir not found in: $($releaseDirs -join ', '). Run 'npx tauri build --no-bundle' first."
+}
 
 # ── 2. Find the built exe (package name esuyo-markdown, fallback to product name) ──
 $candidates = @("esuyo-markdown.exe", "Esuyo Markdown.exe", "EsuyoMarkdown.exe")
 $exePath = $null
-foreach ($name in $candidates) {
-  $p = Join-Path $releaseDir $name
-  if (Test-Path -LiteralPath $p) { $exePath = $p; break }
+foreach ($dir in $releaseDirs) {
+  foreach ($name in $candidates) {
+    $p = Join-Path $dir $name
+    if (Test-Path -LiteralPath $p) { $exePath = $p; break }
+  }
+  if ($exePath) { break }
 }
 if (-not $exePath) {
   $exePath = Get-ChildItem -LiteralPath $releaseDir -Filter "*.exe" -File -ErrorAction SilentlyContinue |
@@ -111,6 +128,20 @@ New-Item -ItemType Directory -Path $assetsDir -Force | Out-Null
 
 Copy-Item -LiteralPath $exePath -Destination (Join-Path $stagingDir $exeName) -Force
 
+# WebView2Loader.dll must be beside the exe. The GNU build copies it into the
+# cargo target dir; fall back to the vendored copy in src-tauri/msix/.
+$loaderName = "WebView2Loader.dll"
+$loaderCandidates = @(
+  (Join-Path (Split-Path -Parent $exePath) $loaderName),
+  (Join-Path $msixDir "WebView2Loader-$Architecture.dll")
+)
+$loaderPath = $loaderCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+if (-not $loaderPath) {
+  throw "No $loaderName found for $Architecture. Checked: $($loaderCandidates -join ', ')."
+}
+Copy-Item -LiteralPath $loaderPath -Destination (Join-Path $stagingDir $loaderName) -Force
+Write-Host "Using WebView2 loader: $loaderPath"
+
 $requiredLogos = @(
   "StoreLogo.png",
   "Square44x44Logo.png",
@@ -129,6 +160,7 @@ $manifest = $manifest.Replace("__IDENTITY_NAME__", $IdentityName)
 $manifest = $manifest.Replace("__PUBLISHER__", $Publisher)
 $manifest = $manifest.Replace("__VERSION_QUAD__", $quadVersion)
 $manifest = $manifest.Replace("__EXE_NAME__", $exeName)
+$manifest = $manifest.Replace("__ARCHITECTURE__", $Architecture)
 $manifest = $manifest.Replace("__DISPLAY_NAME__", $DisplayName)
 $manifest = $manifest.Replace("__PUBLISHER_DISPLAY_NAME__", $PublisherDisplayName)
 $manifest = $manifest.Replace("__DESCRIPTION__", $Description)
@@ -142,6 +174,13 @@ $makeappx = Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin" -Fi
 if (-not $makeappx) { throw "makeappx.exe not found. Install the Windows 10/11 SDK." }
 Write-Host "Using makeappx: $makeappx"
 
+# Sanity-check the staged package before packing.
+$staged = Get-ChildItem -LiteralPath $stagingDir -File | Select-Object -ExpandProperty Name
+foreach ($required in @($exeName, $loaderName, "AppxManifest.xml")) {
+  if ($required -notin $staged) { throw "Required file missing from staging dir: $required" }
+}
+Write-Host "Staged files: $($staged -join ', ')"
+
 if (-not (Test-Path -LiteralPath $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
 $msixName = "$($IdentityName)_${quadVersion}_${Architecture}.msix"
 $msixPath = Join-Path $outDir $msixName
@@ -150,5 +189,8 @@ $msixPath = Join-Path $outDir $msixName
 if ($LASTEXITCODE -ne 0) { throw "makeappx pack failed with exit code $LASTEXITCODE." }
 
 Write-Host "MSIX created (UNSIGNED, ready for Store upload): $msixPath"
+Write-Host "NOTE: The WebView2 Evergreen Runtime is still required on the target device"
+Write-Host "(built into Windows 11, present on most Windows 10 installs). This package"
+Write-Host "does not bundle the runtime itself."
 Write-Host "NOTE: For local install testing, self-sign with signtool. For Store, upload as-is."
 $msixPath

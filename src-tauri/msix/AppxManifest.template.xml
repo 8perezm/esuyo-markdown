@@ -10,6 +10,7 @@
     __PUBLISHER__               -> Partner Center Publisher, e.g. CN=8AC4B328-845D-4C1C-B1FC-CE52C08F4693
     __VERSION_QUAD__            -> 4-part version, e.g. 0.1.9.0 (semver + .0)
     __EXE_NAME__                -> built exe file name, e.g. esuyo-markdown.exe
+    __ARCHITECTURE__            -> x64 or arm64 (matches -Architecture)
     __DISPLAY_NAME__            -> Esuyo Markdown
     __PUBLISHER_DISPLAY_NAME__  -> Esuyo
     __DESCRIPTION__             -> short description
@@ -25,7 +26,7 @@
     Name="__IDENTITY_NAME__"
     Publisher="__PUBLISHER__"
     Version="__VERSION_QUAD__"
-    ProcessorArchitecture="x64" />
+    ProcessorArchitecture="__ARCHITECTURE__" />
   <Properties>
     <DisplayName>__DISPLAY_NAME__</DisplayName>
     <PublisherDisplayName>__PUBLISHER_DISPLAY_NAME__</PublisherDisplayName>

@@ -40,7 +40,7 @@ Open source and offline by design.
 - Brand is **Esuyo Markdown** (with a space), per `tauri.conf.json` `productName` and the `DisplayName` in `src-tauri/msix/AppxManifest.template.xml`. Partner Center requires an exact match.
 - It is both a reader and an editor; calling it only a "reader" undersells the main feature.
 - Browsing supports both a flat list and a collapsible tree (not just a tree), and matches `.markdown` as well as `.md` (`docs/reference.md`).
-- The app is cross-platform (Windows, macOS, Linux), though this listing is for the Windows Store build. The Store MSIX bundles WebView2 as an offline installer, so no separate WebView2 download is needed (`docs/build-and-deployment.md`).
+- The app is cross-platform (Windows, macOS, Linux), though this listing is for the Windows Store build. The MSIX ships `WebView2Loader.dll` beside the exe; it relies on the system WebView2 Evergreen Runtime (built into Windows 11, common on Windows 10) rather than downloading one (`docs/build-and-deployment.md`, `src-tauri/msix/README.md`).
 - Tabs, per-tab drafts, per-folder tab restoration, and file management (New File incl. folder context menu, Save As, reload) were omitted from the old copy (`README.md`, `docs/reference.md`).
 - Keyboard shortcuts and zoom are documented in `docs/reference.md`.
 - Privacy claim verified: no accounts, telemetry, or analytics; the only network request is optional Google Fonts loading (`README.md`, `PRIVACY.md`).

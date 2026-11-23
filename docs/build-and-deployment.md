@@ -45,8 +45,10 @@ Concurrency cancels superseded runs on the same branch (`publish.yml:9-11`).
 
 ## Microsoft Store (MSIX)
 
-- Store-specific WebView2 mode: `src-tauri/tauri.microsoftstore.conf.json` sets `webviewInstallMode.type: offlineInstaller` so the Store bundle works without a separate WebView2 download.
-- Pack script: `scripts/build-msix.ps1 -Version <3-part semver>` stages the release exe + 4 required logos (`StoreLogo.png`, `Square44x44Logo.png`, `Square150x150Logo.png`, `Square71x71Logo.png` from `src-tauri/icons/`) and runs `makeappx.exe pack` (unsigned — the Store signs on submission).
+- Store-specific WebView2 mode: `src-tauri/tauri.microsoftstore.conf.json` sets `webviewInstallMode.type: offlineInstaller` **for the Tauri MSI/NSIS installer only**. The hand-packed MSIX described below is not affected by that setting.
+- Pack script: `scripts/build-msix.ps1 -Version <3-part semver>` stages the release exe, **`WebView2Loader.dll`**, and the 4 required logos (`StoreLogo.png`, `Square44x44Logo.png`, `Square150x150Logo.png`, `Square71x71Logo.png` from `src-tauri/icons/`) and runs `makeappx.exe pack` (unsigned — the Store signs on submission).
+  - The GNU Rust toolchain loads `WebView2Loader.dll` dynamically from the exe's folder. If it is missing, the installed app fails with *"The code execution cannot proceed because WebView2Loader.dll was not found."* The script copies it from the Cargo output or the vendored `src-tauri/msix/WebView2Loader-<arch>.dll` files. See `src-tauri/msix/README.md`.
+  - The WebView2 **runtime** itself is not bundled: it is built into Windows 11 and present on most Windows 10 installs. No runtime download is performed by the MSIX.
 - MSIX identity defaults (`build-msix.ps1:56-60`): `Esuyo.EsuyoMarkdown` / `CN=Esuyo` / `Esuyo Markdown` / `Esuyo`. Override via repo Variables `MSIX_IDENTITY_NAME`, `MSIX_PUBLISHER`, `MSIX_PUBLISHER_DISPLAY_NAME`, `MSIX_DISPLAY_NAME`, `MSIX_DESCRIPTION`. `DisplayName` must exactly match the Partner Center reserved name.
 - Auto-submit requires Secrets `AZURE_AD_TENANT_ID`, `SELLER_ID`, `AZURE_AD_APPLICATION_CLIENT_ID`, `AZURE_AD_APPLICATION_SECRET` plus Variable `STORE_PRODUCT_ID` (`publish.yml:290-299`). Only free products support API update. Without them, CI skips and you upload the `.msix` from the GitHub Release to Partner Center by hand.
 - First Store submission must be manual (Store API cannot create the very first submission) — see the setup checklist in `publish.yml:283-300`.
