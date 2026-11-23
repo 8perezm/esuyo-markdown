@@ -83,6 +83,23 @@ jobs:
         env:
           NEW_VERSION: ${{ needs.version.outputs.new_version }}
 
+      # The About dialog has no hardcoded version: at runtime it reads
+      # Cargo.toml (via the get_app_version command), and in browser dev it
+      # falls back to package.json (via Vite). Both were written above, so
+      # this check guarantees the dialog shows the version of this release.
+      - name: Verify About dialog version sources
+        shell: pwsh
+        run: |
+          $newVer = "$env:NEW_VERSION"
+          $pkgVer = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $cargoVer = [regex]::Match((Get-Content src-tauri/Cargo.toml -Raw), '(?m)^version = "([^"]+)"').Groups[1].Value
+          if ($pkgVer -ne $newVer -or $cargoVer -ne $newVer) {
+            throw "About dialog version sources out of sync: expected $newVer, package.json=$pkgVer, Cargo.toml=$cargoVer"
+          }
+          Write-Host "About dialog will display v$newVer"
+        env:
+          NEW_VERSION: ${{ needs.version.outputs.new_version }}
+
       # ── Linux system dependencies ──
       - name: Install Linux system dependencies
         if: matrix.os == 'ubuntu-latest'

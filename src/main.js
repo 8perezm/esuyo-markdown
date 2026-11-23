@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
+import { open as openExternalUrl } from "@tauri-apps/plugin-shell";
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
@@ -914,8 +915,14 @@ const recentFoldersList = document.getElementById("recent-folders-list");
 const menuNewFileItem = document.getElementById("menu-new-file-item");
 const menuOpenFolderItem = document.getElementById("menu-open-folder-item");
 const menuSettingsItem = document.getElementById("menu-settings-item");
+const menuAboutItem = document.getElementById("menu-about-item");
 const settingsOverlay = document.getElementById("settings-overlay");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
+const aboutOverlay = document.getElementById("about-overlay");
+const aboutCloseBtn = document.getElementById("about-close-btn");
+const aboutVersion = document.getElementById("about-version");
+const aboutGithubLink = document.getElementById("about-github-link");
+const aboutStoreLink = document.getElementById("about-store-link");
 const fontDefaultSelect = document.getElementById("font-default-select");
 const fontHeaderSelect = document.getElementById("font-header-select");
 const fontCodeSelect = document.getElementById("font-code-select");
@@ -1242,6 +1249,11 @@ menuSettingsItem.addEventListener("click", () => {
     openSettings();
 });
 
+menuAboutItem.addEventListener("click", () => {
+    menuDropdown.classList.add("hidden");
+    openAbout();
+});
+
 // ── Settings Modal ──────────────────────────────────────────────────────────
 
 function buildFontSelect(selectEl, currentFont) {
@@ -1323,6 +1335,52 @@ settingsCloseBtn.addEventListener("click", closeSettings);
 settingsOverlay.addEventListener("click", (e) => {
     if (e.target === settingsOverlay) closeSettings();
 });
+
+// ── About Modal ─────────────────────────────────────────────────────────────
+
+async function getAppVersion() {
+    try {
+        return await invoke("get_app_version");
+    } catch (err) {
+        // In a plain browser (npm run dev) Tauri IPC is unavailable, so use
+        // the version injected by Vite from package.json instead.
+        console.warn("Failed to read app version:", err);
+        return typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "Unknown";
+    }
+}
+
+async function openAbout() {
+    aboutVersion.textContent = await getAppVersion();
+    aboutOverlay.classList.remove("hidden");
+}
+
+function closeAbout() {
+    aboutOverlay.classList.add("hidden");
+}
+
+aboutCloseBtn.addEventListener("click", closeAbout);
+aboutOverlay.addEventListener("click", (e) => {
+    if (e.target === aboutOverlay) closeAbout();
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !aboutOverlay.classList.contains("hidden")) closeAbout();
+});
+
+/** Open an external link in the system default browser (falls back to the browser). */
+function bindExternalLink(link) {
+    link.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+            await openExternalUrl(link.href);
+        } catch (err) {
+            console.warn("Failed to open external link:", err);
+            window.open(link.href, "_blank", "noopener,noreferrer");
+        }
+    });
+}
+bindExternalLink(aboutGithubLink);
+bindExternalLink(aboutStoreLink);
 
 fontDefaultSelect.addEventListener("change", () => {
     applyFonts(

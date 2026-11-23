@@ -125,6 +125,16 @@
                     <ul id="recent-folders-list" class="recent-list">
                         <li class="recent-empty">No recent folders</li>
                     </ul>
+                    <div class="menu-divider"></div>
+                    <div id="menu-about-item" class="menu-item" data-action="about">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                        <span>About</span>
+                    </div>
                 </div>
             </div>
             <div id="current-folder-bar" class="hidden">
@@ -329,6 +339,62 @@
                                     <label for="font-code-size">Size</label>
                                     <input type="number" id="font-code-size" class="settings-number" min="10" max="28"
                                         step="1" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="about-overlay" class="settings-overlay hidden">
+                <div class="settings-panel about-panel">
+                    <div class="settings-header">
+                        <h2>About Esuyo Markdown</h2>
+                        <button id="about-close-btn" class="icon-btn" title="Close" aria-label="Close">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="about-body">
+                        <div class="about-app">
+                            <div class="about-logo" aria-hidden="true">E</div>
+                            <div class="about-app-info">
+                                <div class="about-app-name">Esuyo Markdown</div>
+                                <div class="about-app-version">Version <span id="about-version">—</span></div>
+                            </div>
+                        </div>
+                        <div class="about-section">
+                            <div class="about-row">
+                                <span class="about-label">License</span>
+                                <span class="about-value">GNU Affero General Public License v3.0 (AGPL-3.0)</span>
+                            </div>
+                        </div>
+                        <div class="about-section">
+                            <div class="about-link-row">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path
+                                        d="M12 .297a12 12 0 00-3.793 23.397c.6.11.82-.26.82-.578v-2.03c-3.338.726-4.043-1.61-4.043-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.746.083-.73.083-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.303-5.467-1.333-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 016.003 0c2.29-1.552 3.297-1.23 3.297-1.23.653 1.652.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.624-5.48 5.92.43.372.823 1.102.823 2.222v3.293c0 .32.216.694.825.576A12.002 12.002 0 0012 .297z" />
+                                </svg>
+                                <div class="about-link-text">
+                                    <a id="about-github-link" class="about-link"
+                                        href="https://github.com/8perezm/esuyo-markdown" target="_blank"
+                                        rel="noopener noreferrer">GitHub repository</a>
+                                    <span class="about-url">https://github.com/8perezm/esuyo-markdown</span>
+                                </div>
+                            </div>
+                            <div class="about-link-row">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 4h11a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" />
+                                    <path d="M16 9h3a1 1 0 011 1v9a1 1 0 01-1 1h-3" />
+                                    <path d="M7 8h5M7 12h5M7 16h5" />
+                                </svg>
+                                <div class="about-link-text">
+                                    <a id="about-store-link" class="about-link"
+                                        href="https://apps.microsoft.com/detail/9NFR3W513LVR?hl=en-us&amp;gl=GB&amp;ocid=pdpshare"
+                                        target="_blank" rel="noopener noreferrer">Microsoft Store</a>
+                                    <span class="about-url">https://apps.microsoft.com/detail/9NFR3W513LVR?hl=en-us&amp;gl=GB&amp;ocid=pdpshare</span>
                                 </div>
                             </div>
                         </div>

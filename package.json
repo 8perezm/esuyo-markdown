@@ -12,6 +12,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.6.0",
     "highlight.js": "^11.9.0",
     "marked": "^18.0.0",
     "marked-highlight": "^2.2.0",

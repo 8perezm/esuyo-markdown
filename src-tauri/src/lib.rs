@@ -392,10 +392,17 @@ async fn pick_save_file(app: tauri::AppHandle) -> Result<Option<String>, String>
     }
 }
 
+/// Returns the application version baked into the binary at compile time.
+#[tauri::command]
+fn get_app_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             pick_folder,
             scan_md_files,
@@ -405,7 +412,8 @@ pub fn run() {
             delete_file,
             pick_save_file,
             get_settings,
-            save_settings
+            save_settings,
+            get_app_version
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

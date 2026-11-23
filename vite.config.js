@@ -21,6 +21,11 @@ const prebundle = [
 
 export default defineConfig(async () => ({
     clearScreen: false,
+    // Fallback version for the About dialog when running in a plain browser
+    // (where the Tauri `get_app_version` command is unavailable).
+    define: {
+        __APP_VERSION__: JSON.stringify(process.env.npm_package_version || "0.0.0"),
+    },
     server: {
         port: 1420,
         strictPort: true,
