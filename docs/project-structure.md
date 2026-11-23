@@ -33,8 +33,8 @@ esuyo-markdown/
 ├── scripts/
 │   └── build-msix.ps1          # Stages exe + logos, expands manifest, packs unsigned .msix
 ├── test/
-│   └── test-table-better.html  # Manual table-editing fixture (open in browser, no runner)
-├── test-editor-view.html       # Manual editor-view fixture at repo root
+│   ├── test-table-better.html  # Manual table-editing fixture (open in browser, no runner)
+│   └── test-editor-view.html   # Manual editor-view fixture (open in browser, no runner)
 ├── .github/workflows/publish.yml  # Version-bump → matrix build → Release → Store submit
 ├── PRIVACY.md                  # Privacy policy (local-only, Google Fonts exception)
 ├── LICENSE                     # GNU AGPL v3
@@ -54,4 +54,4 @@ esuyo-markdown/
 - `src-tauri/Cargo.lock` exists on disk but is git-ignored (`.gitignore:12`); CI restores it from scratch.
 - `src-tauri/gen/` is Tauri-generated schemas, also ignored (`.gitignore:42`).
 - The two `*-plan.md` files in `docs/` are **design proposals**, not current behavior. They are preserved as-is and linked from the README for visibility.
-- `test/` and `test-editor-view.html` are manual HTML fixtures — there is no automated test runner (see `docs/development.md`).
+- The HTML files in `test/` are manual fixtures — there is no automated test runner (see `docs/development.md`).

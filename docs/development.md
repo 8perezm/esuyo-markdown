@@ -65,7 +65,7 @@ There is no unit/e2e framework in `package.json`. Verify by hand:
 1. `cargo check` in `src-tauri/` — backend compiles.
 2. `npm run build` — frontend builds to `dist/`.
 3. `npx tauri dev` — open `sample/` via **Open Folder**, check read view, toggle **Edit**, toggle **Source**, save, create new file, delete (goes to Recycle Bin), toggle theme, change fonts, toggle `Use .gitignore`.
-4. Manual fixtures: open `test/test-table-better.html` or `test-editor-view.html` in a browser for table/editor edge cases.
+4. Manual fixtures: open `test/test-table-better.html` or `test/test-editor-view.html` in a browser for table/editor edge cases.
 
 ## Clearing stale caches
 

@@ -47,4 +47,4 @@ Full docs: `docs/development.md`, `docs/build-and-deployment.md`.
 
 ## Testing
 
-No automated tests. Verify manually: `cargo check`, `npm run build`, then `npx tauri dev` and exercise `sample/` (open folder, read/edit/source mode, save, new file, delete to Recycle Bin, theme/fonts, `.gitignore` toggle). HTML fixtures: `test/test-table-better.html`, `test-editor-view.html`.
+No automated tests. Verify manually: `cargo check`, `npm run build`, then `npx tauri dev` and exercise `sample/` (open folder, read/edit/source mode, save, new file, delete to Recycle Bin, theme/fonts, `.gitignore` toggle). HTML fixtures: `test/test-table-better.html`, `test/test-editor-view.html`.
