@@ -57,4 +57,4 @@ Seoul is the capital of South Korea — a **hyper-modern megacity** where ancien
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Asia](index.md) · [⬅ Back to welcome](../welcome.md)

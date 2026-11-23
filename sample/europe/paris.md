@@ -40,4 +40,4 @@ Paris, the *City of Light*, is the capital of France. Known for its art, fashion
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Europe](index.md) · [⬅ Back to welcome](../welcome.md)

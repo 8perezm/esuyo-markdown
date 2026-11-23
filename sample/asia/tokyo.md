@@ -41,4 +41,4 @@ Tokyo is the capital of Japan and the world's most populous metropolitan area. I
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Asia](index.md) · [⬅ Back to welcome](../welcome.md)

@@ -48,4 +48,4 @@ Cairo is the capital of Egypt and the largest city in the Arab world. Straddling
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Africa](index.md) · [⬅ Back to welcome](../welcome.md)

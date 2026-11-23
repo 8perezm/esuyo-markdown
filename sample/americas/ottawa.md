@@ -49,4 +49,4 @@ Ottawa, the capital of Canada, is a bilingual city on the Ottawa River. It's kno
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Americas](index.md) · [⬅ Back to welcome](../welcome.md)

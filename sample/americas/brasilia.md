@@ -48,4 +48,4 @@ Brasília's urban plan (the *Plano Piloto*) is shaped like an aeroplane:
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Americas](index.md) · [⬅ Back to welcome](../welcome.md)

@@ -2128,7 +2128,18 @@ function renderMarkdown(content) {
             if (!currentFile) return;
 
             const currentDir = currentFile.relative_path.split("/").slice(0, -1).join("/");
-            const targetPath = (currentDir ? currentDir + "/" : "") + href;
+
+            // Resolve the href against the current file's folder, collapsing
+            // "." and ".." segments so links from nested folders resolve to
+            // the same normalized relative_path used by the file list.
+            const rawTarget = currentDir ? currentDir + "/" + href : href;
+            const segments = [];
+            for (const part of rawTarget.split("/")) {
+                if (!part || part === ".") continue;
+                if (part === "..") { segments.pop(); continue; }
+                segments.push(part);
+            }
+            const targetPath = segments.join("/");
 
             // Find the matching file in the current file list
             const targetIndex = currentFiles.findIndex((f) => f.relative_path === targetPath);

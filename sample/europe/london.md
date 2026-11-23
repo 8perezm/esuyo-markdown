@@ -48,4 +48,4 @@ London is the capital of the United Kingdom and one of the world's most influent
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Europe](index.md) · [⬅ Back to welcome](../welcome.md)

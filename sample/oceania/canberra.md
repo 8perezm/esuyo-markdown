@@ -50,4 +50,4 @@ Canberra is the capital of Australia, chosen in 1908 as a compromise between riv
 
 ---
 
-[⬅ Back to welcome](welcome.md)
+[⬅ Back to Oceania](index.md) · [⬅ Back to welcome](../welcome.md)

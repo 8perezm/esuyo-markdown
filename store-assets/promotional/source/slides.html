@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; overflow: hidden; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #fff; }
+
+  .slide {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    padding: 96px 104px;
+    background:
+      radial-gradient(900px 620px at 88% 8%, rgba(33,138,86,.30) 0%, transparent 62%),
+      radial-gradient(760px 560px at 8% 96%, rgba(20,100,70,.20) 0%, transparent 60%),
+      linear-gradient(140deg, #06110d 0%, #0a1b15 52%, #06120e 100%);
+  }
+  .slide::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: linear-gradient(90deg, black, transparent 85%);
+  }
+  .slide > * { position: relative; z-index: 2; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 20px; font-weight: 700; letter-spacing: 3.2px; text-transform: uppercase;
+    color: #4ade9b;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade9b; box-shadow: 0 0 16px #4ade9b; }
+  .rule { width: 68px; height: 5px; border-radius: 4px; background: #4ade9b; margin-top: 30px; }
+  h1 { margin-top: 30px; font-size: 92px; line-height: 1.04; letter-spacing: -3.2px; font-weight: 700; }
+  h1 .accent { color: #4ade9b; }
+  h2 { margin-top: 28px; font-size: 70px; line-height: 1.06; letter-spacing: -2.4px; font-weight: 700; }
+  h2 .accent { color: #4ade9b; }
+  .tagline { margin-top: 26px; font-size: 30px; line-height: 1.45; color: rgba(255,255,255,.74); max-width: 900px; }
+  .pills { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .pill {
+    padding: 13px 22px; border-radius: 999px; font-size: 20px; font-weight: 600;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18);
+    color: rgba(255,255,255,.88);
+  }
+
+  .shot {
+    position: absolute; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 0 8px rgba(255,255,255,.025);
+    background: #fff;
+  }
+  .shot img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
+  .shot-label {
+    position: absolute; bottom: 18px; left: 20px;
+    padding: 8px 15px; border-radius: 8px; font-size: 15px; font-weight: 700;
+    letter-spacing: 1.6px; text-transform: uppercase;
+    background: rgba(6,10,26,.78); border: 1px solid rgba(255,255,255,.18);
+  }
+
+  .brand {
+    position: absolute; left: 104px; bottom: 44px;
+    font-size: 17px; letter-spacing: 2.6px; text-transform: uppercase;
+    color: rgba(255,255,255,.42);
+  }
+  .brand b { color: rgba(255,255,255,.78); font-weight: 600; }
+
+  /* Slide 1 — centered copy at the top, large screenshot below */
+  #slide-1 .copy { position: absolute; left: 0; right: 0; top: 28px; width: auto; text-align: center; }
+  #slide-1 .eyebrow { margin: 0 auto; }
+  #slide-1 .rule { margin: 14px auto 0; }
+  #slide-1 h1 { font-size: 72px; margin-top: 12px; }
+  #slide-1 .tagline { margin-top: 10px; font-size: 25px; max-width: none; }
+  #slide-1 .pills { margin-top: 14px; justify-content: center; }
+  #slide-1 .pill { padding: 10px 18px; font-size: 19px; }
+  #slide-1 .shot {
+    left: 340px; top: 300px; width: 1240px; height: 698px;
+    box-shadow: 0 40px 100px rgba(0,0,0,.60), 0 0 0 8px rgba(74,222,155,.06);
+  }
+
+  /* Slides 2–4 — two-up comparisons */
+  .head { position: absolute; left: 104px; top: 92px; width: 1712px; }
+  .head .tagline { margin-top: 18px; max-width: 1300px; font-size: 27px; }
+  .pair { position: absolute; left: 104px; top: 410px; width: 1712px; display: flex; gap: 32px; }
+  /* Each card is (1712 - 32) / 2 = 840px wide, so 840 * 9/16 = 472.5px keeps the full 16:9 screenshot. */
+  .pair .shot { position: relative; flex: 1; height: 473px; }
+
+  /* Slide 5 — closing statement */
+  #slide-5 { background:
+      radial-gradient(900px 700px at 80% 20%, rgba(33,138,86,.28) 0%, transparent 62%),
+      linear-gradient(140deg, #05100c 0%, #0a1c15 60%, #06120e 100%); }
+  #slide-5 .copy { position: absolute; left: 104px; top: 205px; width: 830px; }
+  #slide-5 .shot { left: 930px; top: 232px; width: 890px; height: 501px; }
+</style>
+</head>
+<body>
+
+<!-- 1 / 5 : hero with a real app screenshot -->
+<section class="slide" id="slide-1">
+  <div class="copy">
+    <div class="eyebrow"><span class="dot"></span>Local-first markdown editor</div>
+    <div class="rule"></div>
+    <h1>Esuyo <span class="accent">Markdown</span></h1>
+    <div class="tagline">Read, write, and browse every Markdown file in any folder on your PC.</div>
+    <div class="pills">
+      <div class="pill">Folder tree &amp; tabs</div>
+      <div class="pill">Rich text + source</div>
+      <div class="pill">Light &amp; dark</div>
+    </div>
+  </div>
+  <div class="shot"><img src="../../screenshots/01-welcome-library.png"></div>
+  <div class="brand"><b>Esuyo Markdown</b> &nbsp;·&nbsp; Private, offline, local-only</div>
+</section>
+
+<!-- 2 / 5 : reading -->
+<section class="slide" id="slide-2">
+  <div class="head">
+    <div class="eyebrow"><span class="dot"></span>Read</div>
+    <h2>Beautiful reading, <span class="accent">day or night.</span></h2>
+    <div class="tagline">Clean typography, GitHub tables, and syntax-highlighted code — in a theme that suits you.</div>
+  </div>
+  <div class="pair">
+    <div class="shot"><img src="../../screenshots/02-reading-view.png"><span class="shot-label">Light theme</span></div>
+    <div class="shot"><img src="../../screenshots/04-dark-theme.png"><span class="shot-label">Dark theme</span></div>
+  </div>
+  <div class="brand"><b>Esuyo Markdown</b> &nbsp;·&nbsp; Read comfortably</div>
+</section>
+
+<!-- 3 / 5 : browsing -->
+<section class="slide" id="slide-3">
+  <div class="head">
+    <div class="eyebrow"><span class="dot"></span>Browse</div>
+    <h2>Any folder. <span class="accent">Any depth.</span></h2>
+    <div class="tagline">A collapsible folder tree or a flat list — recursive discovery with .gitignore support.</div>
+  </div>
+  <div class="pair">
+    <div class="shot"><img src="../../screenshots/03-nested-folder-tree.png"><span class="shot-label">Nested folder tree</span></div>
+    <div class="shot"><img src="../../screenshots/07-flat-file-list.png"><span class="shot-label">Flat file list</span></div>
+  </div>
+  <div class="brand"><b>Esuyo Markdown</b> &nbsp;·&nbsp; Your files, your structure</div>
+</section>
+
+<!-- 4 / 5 : editing -->
+<section class="slide" id="slide-4">
+  <div class="head">
+    <div class="eyebrow"><span class="dot"></span>Write</div>
+    <h2>Edit the <span class="accent">way you like.</span></h2>
+    <div class="tagline">Rich text when you want speed, raw source when you want control. Both save straight to disk.</div>
+  </div>
+  <div class="pair">
+    <div class="shot"><img src="../../screenshots/06-rich-text-editing.png"><span class="shot-label">Rich text editor</span></div>
+    <div class="shot"><img src="../../screenshots/05-source-editing.png"><span class="shot-label">Markdown source</span></div>
+  </div>
+  <div class="brand"><b>Esuyo Markdown</b> &nbsp;·&nbsp; Tabs, drafts, Save As</div>
+</section>
+
+<!-- 5 / 5 : privacy -->
+<section class="slide" id="slide-5">
+  <div class="copy">
+    <div class="eyebrow"><span class="dot"></span>Private by design</div>
+    <div class="rule"></div>
+    <h2>Your files<br><span class="accent">stay yours.</span></h2>
+    <div class="tagline">No account. No cloud sync. No telemetry.<br>Just your Markdown files, on your machine.</div>
+    <div class="pills">
+      <div class="pill">Offline</div>
+      <div class="pill">Local-only</div>
+      <div class="pill">Open source</div>
+    </div>
+  </div>
+  <div class="shot"><img src="../../screenshots/02-reading-view.png"></div>
+  <div class="brand"><b>Esuyo Markdown</b> &nbsp;·&nbsp; AGPL-3.0</div>
+</section>
+
+</body>
+</html>
