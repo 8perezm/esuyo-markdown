@@ -1,0 +1,111 @@
+// Icelandic dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Efstibær / valmynd
+    "menu.tooltip": "Valmynd",
+    "theme.toggle": "Skipta um þema",
+    "theme.switchToDark": "Skipta yfir í dökkt þema",
+    "theme.switchToLight": "Skipta yfir í ljóst þema",
+    "file.new": "Ný skrá",
+    "file.newTooltip": "Ný skrá",
+    "folder.reload": "Hlaða möppunni aftur",
+    "folder.open": "Opna möppu",
+    "action.save": "Vista",
+    "action.saveAs": "Vista sem",
+    "settings.title": "Stillingar",
+    "menu.recentFolders": "Nýlegar möppur",
+    "menu.noRecentFolders": "Engar nýlegar möppur",
+    "about.title": "Um",
+    "context.newFileHere": "Ný Markdown-skrá hér",
+
+    // Skráasýn / hliðarspjald
+    "view.group": "Skráanavigering",
+    "view.flatList": "Flatur listi",
+    "view.treeView": "Trjámynd",
+    "view.allDirs": "Allar möppur",
+    "view.allDirsTooltip": "Sýna möppur án Markdown-skára",
+    "sidebar.toggle": "Víxla hliðarspjöldum",
+    "sidebar.show": "Sýna hliðarspjald",
+    "sidebar.hide": "Fela hliðarspjald",
+    "tabs.ariaLabel": "Opnar skrár",
+    "tabs.close": "Loka flipa",
+
+    // Tómt / velkomin / hleðsluástand
+    "empty.noFolderSelected": "Engin mappa valin",
+    "empty.noFolderHint": "Smelltu á \"Opna möppu\" til að finna möppu með Markdown-skrám.",
+    "empty.noFilesFound": "Engar Markdown-skrár fundust",
+    "empty.noFilesHint": "Þessi mappa inniheldur engar .md- eða .markdown-skrár.",
+    "welcome.title": "Velkomin til Esuyo Markdown",
+    "welcome.hint": "Opnaðu möppu til að skoða og lesa Markdown-skrár.",
+    "loading.scanning": "Skanna möppu...",
+
+    // Lesari / ritill
+    "editor.source": "Frumkóði",
+    "editor.edit": "Breyta",
+    "editor.placeholder": "Byrjaðu að skrifa Markdown...",
+    "editor.sourcePlaceholder": "Breyta hráum Markdown-frumkóða...",
+    "viewer.fileMissing": "Skráin er ekki lengur til: {file}",
+    "viewer.missingSuffix": " (vantar)",
+    "zoom.tooltip": "Aðdráttur: Ctrl + músarhjól, Ctrl + / Ctrl -, Ctrl 0. Smelltu til að endurstilla í 100 %.",
+    "zoom.resetAria": "Endurstilla aðdrátt í 100 %",
+    "zoom.normal": "Aðdráttur: 100 % (venjulegt). Ctrl + músarhjól eða Ctrl + / Ctrl - til að breyta.",
+    "zoom.changed": "Aðdráttur: {zoom} %. Smelltu eða ýttu á Ctrl+0 til að endurstilla í 100 %.",
+
+    // Algengar aðgerðir
+    "action.cancel": "Hætta við",
+    "action.delete": "Eyða",
+    "file.delete": "Eyða skrá",
+
+    // Gluggar
+    "dialog.delete.title": "Eyða skrá",
+    "dialog.delete.message": "Ertu viss um að þú viljir eyða þessari skrá?",
+    "dialog.delete.hint": "Skráin verður færð í Ruslafatann.",
+    "dialog.dirty.title": "Óvistaðar breytingar",
+    "dialog.dirty.message_one": "\"{file}\" er með óvistaðar breytingar. Hvað vilt þú gera?",
+    "dialog.dirty.message_other": "{count} skrár eru með óvistaðar breytingar. Veldu hverjar á að vista.",
+    "dialog.dirty.saveSelected": "Vista valdar",
+    "dialog.dirty.saveSelectedClose": "Vista valdar og loka",
+    "dialog.dirty.saveSelectedSwitch": "Vista valdar og skipta",
+    "dialog.dirty.saveSelectedQuit": "Vista valdar og hætta",
+    "dialog.dirty.discard": "Henda",
+    "dialog.dirty.discardClose": "Henda og loka",
+    "dialog.dirty.discardSwitch": "Henda og skipta",
+    "dialog.dirty.discardQuit": "Henda og hætta",
+    "dialog.openFolder": "Veldu möppu með Markdown-skrám",
+
+    // Villur sem birtast í tilkynningum
+    "error.saveCancelled": "Mistókst að vista {file}. Aðgerðin var hætt.",
+    "error.openFolder": "Villa við að opna möppuna: {error}",
+    "error.createFile": "Villa við að búa til skrá: {error}",
+    "error.deleteFile": "Villa við að eyða skrá: {error}",
+    "error.saveFile": "Mistókst að vista {file}: {error}",
+    "error.saveFileAs": "Mistókst að vista skrána: {error}",
+
+    // Stillingar
+    "settings.close": "Loka stillingum",
+    "settings.fileDiscovery": "Skráaleit",
+    "settings.useGitignore": "Nota .gitignore",
+    "settings.useGitignoreHint": "Sleppa skrám og möppum sem passa við .gitignore. Taka hakið af til að hafa óútilokaðar skrár með í listanum.",
+    "settings.fonts": "Leturgerðir",
+    "settings.bodyFont": "Textaletur",
+    "settings.headingFont": "Fyrirsagnarletur",
+    "settings.codeFont": "Kóðaletur",
+    "settings.size": "Stærð",
+    "settings.language": "Tungumál",
+    "settings.displayLanguage": "Birtingartungumál",
+    "settings.languageHint": "Breytingar taka gildi þegar forritið hlaðast aftur inn.",
+    "settings.systemDefault": "Sjálfgefið kerfi",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Um (leyfisheitið er óþytt)
+    "about.titleFull": "Um Esuyo Markdown",
+    "about.close": "Loka",
+    "about.version": "Útgáfa",
+    "about.unknownVersion": "Óþekkt",
+    "about.license": "Leyfi",
+    "about.github": "GitHub-geymsla",
+    "about.store": "Microsoft Store",
+};

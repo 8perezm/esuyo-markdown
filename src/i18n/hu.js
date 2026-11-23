@@ -1,0 +1,111 @@
+// Hungarian dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Felső sáv / menü
+    "menu.tooltip": "Menü",
+    "theme.toggle": "Téma váltása",
+    "theme.switchToDark": "Váltás sötét témára",
+    "theme.switchToLight": "Váltás világos témára",
+    "file.new": "Új fájl",
+    "file.newTooltip": "Új fájl",
+    "folder.reload": "Mappa újratöltése",
+    "folder.open": "Mappa megnyitása",
+    "action.save": "Mentés",
+    "action.saveAs": "Mentés másként",
+    "settings.title": "Beállítások",
+    "menu.recentFolders": "Nemrég használt mappák",
+    "menu.noRecentFolders": "Nincsenek nemrég használt mappák",
+    "about.title": "Névjegy",
+    "context.newFileHere": "Új Markdown-fájl létrehozása itt",
+
+    // Fájlnézet / oldalsáv
+    "view.group": "Fájlnavigációs nézet",
+    "view.flatList": "Listanézet",
+    "view.treeView": "Fanézet",
+    "view.allDirs": "Összes mappa",
+    "view.allDirsTooltip": "Markdown-fájlok nélküli mappák megjelenítése",
+    "sidebar.toggle": "Oldalsáv átváltása",
+    "sidebar.show": "Oldalsáv megjelenítése",
+    "sidebar.hide": "Oldalsáv elrejtése",
+    "tabs.ariaLabel": "Megnyitott fájlok",
+    "tabs.close": "Lap bezárása",
+
+    // Üres / üdvözlő / betöltési állapotok
+    "empty.noFolderSelected": "Nincs kiválasztva mappa",
+    "empty.noFolderHint": "Kattintson a \"Mappa megnyitása\" lehetőségre, és keressen Markdown-fájlokat tartalmazó könyvtárat.",
+    "empty.noFilesFound": "Nem találhatók Markdown-fájlok",
+    "empty.noFilesHint": "Ez a mappa nem tartalmaz .md vagy .markdown fájlokat.",
+    "welcome.title": "Üdvözöljük az Esuyo Markdownban",
+    "welcome.hint": "Nyisson meg egy mappát a Markdown-fájlok böngészéséhez és olvasásához.",
+    "loading.scanning": "Mappa átvizsgálása...",
+
+    // Olvasó / szerkesztő
+    "editor.source": "Forráskód",
+    "editor.edit": "Szerkesztés",
+    "editor.placeholder": "Kezdjen el Markdownot írni...",
+    "editor.sourcePlaceholder": "A Markdown-forrás szerkesztése...",
+    "viewer.fileMissing": "A fájl már nem létezik: {file}",
+    "viewer.missingSuffix": " (hiányzik)",
+    "zoom.tooltip": "Nagyítás: Ctrl + egérkerék, Ctrl + / Ctrl -, Ctrl 0. Kattintson a 100 %-ra való visszaállításhoz.",
+    "zoom.resetAria": "Nagyítás visszaállítása 100 %-ra",
+    "zoom.normal": "Nagyítás: 100 % (normál). A módosításhoz használja a Ctrl + egérkereket vagy a Ctrl + / Ctrl - billentyűket.",
+    "zoom.changed": "Nagyítás: {zoom} %. Kattintson vagy nyomja meg a Ctrl+0 billentyűt a 100 %-ra való visszaállításhoz.",
+
+    // Gyakori műveletek
+    "action.cancel": "Mégse",
+    "action.delete": "Törlés",
+    "file.delete": "Fájl törlése",
+
+    // Párbeszédablakok
+    "dialog.delete.title": "Fájl törlése",
+    "dialog.delete.message": "Biztosan törli ezt a fájlt?",
+    "dialog.delete.hint": "A fájl a Lomtárba kerül.",
+    "dialog.dirty.title": "Nem mentett módosítások",
+    "dialog.dirty.message_one": "A „{file}” nem mentett módosításokat tartalmaz. Mit szeretne tenni?",
+    "dialog.dirty.message_other": "{count} fájl nem mentett módosításokat tartalmaz. Válassza ki, melyeket szeretné menteni.",
+    "dialog.dirty.saveSelected": "Kijelöltek mentése",
+    "dialog.dirty.saveSelectedClose": "Kijelöltek mentése és bezárás",
+    "dialog.dirty.saveSelectedSwitch": "Kijelöltek mentése és váltás",
+    "dialog.dirty.saveSelectedQuit": "Kijelöltek mentése és kilépés",
+    "dialog.dirty.discard": "Elvetés",
+    "dialog.dirty.discardClose": "Elvetés és bezárás",
+    "dialog.dirty.discardSwitch": "Elvetés és váltás",
+    "dialog.dirty.discardQuit": "Elvetés és kilépés",
+    "dialog.openFolder": "Válasszon Markdown-fájlokat tartalmazó mappát",
+
+    // Figyelmeztetésekben megjelenő hibák
+    "error.saveCancelled": "A {file} mentése nem sikerült. A művelet megszakadt.",
+    "error.openFolder": "Hiba a mappa megnyitásakor: {error}",
+    "error.createFile": "Hiba a fájl létrehozásakor: {error}",
+    "error.deleteFile": "Hiba a fájl törlésekor: {error}",
+    "error.saveFile": "A {file} mentése nem sikerült: {error}",
+    "error.saveFileAs": "A fájl mentése nem sikerült: {error}",
+
+    // Beállítások
+    "settings.close": "Beállítások bezárása",
+    "settings.fileDiscovery": "Fájlfelismerés",
+    "settings.useGitignore": ".gitignore használata",
+    "settings.useGitignoreHint": "A .gitignore által egyeztetett fájlok és mappák kihagyása. Vegye ki a pipát a figyelmen kívül hagyott fájlok listába való felvételéhez.",
+    "settings.fonts": "Betűkészletek",
+    "settings.bodyFont": "Törzsszöveg betűkészlete",
+    "settings.headingFont": "Címsorok betűkészlete",
+    "settings.codeFont": "Kód betűkészlete",
+    "settings.size": "Méret",
+    "settings.language": "Nyelv",
+    "settings.displayLanguage": "Megjelenítési nyelv",
+    "settings.languageHint": "A változások az alkalmazás újraindítása után lépnek érvénybe.",
+    "settings.systemDefault": "Rendszer alapértelmezése",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Névjegy (a licenc neve fordítatlan marad)
+    "about.titleFull": "Az Esuyo Markdown névjegye",
+    "about.close": "Bezárás",
+    "about.version": "Verzió",
+    "about.unknownVersion": "Ismeretlen",
+    "about.license": "Licenc",
+    "about.github": "GitHub-tároló",
+    "about.store": "Microsoft Store",
+};

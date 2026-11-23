@@ -20,14 +20,16 @@
             <div id="sidebar-header">
                 <div id="app-title-row">
                     <div id="header-actions">
-                        <button id="menu-btn" class="icon-btn" title="Menu" aria-label="Menu">
+                        <button id="menu-btn" class="icon-btn" data-i18n-title="menu.tooltip"
+                            data-i18n-aria-label="menu.tooltip" title="Menu" aria-label="Menu">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <circle cx="3" cy="8" r="1.5" fill="currentColor" />
                                 <circle cx="8" cy="8" r="1.5" fill="currentColor" />
                                 <circle cx="13" cy="8" r="1.5" fill="currentColor" />
                             </svg>
                         </button>
-                        <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+                        <button id="theme-toggle" class="icon-btn" data-i18n-title="theme.toggle"
+                            data-i18n-aria-label="theme.toggle" title="Toggle theme" aria-label="Toggle theme">
                             <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5" fill="none" />
                                 <path
@@ -41,7 +43,8 @@
                                     fill="currentColor" />
                             </svg>
                         </button>
-                        <button id="new-file-btn" class="icon-btn" title="New file" aria-label="New file"
+                        <button id="new-file-btn" class="icon-btn" data-i18n-title="file.newTooltip"
+                            data-i18n-aria-label="file.newTooltip" title="New file" aria-label="New file"
                             style="display:none">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +54,8 @@
                                 <line x1="9" y1="15" x2="15" y2="15" />
                             </svg>
                         </button>
-                        <button id="reload-btn" class="icon-btn" title="Reload folder" aria-label="Reload folder"
+                        <button id="reload-btn" class="icon-btn" data-i18n-title="folder.reload"
+                            data-i18n-aria-label="folder.reload" title="Reload folder" aria-label="Reload folder"
                             style="display:none">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,7 +73,7 @@
                             d="M2 4.5V12A1.5 1.5 0 003.5 13.5h9A1.5 1.5 0 0014 12V5.5A1.5 1.5 0 0012.5 4H8.707l-1-1H3.5A1.5 1.5 0 002 4.5z"
                             stroke="currentColor" stroke-width="1.5" fill="none" />
                     </svg>
-                    Open Folder
+                    <span data-i18n="folder.open">Open Folder</span>
                 </button>
                 <div id="menu-dropdown" class="menu-dropdown hidden">
                     <div id="menu-save-item" class="menu-item hidden" data-action="save">
@@ -79,7 +83,7 @@
                             <polyline points="17,21 17,13 7,13 7,21" />
                             <polyline points="7,3 7,8 15,8" />
                         </svg>
-                        <span>Save</span>
+                        <span data-i18n="action.save">Save</span>
                     </div>
                     <div id="menu-save-as-item" class="menu-item hidden" data-action="save-as">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -90,7 +94,7 @@
                             <path d="M12 13v8" />
                             <path d="M9 16h6" />
                         </svg>
-                        <span>Save As</span>
+                        <span data-i18n="action.saveAs">Save As</span>
                     </div>
                     <div id="menu-edit-divider" class="menu-divider hidden"></div>
                     <div id="menu-new-file-item" class="menu-item" data-action="new-file">
@@ -101,7 +105,7 @@
                             <line x1="12" y1="12" x2="12" y2="18" />
                             <line x1="9" y1="15" x2="15" y2="15" />
                         </svg>
-                        <span>New File</span>
+                        <span data-i18n="file.new">New File</span>
                     </div>
                     <div id="menu-open-folder-item" class="menu-item hidden" data-action="open-folder">
                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -109,7 +113,7 @@
                                 d="M2 4.5V12A1.5 1.5 0 003.5 13.5h9A1.5 1.5 0 0014 12V5.5A1.5 1.5 0 0012.5 4H8.707l-1-1H3.5A1.5 1.5 0 002 4.5z"
                                 stroke="currentColor" stroke-width="1.5" fill="none" />
                         </svg>
-                        <span>Open Folder</span>
+                        <span data-i18n="folder.open">Open Folder</span>
                     </div>
                     <div id="menu-settings-item" class="menu-item" data-action="settings">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -118,12 +122,12 @@
                             <path
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
-                        <span>Settings</span>
+                        <span data-i18n="settings.title">Settings</span>
                     </div>
                     <div class="menu-divider"></div>
-                    <div class="menu-section-title">Recent Folders</div>
+                    <div class="menu-section-title" data-i18n="menu.recentFolders">Recent Folders</div>
                     <ul id="recent-folders-list" class="recent-list">
-                        <li class="recent-empty">No recent folders</li>
+                        <li class="recent-empty" data-i18n="menu.noRecentFolders">No recent folders</li>
                     </ul>
                     <div class="menu-divider"></div>
                     <div id="menu-about-item" class="menu-item" data-action="about">
@@ -133,7 +137,7 @@
                             <line x1="12" y1="16" x2="12" y2="12" />
                             <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
-                        <span>About</span>
+                        <span data-i18n="about.title">About</span>
                     </div>
                 </div>
             </div>
@@ -146,9 +150,9 @@
                 <span id="current-folder-name"></span>
             </div>
             <div id="file-view-bar" class="hidden">
-                <div class="view-toggle" role="group" aria-label="File navigation view">
-                    <button type="button" id="view-list-btn" class="view-toggle-btn" title="Flat list"
-                        aria-label="Flat list" aria-pressed="true">
+                <div class="view-toggle" role="group" data-i18n-aria-label="view.group" aria-label="File navigation view">
+                    <button type="button" id="view-list-btn" class="view-toggle-btn" data-i18n-title="view.flatList"
+                        data-i18n-aria-label="view.flatList" title="Flat list" aria-label="Flat list" aria-pressed="true">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="8" y1="6" x2="21" y2="6" />
@@ -159,8 +163,8 @@
                             <line x1="3" y1="18" x2="3.01" y2="18" />
                         </svg>
                     </button>
-                    <button type="button" id="view-tree-btn" class="view-toggle-btn" title="Tree view"
-                        aria-label="Tree view" aria-pressed="false">
+                    <button type="button" id="view-tree-btn" class="view-toggle-btn" data-i18n-title="view.treeView"
+                        data-i18n-aria-label="view.treeView" title="Tree view" aria-label="Tree view" aria-pressed="false">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 4v6a2 2 0 0 0 2 2h5" />
@@ -170,21 +174,24 @@
                         </svg>
                     </button>
                 </div>
-                <label id="tree-all-dirs" class="tree-all-dirs hidden" title="Show folders without markdown files">
+                <label id="tree-all-dirs" class="tree-all-dirs hidden" data-i18n-title="view.allDirsTooltip"
+                    title="Show folders without markdown files">
                     <input type="checkbox" id="tree-all-dirs-checkbox" />
-                    <span>All folders</span>
+                    <span data-i18n="view.allDirs">All folders</span>
                 </label>
             </div>
             <div id="file-list-container">
                 <div id="empty-state" class="empty-state">
-                    <p>No folder selected</p>
-                    <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
+                    <p data-i18n="empty.noFolderSelected">No folder selected</p>
+                    <p class="hint" data-i18n="empty.noFolderHint">Click "Open Folder" to browse for a directory
+                        containing markdown files.</p>
                 </div>
                 <ul id="file-list" class="hidden"></ul>
                 <ul id="file-tree" class="hidden"></ul>
             </div>
         </aside>
-        <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle sidebar" aria-label="Toggle sidebar">
+        <button id="sidebar-toggle" class="sidebar-toggle" data-i18n-title="sidebar.toggle"
+            data-i18n-aria-label="sidebar.toggle" title="Toggle sidebar" aria-label="Toggle sidebar">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"
                     fill="none" />
@@ -192,19 +199,20 @@
             </svg>
         </button>
         <main id="content">
-            <div id="tab-bar" class="hidden" role="tablist" aria-label="Open files"></div>
+            <div id="tab-bar" class="hidden" role="tablist" data-i18n-aria-label="tabs.ariaLabel" aria-label="Open files"></div>
             <div id="welcome" class="welcome">
-                <h2>Welcome to Esuyo Markdown</h2>
-                <p>Open a folder to browse and read markdown files.</p>
+                <h2 data-i18n="welcome.title">Welcome to Esuyo Markdown</h2>
+                <p data-i18n="welcome.hint">Open a folder to browse and read markdown files.</p>
             </div>
             <div id="markdown-viewer" class="hidden">
                 <div id="editor-bar">
                     <span id="current-file-path" class="file-path"></span>
                     <label id="source-checkbox-label" class="checkbox-label source-toggle" style="display:none">
                         <input type="checkbox" id="source-checkbox" />
-                        <span>Source</span>
+                        <span data-i18n="editor.source">Source</span>
                     </label>
-                    <button id="delete-file-btn" class="btn delete-btn" title="Delete file" aria-label="Delete file"
+                    <button id="delete-file-btn" class="btn delete-btn" data-i18n-title="file.delete"
+                        data-i18n-aria-label="file.delete" title="Delete file" aria-label="Delete file"
                         style="display:none">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -215,30 +223,33 @@
                         </svg>
                     </button>
                     <div id="edit-actions" class="edit-actions">
-                        <button id="cancel-btn" class="btn btn-cancel" title="Cancel" aria-label="Cancel">
+                        <button id="cancel-btn" class="btn btn-cancel" data-i18n-title="action.cancel"
+                            data-i18n-aria-label="action.cancel" title="Cancel" aria-label="Cancel">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 6 6 18M6 6l12 12" />
                             </svg>
-                            Cancel
+                            <span data-i18n="action.cancel">Cancel</span>
                         </button>
-                        <button id="save-btn" class="btn btn-save" title="Save" aria-label="Save">
+                        <button id="save-btn" class="btn btn-save" data-i18n-title="action.save"
+                            data-i18n-aria-label="action.save" title="Save" aria-label="Save">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 6 9 17l-5-5" />
                             </svg>
-                            Save
+                            <span data-i18n="action.save">Save</span>
                         </button>
                     </div>
-                    <button id="edit-toggle-btn" class="btn edit-toggle" title="Toggle edit mode"
-                        aria-label="Toggle edit mode">
+                    <button id="edit-toggle-btn" class="btn edit-toggle" data-i18n-title="editor.edit"
+                        data-i18n-aria-label="editor.edit" title="Toggle edit mode" aria-label="Toggle edit mode">
                         <svg id="edit-icon-pen" width="14" height="14" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                         </svg>
-                        Edit
+                        <span data-i18n="editor.edit">Edit</span>
                     </button>
-                    <button id="zoom-indicator" class="zoom-indicator"
+                    <button id="zoom-indicator" class="zoom-indicator" data-i18n-title="zoom.tooltip"
+                        data-i18n-aria-label="zoom.resetAria"
                         title="Zoom: Ctrl + mouse wheel, Ctrl + / Ctrl -, Ctrl 0. Click to reset to 100%."
                         aria-label="Reset zoom to 100%">100%</button>
                 </div>
@@ -249,45 +260,52 @@
             </div>
             <div id="loading-indicator" class="hidden">
                 <div class="spinner"></div>
-                <p>Scanning folder...</p>
+                <p data-i18n="loading.scanning">Scanning folder...</p>
             </div>
             <div id="confirm-overlay" class="confirm-overlay hidden">
                 <div class="confirm-panel">
                     <div class="confirm-header">
-                        <h2>Delete File</h2>
+                        <h2 data-i18n="dialog.delete.title">Delete File</h2>
                     </div>
                     <div class="confirm-body">
-                        <p>Are you sure you want to delete <strong id="confirm-file-name"></strong>?</p>
-                        <p class="confirm-hint">The file will be moved to the Recycle Bin.</p>
+                        <p data-i18n="dialog.delete.message">Are you sure you want to delete this file?</p>
+                        <p class="confirm-file-name"><strong id="confirm-file-name"></strong></p>
+                        <p class="confirm-hint" data-i18n="dialog.delete.hint">The file will be moved to the Recycle Bin.
+                        </p>
                     </div>
                     <div class="confirm-actions">
-                        <button id="confirm-cancel-btn" class="btn btn-cancel-confirm">Cancel</button>
-                        <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+                        <button id="confirm-cancel-btn" class="btn btn-cancel-confirm"
+                            data-i18n="action.cancel">Cancel</button>
+                        <button id="confirm-delete-btn" class="btn btn-danger"
+                            data-i18n="action.delete">Delete</button>
                     </div>
                 </div>
             </div>
             <div id="dirty-overlay" class="confirm-overlay hidden">
                 <div class="confirm-panel dirty-panel">
                     <div class="confirm-header">
-                        <h2 id="dirty-title">Unsaved changes</h2>
+                        <h2 id="dirty-title" data-i18n="dialog.dirty.title">Unsaved changes</h2>
                     </div>
                     <div class="confirm-body">
                         <p id="dirty-message"></p>
                         <div id="dirty-file-list" class="dirty-list"></div>
                     </div>
                     <div class="confirm-actions">
-                        <button id="dirty-cancel-btn" class="btn btn-cancel-confirm">Cancel</button>
-                        <button id="dirty-discard-btn" class="btn btn-discard">Discard</button>
-                        <button id="dirty-save-btn" class="btn btn-save-selected">Save selected</button>
+                        <button id="dirty-cancel-btn" class="btn btn-cancel-confirm"
+                            data-i18n="action.cancel">Cancel</button>
+                        <button id="dirty-discard-btn" class="btn btn-discard"
+                            data-i18n="dialog.dirty.discard">Discard</button>
+                        <button id="dirty-save-btn" class="btn btn-save-selected"
+                            data-i18n="dialog.dirty.saveSelected">Save selected</button>
                     </div>
                 </div>
             </div>
             <div id="settings-overlay" class="settings-overlay hidden">
                 <div class="settings-panel">
                     <div class="settings-header">
-                        <h2>Settings</h2>
-                        <button id="settings-close-btn" class="icon-btn" title="Close settings"
-                            aria-label="Close settings">
+                        <h2 data-i18n="settings.title">Settings</h2>
+                        <button id="settings-close-btn" class="icon-btn" data-i18n-title="settings.close"
+                            data-i18n-aria-label="settings.close" title="Close settings" aria-label="Close settings">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" />
@@ -296,47 +314,57 @@
                     </div>
                     <div class="settings-body">
                         <div class="settings-section">
-                            <h3 class="settings-section-title">File Discovery</h3>
+                            <h3 class="settings-section-title" data-i18n="settings.fileDiscovery">File Discovery</h3>
                             <div class="settings-field settings-field-checkbox">
                                 <label class="checkbox-label" for="use-gitignore-checkbox">
                                     <input type="checkbox" id="use-gitignore-checkbox" checked />
-                                    <span>Use .gitignore</span>
+                                    <span data-i18n="settings.useGitignore">Use .gitignore</span>
                                 </label>
-                                <p class="settings-hint">Skip files and folders matched by .gitignore. Uncheck to
-                                    include ignored files in the list.</p>
+                                <p class="settings-hint" data-i18n="settings.useGitignoreHint">Skip files and folders
+                                    matched by .gitignore. Uncheck to include ignored files in the list.</p>
                             </div>
                         </div>
                         <div class="settings-section">
-                            <h3 class="settings-section-title">Fonts</h3>
+                            <h3 class="settings-section-title" data-i18n="settings.language">Language</h3>
+                            <div class="settings-field">
+                                <label for="language-select" data-i18n="settings.displayLanguage">Display
+                                    language</label>
+                                <select id="language-select" class="settings-select"></select>
+                                <p class="settings-hint" data-i18n="settings.languageHint">Changes take effect after
+                                    the app reloads.</p>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h3 class="settings-section-title" data-i18n="settings.fonts">Fonts</h3>
                             <div class="settings-field-row">
                                 <div class="settings-field">
-                                    <label for="font-default-select">Body Font</label>
+                                    <label for="font-default-select" data-i18n="settings.bodyFont">Body Font</label>
                                     <select id="font-default-select" class="settings-select"></select>
                                 </div>
                                 <div class="settings-field settings-field-size">
-                                    <label for="font-default-size">Size</label>
+                                    <label for="font-default-size" data-i18n="settings.size">Size</label>
                                     <input type="number" id="font-default-size" class="settings-number" min="10"
                                         max="32" step="1" />
                                 </div>
                             </div>
                             <div class="settings-field-row">
                                 <div class="settings-field">
-                                    <label for="font-header-select">Heading Font</label>
+                                    <label for="font-header-select" data-i18n="settings.headingFont">Heading Font</label>
                                     <select id="font-header-select" class="settings-select"></select>
                                 </div>
                                 <div class="settings-field settings-field-size">
-                                    <label for="font-header-size">Size</label>
+                                    <label for="font-header-size" data-i18n="settings.size">Size</label>
                                     <input type="number" id="font-header-size" class="settings-number" min="14" max="48"
                                         step="1" />
                                 </div>
                             </div>
                             <div class="settings-field-row">
                                 <div class="settings-field">
-                                    <label for="font-code-select">Code Font</label>
+                                    <label for="font-code-select" data-i18n="settings.codeFont">Code Font</label>
                                     <select id="font-code-select" class="settings-select"></select>
                                 </div>
                                 <div class="settings-field settings-field-size">
-                                    <label for="font-code-size">Size</label>
+                                    <label for="font-code-size" data-i18n="settings.size">Size</label>
                                     <input type="number" id="font-code-size" class="settings-number" min="10" max="28"
                                         step="1" />
                                 </div>
@@ -348,8 +376,9 @@
             <div id="about-overlay" class="settings-overlay hidden">
                 <div class="settings-panel about-panel">
                     <div class="settings-header">
-                        <h2>About Esuyo Markdown</h2>
-                        <button id="about-close-btn" class="icon-btn" title="Close" aria-label="Close">
+                        <h2 data-i18n="about.titleFull">About Esuyo Markdown</h2>
+                        <button id="about-close-btn" class="icon-btn" data-i18n-title="about.close"
+                            data-i18n-aria-label="about.close" title="Close" aria-label="Close">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" />
@@ -361,12 +390,13 @@
                             <div class="about-logo" aria-hidden="true">E</div>
                             <div class="about-app-info">
                                 <div class="about-app-name">Esuyo Markdown</div>
-                                <div class="about-app-version">Version <span id="about-version">—</span></div>
+                                <div class="about-app-version"><span data-i18n="about.version">Version</span> <span
+                                        id="about-version">—</span></div>
                             </div>
                         </div>
                         <div class="about-section">
                             <div class="about-row">
-                                <span class="about-label">License</span>
+                                <span class="about-label" data-i18n="about.license">License</span>
                                 <span class="about-value">GNU Affero General Public License v3.0 (AGPL-3.0)</span>
                             </div>
                         </div>
@@ -379,7 +409,7 @@
                                 <div class="about-link-text">
                                     <a id="about-github-link" class="about-link"
                                         href="https://github.com/8perezm/esuyo-markdown" target="_blank"
-                                        rel="noopener noreferrer">GitHub repository</a>
+                                        rel="noopener noreferrer" data-i18n="about.github">GitHub repository</a>
                                     <span class="about-url">https://github.com/8perezm/esuyo-markdown</span>
                                 </div>
                             </div>
@@ -393,7 +423,8 @@
                                 <div class="about-link-text">
                                     <a id="about-store-link" class="about-link"
                                         href="https://apps.microsoft.com/detail/9NFR3W513LVR?hl=en-us&amp;gl=GB&amp;ocid=pdpshare"
-                                        target="_blank" rel="noopener noreferrer">Microsoft Store</a>
+                                        target="_blank" rel="noopener noreferrer" data-i18n="about.store">Microsoft
+                                        Store</a>
                                     <span class="about-url">https://apps.microsoft.com/detail/9NFR3W513LVR?hl=en-us&amp;gl=GB&amp;ocid=pdpshare</span>
                                 </div>
                             </div>
@@ -413,7 +444,7 @@
                 <line x1="12" y1="12" x2="12" y2="18" />
                 <line x1="9" y1="15" x2="15" y2="15" />
             </svg>
-            <span>New markdown file here</span>
+            <span data-i18n="context.newFileHere">New markdown file here</span>
         </button>
     </div>
 

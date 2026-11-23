@@ -1,0 +1,111 @@
+// Azerbaijani dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Üst panel / menyu
+    "menu.tooltip": "Menyu",
+    "theme.toggle": "Temanı dəyiş",
+    "theme.switchToDark": "Qaranlıq temaya keç",
+    "theme.switchToLight": "Açıq temaya keç",
+    "file.new": "Yeni fayl",
+    "file.newTooltip": "Yeni fayl",
+    "folder.reload": "Qovluğu yenilə",
+    "folder.open": "Qovluğu aç",
+    "action.save": "Yadda saxla",
+    "action.saveAs": "Fərqli saxla",
+    "settings.title": "Parametrlər",
+    "menu.recentFolders": "Son açılan qovluqlar",
+    "menu.noRecentFolders": "Son açılan qovluq yoxdur",
+    "about.title": "Haqqında",
+    "context.newFileHere": "Burada yeni Markdown faylı yarat",
+
+    // Fayl görünümü / yan panel
+    "view.group": "Fayl naviqasiyası",
+    "view.flatList": "Düz siyahı",
+    "view.treeView": "Ağac görünümü",
+    "view.allDirs": "Bütün qovluqlar",
+    "view.allDirsTooltip": "Markdown faylı olmayan qovluqları göstər",
+    "sidebar.toggle": "Yan paneli açıb-bağla",
+    "sidebar.show": "Yan paneli göstər",
+    "sidebar.hide": "Yan paneli gizlət",
+    "tabs.ariaLabel": "Açıq fayllar",
+    "tabs.close": "Sekmeyi bağla",
+
+    // Boş / xoş gəlmə / yüklənmə vəziyyətləri
+    "empty.noFolderSelected": "Qovluq seçilməyib",
+    "empty.noFolderHint": "Markdown faylları olan bir qovluq seçmək üçün \"Qovluğu aç\" düyməsinə klikləyin.",
+    "empty.noFilesFound": "Markdown faylı tapılmadı",
+    "empty.noFilesHint": "Bu qovluqda .md və ya .markdown faylı yoxdur.",
+    "welcome.title": "Esuyo Markdown-a xoş gəlmisiniz",
+    "welcome.hint": "Markdown fayllarına baxmaq və oxumaq üçün bir qovluq açın.",
+    "loading.scanning": "Qovluq skan edilir...",
+
+    // Oxucu / redaktor
+    "editor.source": "Mənbə",
+    "editor.edit": "Redaktə et",
+    "editor.placeholder": "Markdown yazmağa başlayın...",
+    "editor.sourcePlaceholder": "Markdown mənbə kodunu redaktə edin...",
+    "viewer.fileMissing": "Fayl artıq mövcud deyil: {file}",
+    "viewer.missingSuffix": " (mövcud deyil)",
+    "zoom.tooltip": "Miqyas: Ctrl + siçan təkəri, Ctrl + / Ctrl -, Ctrl 0. 100 %-ə qaytarmaq üçün klikləyin.",
+    "zoom.resetAria": "Miqyası 100 %-ə qaytar",
+    "zoom.normal": "Miqyas: 100 % (normal). Dəyişmək üçün Ctrl + siçan təkəri və ya Ctrl + / Ctrl - istifadə edin.",
+    "zoom.changed": "Miqyas: {zoom} %. 100 %-ə qaytarmaq üçün klikləyin və ya Ctrl+0 basın.",
+
+    // Ümumi əməliyyatlar
+    "action.cancel": "Ləğv et",
+    "action.delete": "Sil",
+    "file.delete": "Faylı sil",
+
+    // Dialoqlar
+    "dialog.delete.title": "Faylı sil",
+    "dialog.delete.message": "Bu faylı silmək istədiyinizə əminsiniz?",
+    "dialog.delete.hint": "Fayl Zibil qutusuna köçürüləcək.",
+    "dialog.dirty.title": "Yadda saxlanmamış dəyişikliklər",
+    "dialog.dirty.message_one": "“{file}” faylında yadda saxlanmamış dəyişikliklər var. Nə etmək istəyirsiniz?",
+    "dialog.dirty.message_other": "{count} faylda yadda saxlanmamış dəyişikliklər var. Hansılarını saxlamaq istədiyinizi seçin.",
+    "dialog.dirty.saveSelected": "Seçilmişləri saxla",
+    "dialog.dirty.saveSelectedClose": "Seçilmişləri saxla və bağla",
+    "dialog.dirty.saveSelectedSwitch": "Seçilmişləri saxla və keç",
+    "dialog.dirty.saveSelectedQuit": "Seçilmişləri saxla və çıx",
+    "dialog.dirty.discard": "İmtina et",
+    "dialog.dirty.discardClose": "İmtina et və bağla",
+    "dialog.dirty.discardSwitch": "İmtina et və keç",
+    "dialog.dirty.discardQuit": "İmtina et və çıx",
+    "dialog.openFolder": "Markdown faylları olan bir qovluq seçin",
+
+    // Xəbərdarlıqlarda görünən xətalar
+    "error.saveCancelled": "{file} saxlanıla bilmədi. Əməliyyat ləğv edildi.",
+    "error.openFolder": "Qovluq açılarkən xəta: {error}",
+    "error.createFile": "Fayl yaradılarkən xəta: {error}",
+    "error.deleteFile": "Fayl silinərkən xəta: {error}",
+    "error.saveFile": "{file} saxlanıla bilmədi: {error}",
+    "error.saveFileAs": "Fayl saxlanıla bilmədi: {error}",
+
+    // Parametrlər
+    "settings.close": "Parametrləri bağla",
+    "settings.fileDiscovery": "Fayl axtarışı",
+    "settings.useGitignore": ".gitignore istifadə et",
+    "settings.useGitignoreHint": ".gitignore tərəfindən uyğun gələn fayl və qovluqları atlayın. İgnor edilmiş faylları siyahıya daxil etmək üçün işarəni qaldırın.",
+    "settings.fonts": "Şriftlər",
+    "settings.bodyFont": "Mətn şrifti",
+    "settings.headingFont": "Başlıq şrifti",
+    "settings.codeFont": "Kod şrifti",
+    "settings.size": "Ölçü",
+    "settings.language": "Dil",
+    "settings.displayLanguage": "Görüntü dili",
+    "settings.languageHint": "Dəyişikliklər tətbiq yeniləndikdən sonra qüvvəyə minir.",
+    "settings.systemDefault": "Sistem standartı",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Haqqında (lisenziya adı tərcümə edilmir)
+    "about.titleFull": "Esuyo Markdown haqqında",
+    "about.close": "Bağla",
+    "about.version": "Versiya",
+    "about.unknownVersion": "Naməlum",
+    "about.license": "Lisenziya",
+    "about.github": "GitHub deposu",
+    "about.store": "Microsoft Store",
+};

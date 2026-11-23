@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "checklist": "node scripts/i18n/gen-language-checklist.mjs",
+    "test:autotick": "node scripts/i18n/test-autotick.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",

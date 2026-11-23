@@ -1,0 +1,111 @@
+// Kyrgyz dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Жогорку панель / меню
+    "menu.tooltip": "Меню",
+    "theme.toggle": "Теманы алмаштыру",
+    "theme.switchToDark": "Караңгы темага өтүү",
+    "theme.switchToLight": "Жарык темага өтүү",
+    "file.new": "Жаңы файл",
+    "file.newTooltip": "Жаңы файл",
+    "folder.reload": "Папканы кайта жүктөө",
+    "folder.open": "Папканы ачу",
+    "action.save": "Сактоо",
+    "action.saveAs": "Башкача сактоо",
+    "settings.title": "Жөндөөлөр",
+    "menu.recentFolders": "Жакында ачылган папкалар",
+    "menu.noRecentFolders": "Жакында ачылган папкалар жок",
+    "about.title": "Программа жөнүндө",
+    "context.newFileHere": "Бул жерде жаңы Markdown файлын түзүү",
+
+    // Файл көрүнүшү / каптал панель
+    "view.group": "Файлдарды карап чыгуу",
+    "view.flatList": "Жалпак тизме",
+    "view.treeView": "Дарак көрүнүшү",
+    "view.allDirs": "Бардык папкалар",
+    "view.allDirsTooltip": "Markdown файлдары жок папкаларды көрсөтүү",
+    "sidebar.toggle": "Каптал панелди ачуу/жабуу",
+    "sidebar.show": "Каптал панелди көрсөтүү",
+    "sidebar.hide": "Каптал панелди жашыруу",
+    "tabs.ariaLabel": "Ачык файлдар",
+    "tabs.close": "Өтмөчөнү жабуу",
+
+    // Бош / тосуп алуу / жүктөлүү абалдары
+    "empty.noFolderSelected": "Папка тандалган эмес",
+    "empty.noFolderHint": "Markdown файлдары бар папканы табуу үчүн \"Папканы ачуу\" баскычын басыңыз.",
+    "empty.noFilesFound": "Markdown файлдары табылган эмес",
+    "empty.noFilesHint": "Бул папкада .md же .markdown файлдары жок.",
+    "welcome.title": "Esuyo Markdownга кош келиңиз",
+    "welcome.hint": "Markdown файлдарын карап чыгуу жана окуу үчүн папканы ачыңыз.",
+    "loading.scanning": "Папка сканерленип жатат...",
+
+    // Окугуч / редактор
+    "editor.source": "Код",
+    "editor.edit": "Түзөтүү",
+    "editor.placeholder": "Markdown жазууну баштаңыз...",
+    "editor.sourcePlaceholder": "Markdown кодун түзөтүңүз...",
+    "viewer.fileMissing": "Файл мындан ары жок: {file}",
+    "viewer.missingSuffix": " (жок)",
+    "zoom.tooltip": "Масштаб: Ctrl + чычкан дөңгөлөгү, Ctrl + / Ctrl -, Ctrl 0. 100 %-гө кайтаруу үчүн чыкылдатыңыз.",
+    "zoom.resetAria": "Масштабты 100 %-гө кайтаруу",
+    "zoom.normal": "Масштаб: 100 % (кадимки). Өзгөртүү үчүн Ctrl + чычкан дөңгөлөгү же Ctrl + / Ctrl - колдонуңуз.",
+    "zoom.changed": "Масштаб: {zoom} %. 100 %-гө кайтаруу үчүн чыкылдатыңыз же Ctrl+0 басыңыз.",
+
+    // Жалпы аракеттер
+    "action.cancel": "Жокко чыгаруу",
+    "action.delete": "Өчүрүү",
+    "file.delete": "Файлды өчүрүү",
+
+    // Диалогдор
+    "dialog.delete.title": "Файлды өчүрүү",
+    "dialog.delete.message": "Бул файлды өчүрүүнү каалайсызбы?",
+    "dialog.delete.hint": "Файл Таштанды кутусуна жылдырылат.",
+    "dialog.dirty.title": "Сакталбаган өзгөртүүлөр",
+    "dialog.dirty.message_one": "“{file}” файлында сакталбаган өзгөртүүлөр бар. Эмне кылгыңыз келет?",
+    "dialog.dirty.message_other": "{count} файлда сакталбаган өзгөртүүлөр бар. Кайсыларын сактоону тандаңыз.",
+    "dialog.dirty.saveSelected": "Тандалгандарды сактоо",
+    "dialog.dirty.saveSelectedClose": "Тандалгандарды сактоо жана жабуу",
+    "dialog.dirty.saveSelectedSwitch": "Тандалгандарды сактоо жана алмаштыруу",
+    "dialog.dirty.saveSelectedQuit": "Тандалгандарды сактоо жана чыгуу",
+    "dialog.dirty.discard": "Четке кагуу",
+    "dialog.dirty.discardClose": "Четке кагуу жана жабуу",
+    "dialog.dirty.discardSwitch": "Четке кагуу жана алмаштыруу",
+    "dialog.dirty.discardQuit": "Четке кагуу жана чыгуу",
+    "dialog.openFolder": "Markdown файлдары бар папканы тандаңыз",
+
+    // Эскертүүлөрдө көрсөтүлгөн каталар
+    "error.saveCancelled": "{file} сакталбады. Операция жокко чыгарылды.",
+    "error.openFolder": "Папканы ачууда ката: {error}",
+    "error.createFile": "Файлды түзүүдө ката: {error}",
+    "error.deleteFile": "Файлды өчүрүүдө ката: {error}",
+    "error.saveFile": "{file} сактоодо ката: {error}",
+    "error.saveFileAs": "Файлды сактоодо ката: {error}",
+
+    // Жөндөөлөр
+    "settings.close": "Жөндөөлөрдү жабуу",
+    "settings.fileDiscovery": "Файлдарды табуу",
+    "settings.useGitignore": ".gitignore колдонуу",
+    "settings.useGitignoreHint": ".gitignore дал келген файлдарды жана папкаларды өткөрүп жиберүү. Этибарга алынган файлдарды тизмеге кошуу үчүн белгини алып салыңыз.",
+    "settings.fonts": "Шрифттер",
+    "settings.bodyFont": "Негизги шрифт",
+    "settings.headingFont": "Аталыш шрифти",
+    "settings.codeFont": "Код шрифти",
+    "settings.size": "Өлчөмү",
+    "settings.language": "Тил",
+    "settings.displayLanguage": "Көрсөтүү тили",
+    "settings.languageHint": "Өзгөртүүлөр колдонмо кайта жүктөлгөндөн кийин күчүнө кирет.",
+    "settings.systemDefault": "Системанын демейкиси",
+    "fonts.sansSerif": "Санс-сериф",
+    "fonts.serif": "Сериф",
+    "fonts.monospace": "Моноширин",
+
+    // Жөнүндө (лицензиянын аты которулбайт)
+    "about.titleFull": "Esuyo Markdown жөнүндө",
+    "about.close": "Жабуу",
+    "about.version": "Версиясы",
+    "about.unknownVersion": "Белгисиз",
+    "about.license": "Лицензия",
+    "about.github": "GitHub репозиторийи",
+    "about.store": "Microsoft Store",
+};

@@ -1,0 +1,111 @@
+// Uzbek dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Yuqori panel / menyu
+    "menu.tooltip": "Menyu",
+    "theme.toggle": "Mavzuni almashtirish",
+    "theme.switchToDark": "Qorong'i mavzuga o'tish",
+    "theme.switchToLight": "Ochiq mavzuga o'tish",
+    "file.new": "Yangi fayl",
+    "file.newTooltip": "Yangi fayl",
+    "folder.reload": "Papkani qayta yuklash",
+    "folder.open": "Papkani ochish",
+    "action.save": "Saqlash",
+    "action.saveAs": "Boshqa nomda saqlash",
+    "settings.title": "Sozlamalar",
+    "menu.recentFolders": "Oxirgi ochilgan papkalar",
+    "menu.noRecentFolders": "Oxirgi ochilgan papkalar yo'q",
+    "about.title": "Haqida",
+    "context.newFileHere": "Bu yerda yangi Markdown fayli yaratish",
+
+    // Fayl ko'rinishi / yon panel
+    "view.group": "Fayllar bo'yicha harakatlanish",
+    "view.flatList": "Tekis ro'yxat",
+    "view.treeView": "Daraxt ko'rinishi",
+    "view.allDirs": "Barcha papkalar",
+    "view.allDirsTooltip": "Markdown fayllari bo'lmagan papkalarni ko'rsatish",
+    "sidebar.toggle": "Yon panelni ochib-yopish",
+    "sidebar.show": "Yon panelni ko'rsatish",
+    "sidebar.hide": "Yon panelni yashirish",
+    "tabs.ariaLabel": "Ochiq fayllar",
+    "tabs.close": "Varaqni yopish",
+
+    // Bo'sh / xush kelibsiz / yuklanish holatlari
+    "empty.noFolderSelected": "Papka tanlanmadi",
+    "empty.noFolderHint": "Markdown fayllari bo'lgan papkani topish uchun \"Papkani ochish\" tugmasini bosing.",
+    "empty.noFilesFound": "Markdown fayllari topilmadi",
+    "empty.noFilesHint": "Bu papkada .md yoki .markdown fayllari yo'q.",
+    "welcome.title": "Esuyo Markdown'ga xush kelibsiz",
+    "welcome.hint": "Markdown fayllarini ko'rish va o'qish uchun papkani oching.",
+    "loading.scanning": "Papka skan qilinmoqda...",
+
+    // O'quchi / muharrir
+    "editor.source": "Manba",
+    "editor.edit": "Tahrirlash",
+    "editor.placeholder": "Markdown yozishni boshlang...",
+    "editor.sourcePlaceholder": "Markdown manba kodini tahrirlang...",
+    "viewer.fileMissing": "Fayl endi mavjud emas: {file}",
+    "viewer.missingSuffix": " (mavjud emas)",
+    "zoom.tooltip": "Masshtab: Ctrl + sichqoncha g'ildiragi, Ctrl + / Ctrl -, Ctrl 0. 100 % ga qaytarish uchun bosing.",
+    "zoom.resetAria": "Masshtabni 100 % ga qaytarish",
+    "zoom.normal": "Masshtab: 100 % (normal). O'zgartirish uchun Ctrl + sichqoncha g'ildiragi yoki Ctrl + / Ctrl - dan foydalaning.",
+    "zoom.changed": "Masshtab: {zoom} %. 100 % ga qaytarish uchun bosing yoki Ctrl+0 bosing.",
+
+    // Umumiy amallar
+    "action.cancel": "Bekor qilish",
+    "action.delete": "O'chirish",
+    "file.delete": "Faylni o'chirish",
+
+    // Dialoglarning nomlari
+    "dialog.delete.title": "Faylni o'chirish",
+    "dialog.delete.message": "Bu faylni o'chirishni xohlaysizmi?",
+    "dialog.delete.hint": "Fayl Chiqindi qutisiga ko'chiriladi.",
+    "dialog.dirty.title": "Saqlanmagan o'zgarishlar",
+    "dialog.dirty.message_one": "“{file}” faylida saqlanmagan o'zgarishlar bor. Nima qilmoqchisiz?",
+    "dialog.dirty.message_other": "{count} ta faylda saqlanmagan o'zgarishlar bor. Qaysilarini saqlashni tanlang.",
+    "dialog.dirty.saveSelected": "Tanlanganlarni saqlash",
+    "dialog.dirty.saveSelectedClose": "Tanlanganlarni saqlash va yopish",
+    "dialog.dirty.saveSelectedSwitch": "Tanlanganlarni saqlash va almashtirish",
+    "dialog.dirty.saveSelectedQuit": "Tanlanganlarni saqlash va chiqish",
+    "dialog.dirty.discard": "Rad etish",
+    "dialog.dirty.discardClose": "Rad etish va yopish",
+    "dialog.dirty.discardSwitch": "Rad etish va almashtirish",
+    "dialog.dirty.discardQuit": "Rad etish va chiqish",
+    "dialog.openFolder": "Markdown fayllari bo'lgan papkani tanlang",
+
+    // Ogohlantirishlarda ko'rsatiladigan xatolar
+    "error.saveCancelled": "{file} saqlanib bo'lmadi. Amaliyot bekor qilindi.",
+    "error.openFolder": "Papkani ochishda xatolik: {error}",
+    "error.createFile": "Faylni yaratishda xatolik: {error}",
+    "error.deleteFile": "Faylni o'chirishda xatolik: {error}",
+    "error.saveFile": "{file} saqlanib bo'lmadi: {error}",
+    "error.saveFileAs": "Faylni saqlab bo'lmadi: {error}",
+
+    // Sozlamalar
+    "settings.close": "Sozlamalarni yopish",
+    "settings.fileDiscovery": "Fayllarni topish",
+    "settings.useGitignore": ".gitignore dan foydalanish",
+    "settings.useGitignoreHint": ".gitignore ga mos keladigan fayl va papkalarni o'tkazib yuborish. E'tiborsiz qoldirilgan fayllarni ro'yxatga qo'shish uchun belgini olib tashlang.",
+    "settings.fonts": "Shriftlar",
+    "settings.bodyFont": "Asosiy shrift",
+    "settings.headingFont": "Sarlavha shrifti",
+    "settings.codeFont": "Kod shrifti",
+    "settings.size": "O'lcham",
+    "settings.language": "Til",
+    "settings.displayLanguage": "Ko'rsatish tili",
+    "settings.languageHint": "O'zgarishlar ilova qayta yuklangandan keyin kuchga kiradi.",
+    "settings.systemDefault": "Tizim standarti",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Haqida (litsenziya nomi tarjima qilinmaydi)
+    "about.titleFull": "Esuyo Markdown haqida",
+    "about.close": "Yopish",
+    "about.version": "Versiya",
+    "about.unknownVersion": "Noma'lum",
+    "about.license": "Litsenziya",
+    "about.github": "GitHub ombori",
+    "about.store": "Microsoft Store",
+};

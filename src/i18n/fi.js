@@ -1,0 +1,111 @@
+// Finnish dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Yläpalkki / valikko
+    "menu.tooltip": "Valikko",
+    "theme.toggle": "Vaihda teemaa",
+    "theme.switchToDark": "Vaihda tummaan teemaan",
+    "theme.switchToLight": "Vaihda vaaleaan teemaan",
+    "file.new": "Uusi tiedosto",
+    "file.newTooltip": "Uusi tiedosto",
+    "folder.reload": "Lataa kansio uudelleen",
+    "folder.open": "Avaa kansio",
+    "action.save": "Tallenna",
+    "action.saveAs": "Tallenna nimellä",
+    "settings.title": "Asetukset",
+    "menu.recentFolders": "Viime kansiote",
+    "menu.noRecentFolders": "Ei viime kansiote",
+    "about.title": "Tietoja",
+    "context.newFileHere": "Uusi Markdown-tiedosto tähän",
+
+    // Tiedostonäkymä / sivupaneeli
+    "view.group": "Tiedostojen navigointi",
+    "view.flatList": "Tasainen luettelo",
+    "view.treeView": "Puunäkymä",
+    "view.allDirs": "Kaikki kansiot",
+    "view.allDirsTooltip": "Näytä kansiot, joissa ei ole Markdown-tiedostoja",
+    "sidebar.toggle": "Näytä tai piilota sivupaneeli",
+    "sidebar.show": "Näytä sivupaneeli",
+    "sidebar.hide": "Piilota sivupaneeli",
+    "tabs.ariaLabel": "Avatut tiedostot",
+    "tabs.close": "Sulje välilehti",
+
+    // Tyhjä / tervetuloa / lataustilat
+    "empty.noFolderSelected": "Ei kansiota valittu",
+    "empty.noFolderHint": "Napsauta \"Avaa kansio\" etsiäksesi hakemiston, jossa on Markdown-tiedostoja.",
+    "empty.noFilesFound": "Markdown-tiedostoja ei löytynyt",
+    "empty.noFilesHint": "Tämä kansio ei sisällä .md- tai .markdown-tiedostoja.",
+    "welcome.title": "Tervetuloa Esuyo Markdowniin",
+    "welcome.hint": "Avaa kansio selataksesi ja lukeaksesi Markdown-tiedostoja.",
+    "loading.scanning": "Kansiota tarkistetaan...",
+
+    // Lukija / editori
+    "editor.source": "Lähdekoodi",
+    "editor.edit": "Muokkaa",
+    "editor.placeholder": "Aloita Markdownin kirjoittaminen...",
+    "editor.sourcePlaceholder": "Muokkaa raakaa Markdown-lähdekoodia...",
+    "viewer.fileMissing": "Tiedostoa ei enää ole: {file}",
+    "viewer.missingSuffix": " (puuttuu)",
+    "zoom.tooltip": "Zoom: Ctrl + hiiren rullalla, Ctrl + / Ctrl -, Ctrl 0. Napsauta palauttaaksesi zoomin arvoon 100 %.",
+    "zoom.resetAria": "Palauta zoom arvoon 100 %",
+    "zoom.normal": "Zoom: 100 % (normaali). Muuta Ctrl + hiiren rullalla tai Ctrl + / Ctrl -.",
+    "zoom.changed": "Zoom: {zoom} %. Napsauta tai paina Ctrl+0 palauttaaksesi arvoon 100 %.",
+
+    // Yleiset toiminnot
+    "action.cancel": "Peruuta",
+    "action.delete": "Poista",
+    "file.delete": "Poista tiedosto",
+
+    // Valintaikkunat
+    "dialog.delete.title": "Poista tiedosto",
+    "dialog.delete.message": "Haluatko varmasti poistaa tämän tiedoston?",
+    "dialog.delete.hint": "Tiedosto siirretään Roskakoriin.",
+    "dialog.dirty.title": "Tallentamattomat muutokset",
+    "dialog.dirty.message_one": "\"{file}\" sisältää tallentamattomia muutoksia. Mitä haluat tehdä?",
+    "dialog.dirty.message_other": "{count} tiedostossa on tallentamattomia muutoksia. Valitse, mitkä tallennetaan.",
+    "dialog.dirty.saveSelected": "Tallenna valitut",
+    "dialog.dirty.saveSelectedClose": "Tallenna valitut ja sulje",
+    "dialog.dirty.saveSelectedSwitch": "Tallenna valitut ja vaihda",
+    "dialog.dirty.saveSelectedQuit": "Tallenna valitut ja poistu",
+    "dialog.dirty.discard": "Hylkää",
+    "dialog.dirty.discardClose": "Hylkää ja sulje",
+    "dialog.dirty.discardSwitch": "Hylkää ja vaihda",
+    "dialog.dirty.discardQuit": "Hylkää ja poistu",
+    "dialog.openFolder": "Valitse kansio, jossa on Markdown-tiedostoja",
+
+    // Virheet ilmoituksissa
+    "error.saveCancelled": "Tiedoston {file} tallentaminen epäonnistui. Toiminto peruutettiin.",
+    "error.openFolder": "Virhe kansion avaamisessa: {error}",
+    "error.createFile": "Virhe tiedoston luonnissa: {error}",
+    "error.deleteFile": "Virhe tiedoston poistamisessa: {error}",
+    "error.saveFile": "Tiedoston {file} tallentaminen epäonnistui: {error}",
+    "error.saveFileAs": "Tiedoston tallentaminen epäonnistui: {error}",
+
+    // Asetukset
+    "settings.close": "Sulje asetukset",
+    "settings.fileDiscovery": "Tiedostojen etsintä",
+    "settings.useGitignore": "Käytä .gitignore",
+    "settings.useGitignoreHint": "Ohita .gitignore-tiedoston mukaiset tiedostot ja kansiot. Poista valinta sisällyttääksesi ohitetut tiedostot luetteloon.",
+    "settings.fonts": "Fontit",
+    "settings.bodyFont": "Leipätekstifontti",
+    "settings.headingFont": "Otsikkofontti",
+    "settings.codeFont": "Koodifontti",
+    "settings.size": "Koko",
+    "settings.language": "Kieli",
+    "settings.displayLanguage": "Näyttökieli",
+    "settings.languageHint": "Muutokset tulevat voimaan sovelluksen uudelleenlatauksen jälkeen.",
+    "settings.systemDefault": "Järjestelmän oletus",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Tietoja (lisenssin nimi jätetään kääntämättä)
+    "about.titleFull": "Tietoja Esuyo Markdownista",
+    "about.close": "Sulje",
+    "about.version": "Versio",
+    "about.unknownVersion": "Tuntematon",
+    "about.license": "Lisenssi",
+    "about.github": "GitHub-tietovarasto",
+    "about.store": "Microsoft Store",
+};

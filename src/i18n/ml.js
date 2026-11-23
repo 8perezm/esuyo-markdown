@@ -1,0 +1,111 @@
+// Malayalam dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "മെനു",
+    "theme.toggle": "ഥീം മാറ്റുക",
+    "theme.switchToDark": "ഇരുണ്ട ഥീമിലേക്ക് മാറുക",
+    "theme.switchToLight": "വെളിച്ചമുള്ള ഥീമിലേക്ക് മാറുക",
+    "file.new": "പുതിയ ഫയൽ",
+    "file.newTooltip": "പുതിയ ഫയൽ",
+    "folder.reload": "ഫോൾഡർ വീണ്ടും ലോഡ് ചെയ്യുക",
+    "folder.open": "ഫോൾഡർ തുറക്കുക",
+    "action.save": "സൂക്ഷിക്കുക",
+    "action.saveAs": "ഇതുപോലെ സൂക്ഷിക്കുക",
+    "settings.title": "ക്രമീകരണങ്ങൾ",
+    "menu.recentFolders": "അടുത്തിടെ തുറന്ന ഫോൾഡറുകൾ",
+    "menu.noRecentFolders": "അടുത്തിടെ തുറന്ന ഫോൾഡറുകളൊന്നുമില്ല",
+    "about.title": "വിവരങ്ങൾ",
+    "context.newFileHere": "ഇവിടെ പുതിയ Markdown ഫയൽ",
+
+    // File view / sidebar
+    "view.group": "ഫയൽ നാവിഗേഷൻ കാഴ്ച",
+    "view.flatList": "പരന്ന ലിസ്റ്റ്",
+    "view.treeView": "ട്രീ വ്യൂ",
+    "view.allDirs": "എല്ലാ ഫോൾഡറുകൾ",
+    "view.allDirsTooltip": "Markdown ഫയലുകളില്ലാത്ത ഫോൾഡറുകളും കാണിക്കുക",
+    "sidebar.toggle": "സൈഡ്ബാർ മാറ്റുക",
+    "sidebar.show": "സൈഡ്ബാർ കാണിക്കുക",
+    "sidebar.hide": "സൈഡ്ബാർ മറയ്ക്കുക",
+    "tabs.ariaLabel": "തുറന്നിരിക്കുന്ന ഫയലുകൾ",
+    "tabs.close": "ടാബ് അടയ്ക്കുക",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "ഒരു ഫോൾഡറും തിരഞ്ഞെടുത്തിട്ടില്ല",
+    "empty.noFolderHint": "Markdown ഫയലുകളുള്ള ഒരു ഡയറക്ടറി കണ്ടെത്താൻ \"Open Folder\" ക്ലിക്ക് ചെയ്യുക.",
+    "empty.noFilesFound": "Markdown ഫയലുകളൊന്നും കണ്ടെത്തിയില്ല",
+    "empty.noFilesHint": "ഈ ഫോൾഡറിൽ .md അല്ലെങ്കിൽ .markdown ഫയലുകളൊന്നുമില്ല.",
+    "welcome.title": "Esuyo Markdown-ലേക്ക് സ്വാഗതം",
+    "welcome.hint": "Markdown ഫയലുകൾ ബ്രൗസ് ചെയ്ത് വായിക്കാൻ ഒരു ഫോൾഡർ തുറക്കുക.",
+    "loading.scanning": "ഫോൾഡർ സ്കാൻ ചെയ്യുന്നു...",
+
+    // Reader / editor
+    "editor.source": "ഉറവിടം",
+    "editor.edit": "എഡിറ്റ് ചെയ്യുക",
+    "editor.placeholder": "Markdown എഴുതാൻ തുടങ്ങുക...",
+    "editor.sourcePlaceholder": "അസംസ്കൃത Markdown ഉറവിടം എഡിറ്റ് ചെയ്യുക...",
+    "viewer.fileMissing": "ഫയൽ ഇനി നിലവിലില്ല: {file}",
+    "viewer.missingSuffix": " (നഷ്ടമായി)",
+    "zoom.tooltip": "സൂം: Ctrl + മൗസ് ഹീൽ, Ctrl + / Ctrl -, Ctrl 0. 100% ലേക്ക് പുനഃസജ്ജമാക്കാൻ ക്ലിക്ക് ചെയ്യുക.",
+    "zoom.resetAria": "സൂം 100% ലേക്ക് പുനഃസജ്ജമാക്കുക",
+    "zoom.normal": "സൂം: 100% (സാധാരണ). മാറ്റാൻ Ctrl + മൗസ് ഹീൽ അല്ലെങ്കിൽ Ctrl + / Ctrl - ഉപയോഗിക്കുക.",
+    "zoom.changed": "സൂം: {zoom}%. 100% ലേക്ക് പുനഃസജ്ജമാക്കാൻ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ Ctrl+0 അമർത്തുക.",
+
+    // Common actions
+    "action.cancel": "റദ്ദാക്കുക",
+    "action.delete": "ഇല്ലാതാക്കുക",
+    "file.delete": "ഫയൽ ഇല്ലാതാക്കുക",
+
+    // Dialogs
+    "dialog.delete.title": "ഫയൽ ഇല്ലാതാക്കുക",
+    "dialog.delete.message": "ഈ ഫയൽ ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
+    "dialog.delete.hint": "ഫയൽ റീസൈക്കിൾ ബിനിലേക്ക് നീക്കും.",
+    "dialog.dirty.title": "സൂക്ഷിക്കാത്ത മാറ്റങ്ങൾ",
+    "dialog.dirty.message_one": "“{file}” എന്നതിൽ സൂക്ഷിക്കാത്ത മാറ്റങ്ങളുണ്ട്. എന്തുചെയ്യണമെന്ന് തിരഞ്ഞെടുക്കുക.",
+    "dialog.dirty.message_other": "{count} ഫയലുകളിൽ സൂക്ഷിക്കാത്ത മാറ്റങ്ങളുണ്ട്. ഏതൊക്കെ സൂക്ഷിക്കണമെന്ന് തിരഞ്ഞെടുക്കുക.",
+    "dialog.dirty.saveSelected": "തിരഞ്ഞെടുത്തവ സൂക്ഷിക്കുക",
+    "dialog.dirty.saveSelectedClose": "തിരഞ്ഞെടുത്തവ സൂക്ഷിക്കുക & അടയ്ക്കുക",
+    "dialog.dirty.saveSelectedSwitch": "തിരഞ്ഞെടുത്തവ സൂക്ഷിക്കുക & മാറ്റുക",
+    "dialog.dirty.saveSelectedQuit": "തിരഞ്ഞെടുത്തവ സൂക്ഷിക്കുക & ഉപേക്ഷിക്കുക",
+    "dialog.dirty.discard": "ഉപേക്ഷിക്കുക",
+    "dialog.dirty.discardClose": "ഉപേക്ഷിക്കുക & അടയ്ക്കുക",
+    "dialog.dirty.discardSwitch": "ഉപേക്ഷിക്കുക & മാറ്റുക",
+    "dialog.dirty.discardQuit": "ഉപേക്ഷിക്കുക & പുറത്തുകടക്കുക",
+    "dialog.openFolder": "Markdown ഫയലുകളുള്ള ഒരു ഫോൾഡർ തിരഞ്ഞെടുക്കുക",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "{file} സൂക്ഷിക്കുന്നത് പരാജയപ്പെട്ടു. പ്രവർത്തനം റദ്ദാക്കപ്പെട്ടു.",
+    "error.openFolder": "ഫോൾഡർ തുറക്കുന്നതിൽ പിശക്: {error}",
+    "error.createFile": "ഫയൽ സൃഷ്ടിക്കുന്നതിൽ പിശക്: {error}",
+    "error.deleteFile": "ഫയൽ ഇല്ലാതാക്കുന്നതിൽ പിശക്: {error}",
+    "error.saveFile": "{file} സൂക്ഷിക്കുന്നത് പരാജയപ്പെട്ടു: {error}",
+    "error.saveFileAs": "ഫയൽ സൂക്ഷിക്കുന്നത് പരാജയപ്പെട്ടു: {error}",
+
+    // Settings
+    "settings.close": "ക്രമീകരണങ്ങൾ അടയ്ക്കുക",
+    "settings.fileDiscovery": "ഫയൽ കണ്ടെത്തൽ",
+    "settings.useGitignore": ".gitignore ഉപയോഗിക്കുക",
+    "settings.useGitignoreHint": ".gitignore-മായി പൊരുത്തപ്പെടുന്ന ഫയലുകളും ഫോൾഡറുകളും ഒഴിവാക്കുക. അവഗണിച്ച ഫയലുകൾ ലിസ്റ്റിൽ ഉൾപ്പെടുത്താൻ ചെക്ക് ചെയ്യാതിരിക്കുക.",
+    "settings.fonts": "ഫോണ്ടുകൾ",
+    "settings.bodyFont": "ബോഡി ഫോണ്ട്",
+    "settings.headingFont": "തലക്കെട്ട് ഫോണ്ട്",
+    "settings.codeFont": "കോഡ് ഫോണ്ട്",
+    "settings.size": "വലുപ്പം",
+    "settings.language": "ഭാഷ",
+    "settings.displayLanguage": "പ്രദർശന ഭാഷ",
+    "settings.languageHint": "ആപ്പ് വീണ്ടും ലോഡ് ചെയ്ത ശേഷം മാറ്റങ്ങൾ പ്രാബല്യത്തിൽ വരും.",
+    "settings.systemDefault": "സിസ്റ്റം ഡിഫോൾട്ട്",
+    "fonts.sansSerif": "സാൻസ്-സെരിഫ്",
+    "fonts.serif": "സെരിഫ്",
+    "fonts.monospace": "മോണോസ്പേസ്",
+
+    // About
+    "about.titleFull": "Esuyo Markdown-നെക്കുറിച്ച്",
+    "about.close": "അടയ്ക്കുക",
+    "about.version": "പതിപ്പ്",
+    "about.unknownVersion": "അജ്ഞാതം",
+    "about.license": "ലൈസൻസ്",
+    "about.github": "GitHub റിപ്പോസിറ്ററി",
+    "about.store": "Microsoft Store",
+};

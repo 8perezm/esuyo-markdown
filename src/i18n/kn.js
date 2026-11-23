@@ -1,0 +1,111 @@
+// Kannada dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "ಮೆನು",
+    "theme.toggle": "ಥೀಮ್ ಬದಲಾಯಿಸಿ",
+    "theme.switchToDark": "ಡಾರ್ಕ್ ಥೀಮ್\u200Cಗೆ ಬದಲಾಯಿಸಿ",
+    "theme.switchToLight": "ಲೈಟ್ ಥೀಮ್\u200Cಗೆ ಬದಲಾಯಿಸಿ",
+    "file.new": "ಹೊಸ ಫೈಲ್",
+    "file.newTooltip": "ಹೊಸ ಫೈಲ್",
+    "folder.reload": "ಫೋಲ್ಡರ್\u200Cನ್ನು ರೀಲೋಡ್ ಮಾಡಿ",
+    "folder.open": "ಫೋಲ್ಡರ್ ತೆರೆಯಿರಿ",
+    "action.save": "ಉಳಿಸಿ",
+    "action.saveAs": "ಇದರಂತೆ ಉಳಿಸಿ",
+    "settings.title": "ಸೆಟ್ಟಿಂಗ್\u200Cಗಳು",
+    "menu.recentFolders": "ಇತ್ತೀಚಿನ ಫೋಲ್ಡರ್\u200Cಗಳು",
+    "menu.noRecentFolders": "ಯಾವುದೇ ಇತ್ತೀಚಿನ ಫೋಲ್ಡರ್\u200Cಗಳಿಲ್ಲ",
+    "about.title": "ಬಗ್ಗೆ",
+    "context.newFileHere": "ಇಲ್ಲಿ ಹೊಸ Markdown ಫೈಲ್",
+
+    // File view / sidebar
+    "view.group": "ಫೈಲ್ ನ್ಯಾವಿಗೇಷನ್ ವೀಕ್ಷಣೆ",
+    "view.flatList": "ಫ್ಲಾಟ್ ಪಟ್ಟಿ",
+    "view.treeView": "ಟ್ರೀ ವ್ಯೂ",
+    "view.allDirs": "ಎಲ್ಲಾ ಫೋಲ್ಡರ್\u200Cಗಳು",
+    "view.allDirsTooltip": "Markdown ಫೈಲ್\u200Cಗಳಿಲ್ಲದ ಫೋಲ್ಡರ್\u200Cಗಳನ್ನೂ ತೋರಿಸಿ",
+    "sidebar.toggle": "ಸೈಡ್\u200Cಬಾರ್ ಟಾಗಲ್ ಮಾಡಿ",
+    "sidebar.show": "ಸೈಡ್\u200Cಬಾರ್ ತೋರಿಸಿ",
+    "sidebar.hide": "ಸೈಡ್\u200Cಬಾರ್ ಮರೆಮಾಡಿ",
+    "tabs.ariaLabel": "ತೆರೆದ ಫೈಲ್\u200Cಗಳು",
+    "tabs.close": "ಟ್ಯಾಬ್\u200Cನ್ನು ಮುಚ್ಚಿ",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "ಯಾವುದೇ ಫೋಲ್ಡರ್ ಆಯ್ಕೆಯಾಗಿಲ್ಲ",
+    "empty.noFolderHint": "Markdown ಫೈಲ್\u200Cಗಳಿರುವ ಡೈರೆಕ್ಟರಿಯನ್ನು ಹುಡುಕಲು \"Open Folder\" ಕ್ಲಿಕ್ ಮಾಡಿ.",
+    "empty.noFilesFound": "ಯಾವುದೇ Markdown ಫೈಲ್\u200Cಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+    "empty.noFilesHint": "ಈ ಫೋಲ್ಡರ್\u200Cನಲ್ಲಿ ಯಾವುದೇ .md ಅಥವಾ .markdown ಫೈಲ್\u200Cಗಳಿಲ್ಲ.",
+    "welcome.title": "Esuyo Markdown\u200Cಗೆ ಸ್ವಾಗತ",
+    "welcome.hint": "Markdown ಫೈಲ್\u200Cಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ ಓದಲು ಒಂದು ಫೋಲ್ಡರ್ ತೆರೆಯಿರಿ.",
+    "loading.scanning": "ಫೋಲ್ಡರ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+
+    // Reader / editor
+    "editor.source": "ಮೂಲ",
+    "editor.edit": "ಸಂಪಾದಿಸಿ",
+    "editor.placeholder": "Markdown ಬರೆಯಲು ಪ್ರಾರಂಭಿಸಿ...",
+    "editor.sourcePlaceholder": "ಕಚ್ಚಾ Markdown ಮೂಲವನ್ನು ಸಂಪಾದಿಸಿ...",
+    "viewer.fileMissing": "ಫೈಲ್ ಇನ್ನು ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ: {file}",
+    "viewer.missingSuffix": " (ಕಾಣೆಯಾಗಿದೆ)",
+    "zoom.tooltip": "ಜೂಮ್: Ctrl + ಮೌಸ್ ವೀಲ್, Ctrl + / Ctrl -, Ctrl 0. 100% ಕ್ಕೆ ಮರುಹೊಂದಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ.",
+    "zoom.resetAria": "ಜೂಮ್ ಅನ್ನು 100% ಕ್ಕೆ ಮರುಹೊಂದಿಸಿ",
+    "zoom.normal": "ಜೂಮ್: 100% (ಸಾಮಾನ್ಯ). ಬದಲಾಯಿಸಲು Ctrl + ಮೌಸ್ ವೀಲ್ ಅಥವಾ Ctrl + / Ctrl - ಬಳಸಿ.",
+    "zoom.changed": "ಜೂಮ್: {zoom}%. 100% ಕ್ಕೆ ಮರುಹೊಂದಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ Ctrl+0 ಒತ್ತಿ.",
+
+    // Common actions
+    "action.cancel": "ರದ್ದುಮಾಡಿ",
+    "action.delete": "ಅಳಿಸಿ",
+    "file.delete": "ಫೈಲ್ ಅಳಿಸಿ",
+
+    // Dialogs
+    "dialog.delete.title": "ಫೈಲ್ ಅಳಿಸಿ",
+    "dialog.delete.message": "ಈ ಫೈಲ್\u200Cನ್ನು ಅಳಿಸಲು ನಿಶ್ಚಿತವಾಗಿ ಬಯಸುವಿರಾ?",
+    "dialog.delete.hint": "ಫೈಲ್\u200Cನ್ನು ಮರುಬಳಕೆ ಬಿನ್\u200Cಗೆ ಸರಿಸಲಾಗುತ್ತದೆ.",
+    "dialog.dirty.title": "ಉಳಿಸದ ಬದಲಾವಣೆಗಳು",
+    "dialog.dirty.message_one": "“{file}” ನಲ್ಲಿ ಉಳಿಸದ ಬದಲಾವಣೆಗಳಿವೆ. ನೀವು ಏನು ಮಾಡಲು ಬಯಸುತ್ತೀರಿ?",
+    "dialog.dirty.message_other": "{count} ಫೈಲ್\u200Cಗಳಲ್ಲಿ ಉಳಿಸದ ಬದಲಾವಣೆಗಳಿವೆ. ಯಾವುದನ್ನು ಉಳಿಸಬೇಕೆಂದು ಆಯ್ಕೆಮಾಡಿ.",
+    "dialog.dirty.saveSelected": "ಆಯ್ಕೆಮಾಡಿದ್ದನ್ನು ಉಳಿಸಿ",
+    "dialog.dirty.saveSelectedClose": "ಆಯ್ಕೆಮಾಡಿದ್ದನ್ನು ಉಳಿಸಿ & ಮುಚ್ಚಿ",
+    "dialog.dirty.saveSelectedSwitch": "ಆಯ್ಕೆಮಾಡಿದ್ದನ್ನು ಉಳಿಸಿ & ಬದಲಾಯಿಸಿ",
+    "dialog.dirty.saveSelectedQuit": "ಆಯ್ಕೆಮಾಡಿದ್ದನ್ನು ಉಳಿಸಿ & ನಿರ್ಗಮಿಸಿ",
+    "dialog.dirty.discard": "ತ್ಯಜಿಸಿ",
+    "dialog.dirty.discardClose": "ತ್ಯಜಿಸಿ & ಮುಚ್ಚಿ",
+    "dialog.dirty.discardSwitch": "ತ್ಯಜಿಸಿ & ಬದಲಾಯಿಸಿ",
+    "dialog.dirty.discardQuit": "ತ್ಯಜಿಸಿ & ನಿರ್ಗಮಿಸಿ",
+    "dialog.openFolder": "Markdown ಫೈಲ್\u200Cಗಳಿರುವ ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "{file} ಅನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಯಿತು. ಕಾರ್ಯಾಚರಣೆಯನ್ನು ರದ್ದುಮಾಡಲಾಯಿತು.",
+    "error.openFolder": "ಫೋಲ್ಡರ್ ತೆರೆಯುವಲ್ಲಿ ದೋಷ: {error}",
+    "error.createFile": "ಫೈಲ್ ರಚಿಸುವಲ್ಲಿ ದೋಷ: {error}",
+    "error.deleteFile": "ಫೈಲ್ ಅಳಿಸುವಲ್ಲಿ ದೋಷ: {error}",
+    "error.saveFile": "{file} ಅನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಯಿತು: {error}",
+    "error.saveFileAs": "ಫೈಲ್ ಉಳಿಸಲು ವಿಫಲವಾಯಿತು: {error}",
+
+    // Settings
+    "settings.close": "ಸೆಟ್ಟಿಂಗ್\u200Cಗಳನ್ನು ಮುಚ್ಚಿ",
+    "settings.fileDiscovery": "ಫೈಲ್ ಪತ್ತೆ",
+    "settings.useGitignore": ".gitignore ಬಳಸಿ",
+    "settings.useGitignoreHint": ".gitignore ಗೆ ಹೊಂದುವ ಫೈಲ್\u200Cಗಳು ಮತ್ತು ಫೋಲ್ಡರ\u200Cಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಿ. ಪಟ್ಟಿಯಲ್ಲಿ ನಿರ್ಲಕ್ಷಿಸಿದ ಫೈಲ್\u200Cಗಳನ್ನು ಸೇರಿಸಲು ಗುರುತನ್ನು ತೆಗೆದುಹಾಕಿ.",
+    "settings.fonts": "ಫಾಂಟ\u200Cಗಳು",
+    "settings.bodyFont": "ಮುಖ್ಯ ಪಠ್ಯ ಫಾಂಟ್",
+    "settings.headingFont": "ಶೀರ್ಷಿಕೆ ಫಾಂಟ್",
+    "settings.codeFont": "ಕೋಡ್ ಫಾಂಟ್",
+    "settings.size": "ಗಾತ್ರ",
+    "settings.language": "ಭಾಷೆ",
+    "settings.displayLanguage": "ಪ್ರದರ್ಶನ ಭಾಷೆ",
+    "settings.languageHint": "ಬದಲಾವಣೆಗಳು ಆ್ಯಪ್ ರೀಲೋಡ್ ಆದ ನಂತರ ಜಾರಿಗೆ ಬರುತ್ತವೆ.",
+    "settings.systemDefault": "ಸಿಸ್ಟಮ್ ಡಿಫಾಲ್ಟ್",
+    "fonts.sansSerif": "ಸ್ಯಾನ್ಸ್-ಸೆರಿಫ್",
+    "fonts.serif": "ಸೆರಿಫ್",
+    "fonts.monospace": "ಮೊನೊಸ್ಪೇಸ್",
+
+    // About
+    "about.titleFull": "Esuyo Markdown ಬಗ್ಗೆ",
+    "about.close": "ಮುಚ್ಚಿ",
+    "about.version": "ಆವೃತ್ತಿ",
+    "about.unknownVersion": "ತಿಳಿದಿಲ್ಲ",
+    "about.license": "ಪರವಾನಗಿ",
+    "about.github": "GitHub ರೆಪೊಸಿಟರಿ",
+    "about.store": "Microsoft Store",
+};
