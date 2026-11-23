@@ -1,0 +1,111 @@
+// Nepali (Devanagari) dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "मेनु",
+    "theme.toggle": "थिम परिवर्तन गर्नुहोस्",
+    "theme.switchToDark": "गाढा थिममा बदल्नुहोस्",
+    "theme.switchToLight": "हल्का थिममा बदल्नुहोस्",
+    "file.new": "नयाँ फाइल",
+    "file.newTooltip": "नयाँ फाइल",
+    "folder.reload": "फोल्डर रिफ्रेस गर्नुहोस्",
+    "folder.open": "फोल्डर खोल्नुहोस्",
+    "action.save": "सेभ गर्नुहोस्",
+    "action.saveAs": "फरक नामले सेभ गर्नुहोस्",
+    "settings.title": "सेटिङहरू",
+    "menu.recentFolders": "हालैका फोल्डरहरू",
+    "menu.noRecentFolders": "कुनै हालैको फोल्डर छैन",
+    "about.title": "बारेमा",
+    "context.newFileHere": "यहाँ नयाँ Markdown फाइल",
+
+    // File view / sidebar
+    "view.group": "फाइल नेभिगेसन दृश्य",
+    "view.flatList": "समतल सूची",
+    "view.treeView": "रूख दृश्य",
+    "view.allDirs": "सबै फोल्डरहरू",
+    "view.allDirsTooltip": "Markdown फाइल नभएका फोल्डरहरू पनि देखाउनुहोस्",
+    "sidebar.toggle": "साइडबार टगल गर्नुहोस्",
+    "sidebar.show": "साइडबार देखाउनुहोस्",
+    "sidebar.hide": "साइडबार लुकाउनुहोस्",
+    "tabs.ariaLabel": "खुला फाइलहरू",
+    "tabs.close": "ट्याब बन्द गर्नुहोस्",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "कुनै फोल्डर चयन गरिएको छैन",
+    "empty.noFolderHint": "Markdown फाइलहरू भएको डाइरेक्टरी खोज्न \"Open Folder\" मा क्लिक गर्नुहोस्।",
+    "empty.noFilesFound": "कुनै Markdown फाइल फेला परेन",
+    "empty.noFilesHint": "यस फोल्डरमा कुनै .md वा .markdown फाइल छैन।",
+    "welcome.title": "Esuyo Markdown मा स्वागत छ",
+    "welcome.hint": "Markdown फाइलहरू हेर्न र पढ्न एक फोल्डर खोल्नुहोस्।",
+    "loading.scanning": "फोल्डर स्क्यान गर्दै...",
+
+    // Reader / editor
+    "editor.source": "स्रोत",
+    "editor.edit": "सम्पादन गर्नुहोस्",
+    "editor.placeholder": "Markdown लेख्न सुरु गर्नुहोस्...",
+    "editor.sourcePlaceholder": "कच्चा Markdown स्रोत सम्पादन गर्नुहोस्...",
+    "viewer.fileMissing": "फाइल अब अवस्थित छैन: {file}",
+    "viewer.missingSuffix": " (हराइरहेको)",
+    "zoom.tooltip": "जुम: Ctrl + माउस ह्विल, Ctrl + / Ctrl -, Ctrl 0। 100% मा रिसेट गर्न क्लिक गर्नुहोस्।",
+    "zoom.resetAria": "जुम 100% मा रिसेट गर्नुहोस्",
+    "zoom.normal": "जुम: 100% (सामान्य)। परिवर्तन गर्न Ctrl + माउस ह्विल वा Ctrl + / Ctrl - प्रयोग गर्नुहोस्।",
+    "zoom.changed": "जुम: {zoom}%। 100% मा रिसेट गर्न क्लिक गर्नुहोस् वा Ctrl+0 थिच्नुहोस्।",
+
+    // Common actions
+    "action.cancel": "रद्द गर्नुहोस्",
+    "action.delete": "मेटाउनुहोस्",
+    "file.delete": "फाइल मेटाउनुहोस्",
+
+    // Dialogs
+    "dialog.delete.title": "फाइल मेटाउनुहोस्",
+    "dialog.delete.message": "के तपाईं यो फाइल मेटाउन निश्चित हुनुहुन्छ?",
+    "dialog.delete.hint": "फाइल रिसाइकल बिनमा सारिनेछ।",
+    "dialog.dirty.title": "सेभ नगरिएका परिवर्तनहरू",
+    "dialog.dirty.message_one": "“{file}” मा सेभ नगरिएका परिवर्तनहरू छन्। तपाईं के गर्न चाहनुहुन्छ?",
+    "dialog.dirty.message_other": "{count} फाइलहरूमा सेभ नगरिएका परिवर्तनहरू छन्। कुन फाइलहरू सेभ गर्ने छनौट गर्नुहोस्।",
+    "dialog.dirty.saveSelected": "चयन गरिएका सेभ गर्नुहोस्",
+    "dialog.dirty.saveSelectedClose": "चयन गरिएका सेभ गरी बन्द गर्नुहोस्",
+    "dialog.dirty.saveSelectedSwitch": "चयन गरिएका सेभ गरी बदल्नुहोस्",
+    "dialog.dirty.saveSelectedQuit": "चयन गरिएका सेभ गरी बाहिरिनुहोस्",
+    "dialog.dirty.discard": "खारेज गर्नुहोस्",
+    "dialog.dirty.discardClose": "खारेज गरी बन्द गर्नुहोस्",
+    "dialog.dirty.discardSwitch": "खारेज गरी बदल्नुहोस्",
+    "dialog.dirty.discardQuit": "खारेज गरी बाहिरिनुहोस्",
+    "dialog.openFolder": "Markdown फाइलहरू भएको फोल्डर चयन गर्नुहोस्",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "{file} सेभ गर्न असफल भयो। कार्य रद्द गरियो।",
+    "error.openFolder": "फोल्डर खोल्दा त्रुटि: {error}",
+    "error.createFile": "फाइल सिर्जना गर्दा त्रुटि: {error}",
+    "error.deleteFile": "फाइल मेटाउँदा त्रुटि: {error}",
+    "error.saveFile": "{file} सेभ गर्न असफल भयो: {error}",
+    "error.saveFileAs": "फाइल सेभ गर्न असफल भयो: {error}",
+
+    // Settings
+    "settings.close": "सेटिङहरू बन्द गर्नुहोस्",
+    "settings.fileDiscovery": "फाइल पत्ता लगाउने",
+    "settings.useGitignore": ".gitignore प्रयोग गर्नुहोस्",
+    "settings.useGitignoreHint": ".gitignore सँग मेल खाने फाइल र फोल्डरहरू छोड्नुहोस्। सूचीमा बेवास्ता गरिएका फाइलहरू समावेश गर्न चेक हटाउनुहोस्।",
+    "settings.fonts": "फन्टहरू",
+    "settings.bodyFont": "मुख्य पाठ फन्ट",
+    "settings.headingFont": "शीर्षक फन्ट",
+    "settings.codeFont": "कोड फन्ट",
+    "settings.size": "आकार",
+    "settings.language": "भाषा",
+    "settings.displayLanguage": "प्रदर्शन भाषा",
+    "settings.languageHint": "एप रिफ्रेस भएपछि परिवर्तनहरू लागू हुन्छन्।",
+    "settings.systemDefault": "सिस्टम पूर्वनिर्धारित",
+    "fonts.sansSerif": "स्यान्स-सेरिफ",
+    "fonts.serif": "सेरिफ",
+    "fonts.monospace": "मोनोस्पेस",
+
+    // About
+    "about.titleFull": "Esuyo Markdown बारेमा",
+    "about.close": "बन्द गर्नुहोस्",
+    "about.version": "संस्करण",
+    "about.unknownVersion": "अज्ञात",
+    "about.license": "इजाजतपत्र",
+    "about.github": "GitHub भण्डार",
+    "about.store": "Microsoft Store",
+};

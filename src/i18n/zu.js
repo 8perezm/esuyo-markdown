@@ -1,0 +1,111 @@
+// Zulu (isiZulu) dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "Imenyu",
+    "theme.toggle": "Shintsha itimu",
+    "theme.switchToDark": "Shintshela kutimu emnyama",
+    "theme.switchToLight": "Shintshela kutimu ekhanyayo",
+    "file.new": "Ifayela Elisha",
+    "file.newTooltip": "Ifayela elisha",
+    "folder.reload": "Layisha kabusha ifolda",
+    "folder.open": "Vula Ifolda",
+    "action.save": "Londoloza",
+    "action.saveAs": "Londoloza Njenge",
+    "settings.title": "Izilungiselelo",
+    "menu.recentFolders": "Amafolda akamuva",
+    "menu.noRecentFolders": "Akukho mafolda akamuva",
+    "about.title": "Mayelana",
+    "context.newFileHere": "Ifayela le-markdown elisha lapha",
+
+    // File view / sidebar
+    "view.group": "Ukubukwa kokuzulazula kwamafayela",
+    "view.flatList": "Uhlu oluyisicaba",
+    "view.treeView": "Ukubukwa kwesihlahla",
+    "view.allDirs": "Wonke amafolda",
+    "view.allDirsTooltip": "Bonisa amafolda angenamafayela e-markdown",
+    "sidebar.toggle": "Shintsha ibha eseceleni",
+    "sidebar.show": "Bonisa ibha eseceleni",
+    "sidebar.hide": "Fihla ibha eseceleni",
+    "tabs.ariaLabel": "Amafayela avuliwe",
+    "tabs.close": "Vala ithebhu",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "Akukho fold elikhethiwe",
+    "empty.noFolderHint": "Chofoza \"Vula Ifolda\" ukuze uphequlule uhla lwemibhalo olunamafayela e-markdown.",
+    "empty.noFilesFound": "Akukho mafayela e-markdown atholakele",
+    "empty.noFilesHint": "Leli fold alinawo amafayela e-.md noma e-.markdown.",
+    "welcome.title": "Siyakwamukela ku-Esuyo Markdown",
+    "welcome.hint": "Vula ifolda ukuze uphequlule ufunde amafayela e-markdown.",
+    "loading.scanning": "Kuskenwa ifolda...",
+
+    // Reader / editor
+    "editor.source": "Umthombo",
+    "editor.edit": "Hlela",
+    "editor.placeholder": "Qala ukubhala i-Markdown...",
+    "editor.sourcePlaceholder": "Hlela umthombo we-Markdown ongahluziwe...",
+    "viewer.fileMissing": "Ifayela alisekho: {file}",
+    "viewer.missingSuffix": " (ayikho)",
+    "zoom.tooltip": "Ukukhulisa: Ctrl + isondo lembawu, Ctrl + / Ctrl -, Ctrl 0. Chofoza ukuze ubuyisele ku-100%.",
+    "zoom.resetAria": "Buyisela ukukhulisa ku-100%",
+    "zoom.normal": "Ukukhulisa: 100% (okujwayelekile). Ctrl + isondo lembawu noma Ctrl + / Ctrl - ukuze ushintshe.",
+    "zoom.changed": "Ukukhulisa: {zoom}%. Chofoza noma cindezela u-Ctrl+0 ukuze ubuyisele ku-100%.",
+
+    // Common actions
+    "action.cancel": "Khansela",
+    "action.delete": "Susa",
+    "file.delete": "Susa ifayela",
+
+    // Dialogs
+    "dialog.delete.title": "Susa Ifayela",
+    "dialog.delete.message": "Ingabe uqinisekile ukuthi ufuna ukususa leli fayela?",
+    "dialog.delete.hint": "Ifayela lizothuthelwa emgqomweni wokugaywa kabusha.",
+    "dialog.dirty.title": "Izinguquko ezingalondoloziwe",
+    "dialog.dirty.message_one": "“{file}” inezinguquko ezingalondoloziwe. Ufuna ukwenzani?",
+    "dialog.dirty.message_other": "{count} amafayela anezinguquko ezingalondoloziwe. Khetha ukuthi imaphi okufanele ulondoloze.",
+    "dialog.dirty.saveSelected": "Londoloza akhethiwe",
+    "dialog.dirty.saveSelectedClose": "Londoloza akhethiwe & vala",
+    "dialog.dirty.saveSelectedSwitch": "Londoloza akhethiwe & shintsha",
+    "dialog.dirty.saveSelectedQuit": "Londoloza akhethiwe & phuma",
+    "dialog.dirty.discard": "Lahla",
+    "dialog.dirty.discardClose": "Lahla & vala",
+    "dialog.dirty.discardSwitch": "Lahla & shintsha",
+    "dialog.dirty.discardQuit": "Lahla & phuma",
+    "dialog.openFolder": "Khetha ifolda enamafayela e-markdown",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "Kuhlulekile ukulondoloza {file}. Umsebenzi ukhanseliwe.",
+    "error.openFolder": "Kunephutha ekuvuleni ifolda: {error}",
+    "error.createFile": "Kunephutha ekudaleni ifayela: {error}",
+    "error.deleteFile": "Kunephutha ekususeni ifayela: {error}",
+    "error.saveFile": "Kuhlulekile ukulondoloza {file}: {error}",
+    "error.saveFileAs": "Kuhlulekile ukulondoloza ifayela: {error}",
+
+    // Settings
+    "settings.close": "Vala izilungiselelo",
+    "settings.fileDiscovery": "Ukutholwa Kwamafayela",
+    "settings.useGitignore": "Sebenzisa .gitignore",
+    "settings.useGitignoreHint": "Yeqa amafayela namafolda afana ne-.gitignore. Susa ukumaka ukuze ufake amafayela anganakwa ohlwini.",
+    "settings.fonts": "Amaphonti",
+    "settings.bodyFont": "Iphonti Yomzimba",
+    "settings.headingFont": "Iphonti Yezihloko",
+    "settings.codeFont": "Iphonti Yekhodi",
+    "settings.size": "Usayizi",
+    "settings.language": "Ulimi",
+    "settings.displayLanguage": "Ulimi lokubonisa",
+    "settings.languageHint": "Izinguquko ziqala ukusebenza ngemva kokuthi uhlelo selulayishwe kabusha.",
+    "settings.systemDefault": "Okuzenzakalelayo kwesistimu",
+    "fonts.sansSerif": "I-Sans-serif",
+    "fonts.serif": "I-Serif",
+    "fonts.monospace": "I-Monospace",
+
+    // About (the license name itself stays untranslated)
+    "about.titleFull": "Mayelana ne-Esuyo Markdown",
+    "about.close": "Vala",
+    "about.version": "Inguqulo",
+    "about.unknownVersion": "Akuyaziwa",
+    "about.license": "Ilayisensi",
+    "about.github": "Inqolobane ye-GitHub",
+    "about.store": "Microsoft Store",
+};

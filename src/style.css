@@ -948,6 +948,12 @@ html, body {
   color: #1a1b1e;
 }
 
+/* Split delete prompt: the translated question is one line, the filename
+   is rendered separately via textContent so word order can differ per locale. */
+.confirm-file-name {
+  margin-top: 8px !important;
+}
+
 .confirm-hint {
   font-size: 12px;
   opacity: 0.7;
@@ -956,6 +962,7 @@ html, body {
 
 .confirm-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   padding: 12px 24px 20px;
@@ -1192,17 +1199,19 @@ html, body {
 
 .settings-field-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
 
 .settings-field-row .settings-field {
-  flex: 2;
+  flex: 2 1 180px;
+  min-width: 0;
   margin-bottom: 0;
 }
 
 .settings-field-row .settings-field-size {
-  flex: 1;
+  flex: 1 1 90px;
 }
 
 .checkbox-label {

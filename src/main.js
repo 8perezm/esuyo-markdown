@@ -13,6 +13,19 @@ import QuillTableBetter from "quill-table-better";
 import "quill-table-better/dist/quill-table-better.css";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
+import {
+    applyLocale,
+    resolveLocale,
+    t,
+    tp,
+    LOCALES,
+    SYSTEM_LOCALE,
+} from "./i18n/index.js";
+
+// Translate the static shell right away using the OS locale, so the first
+// paint is already localized. loadSettings() re-applies with the stored
+// override once settings arrive.
+applyLocale();
 
 // Register quill-table-better module
 Quill.register({
@@ -283,7 +296,7 @@ function renderTabBar() {
             <span class="tab-icon">${FILE_ICON_SVG}</span>
             <span class="tab-name"></span>
             <span class="tab-dirty-dot"></span>
-            <button class="tab-close" title="Close tab" aria-label="Close tab">×</button>
+            <button class="tab-close" title="${t("tabs.close")}" aria-label="${t("tabs.close")}">×</button>
         `;
         el.querySelector(".tab-name").textContent = tab.fileName;
         el.addEventListener("click", () => activateTab(tab.id));
@@ -394,7 +407,7 @@ async function activateTab(id, opts = {}) {
         editorContainer.style.display = "none";
         renderedContent.style.display = "block";
         const content = tab.missing
-            ? `<div class="error">File no longer exists: ${escapeHtml(tab.relativePath)}</div>`
+            ? `<div class="error">${t("viewer.fileMissing", { file: escapeHtml(tab.relativePath) })}</div>`
             : tab.content;
         renderMarkdown(content);
         restoreRenderedScrollPosition(tab.savedScrollRatio);
@@ -464,7 +477,7 @@ function updateEditorBar() {
         menuEditDivider.classList.add("hidden");
         return;
     }
-    currentFilePath.textContent = tab.relativePath + (tab.missing ? " (missing)" : "");
+    currentFilePath.textContent = tab.relativePath + (tab.missing ? t("viewer.missingSuffix") : "");
     deleteFileBtn.style.display = currentFileIndex >= 0 ? "" : "none";
     if (tab.isEditMode) {
         editToggleBtn.style.display = "none";
@@ -500,14 +513,18 @@ async function restoreTabsForFolder() {
 
 // ── Unsaved-changes dialog ──────────────────────────────────────────────────
 
+// Distinct keys per action: "Save selected & close" does not translate by
+// gluing a translated verb onto a translated sentence in every language.
+const DIRTY_VERB_SUFFIX = { close: "Close", switch: "Switch", quit: "Quit" };
+
 function showDirtyDialog(dirtyTabs, verb) {
-    dirtyTitle.textContent = "Unsaved changes";
-    dirtySaveBtn.textContent = `Save selected & ${verb}`;
-    dirtyDiscardBtn.textContent = `Discard & ${verb}`;
-    dirtyMessage.textContent =
-        dirtyTabs.length === 1
-            ? `“${dirtyTabs[0].fileName}” has unsaved changes. What would you like to do?`
-            : `${dirtyTabs.length} files have unsaved changes. Choose which ones to save.`;
+    const suffix = DIRTY_VERB_SUFFIX[verb] || "";
+    dirtyTitle.textContent = t("dialog.dirty.title");
+    dirtySaveBtn.textContent = t(`dialog.dirty.saveSelected${suffix}`);
+    dirtyDiscardBtn.textContent = t(`dialog.dirty.discard${suffix}`);
+    dirtyMessage.textContent = tp("dialog.dirty.message", dirtyTabs.length, {
+        file: dirtyTabs[0] ? dirtyTabs[0].fileName : "",
+    });
     dirtyFileList.innerHTML = "";
     for (const tab of dirtyTabs) {
         const row = document.createElement("label");
@@ -551,7 +568,7 @@ async function resolveDirty(verb, onlyTabs = null) {
             if (!tab) continue;
             const ok = await saveTabToDisk(tab);
             if (!ok) {
-                alert(`Failed to save ${tab.fileName}. The operation was cancelled.`);
+                alert(t("error.saveCancelled", { file: tab.fileName }));
                 return { action: "error", ids: [] };
             }
         }
@@ -657,7 +674,7 @@ function initQuillForTab(tab, markdown) {
             },
         },
         theme: "snow",
-        placeholder: "Start writing Markdown...",
+        placeholder: t("editor.placeholder"),
     });
     const delta = editor.clipboard.convert({ html: htmlContent });
     editor.updateContents(delta, Quill.sources.USER);
@@ -690,7 +707,7 @@ function switchToSourceMode(tab) {
     const textarea = document.createElement("textarea");
     textarea.id = `source-editor-${tab.id}`;
     textarea.className = "source-editor-pane";
-    textarea.placeholder = "Edit raw Markdown source...";
+    textarea.placeholder = t("editor.sourcePlaceholder");
     textarea.value = markdown;
     textarea.addEventListener("input", () => markTabDirty(tab));
     textarea.addEventListener("keydown", (e) => {
@@ -918,6 +935,7 @@ const menuSettingsItem = document.getElementById("menu-settings-item");
 const menuAboutItem = document.getElementById("menu-about-item");
 const settingsOverlay = document.getElementById("settings-overlay");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
+const languageSelect = document.getElementById("language-select");
 const aboutOverlay = document.getElementById("about-overlay");
 const aboutCloseBtn = document.getElementById("about-close-btn");
 const aboutVersion = document.getElementById("about-version");
@@ -984,6 +1002,9 @@ async function loadSettings() {
     if (!settings.folder_tabs || typeof settings.folder_tabs !== "object") {
         settings.folder_tabs = {};
     }
+    // Stored preference wins over the OS locale detected at startup. Passing
+    // an unset locale falls back to the system language again.
+    applyLocale(settings.locale ?? SYSTEM_LOCALE);
     updateViewControls();
     applyTheme(settings.theme);
     applyFonts(settings.default_font, settings.header_font, settings.code_font, settings.default_font_size, settings.header_font_size, settings.code_font_size);
@@ -1039,7 +1060,7 @@ function applyTheme(theme) {
     const isLight = theme === "light";
     themeIconSun.style.display = isLight ? "none" : "block";
     themeIconMoon.style.display = isLight ? "block" : "none";
-    themeToggle.title = isLight ? "Switch to dark theme" : "Switch to light theme";
+    themeToggle.title = isLight ? t("theme.switchToDark") : t("theme.switchToLight");
     settings.theme = theme;
 }
 
@@ -1140,8 +1161,8 @@ function applyZoom() {
     zoomIndicator.textContent = `${zoom}%`;
     zoomIndicator.classList.toggle("zoomed", zoom !== DEFAULT_ZOOM);
     zoomIndicator.title = zoom === DEFAULT_ZOOM
-        ? "Zoom: 100% (normal). Ctrl + mouse wheel or Ctrl + / Ctrl - to change."
-        : `Zoom: ${zoom}%. Click or press Ctrl+0 to reset to 100%.`;
+        ? t("zoom.normal")
+        : t("zoom.changed", { zoom });
 }
 
 function setZoom(level) {
@@ -1178,7 +1199,7 @@ document.addEventListener("wheel", (e) => {
 sidebarToggle.addEventListener("click", () => {
     app.classList.toggle("sidebar-hidden");
     const isHidden = app.classList.contains("sidebar-hidden");
-    sidebarToggle.title = isHidden ? "Show sidebar" : "Hide sidebar";
+    sidebarToggle.title = isHidden ? t("sidebar.show") : t("sidebar.hide");
 });
 
 // ── Menu Dropdown ───────────────────────────────────────────────────────────
@@ -1259,9 +1280,9 @@ menuAboutItem.addEventListener("click", () => {
 function buildFontSelect(selectEl, currentFont) {
     // Group fonts by category
     const categories = [
-        { label: "Sans-serif", key: "sans-serif" },
-        { label: "Serif", key: "serif" },
-        { label: "Monospace", key: "monospace" },
+        { label: t("fonts.sansSerif"), key: "sans-serif" },
+        { label: t("fonts.serif"), key: "serif" },
+        { label: t("fonts.monospace"), key: "monospace" },
     ];
 
     selectEl.innerHTML = "";
@@ -1314,9 +1335,27 @@ function buildCodeFontSelect(selectEl, currentFont) {
     }
 }
 
+function buildLanguageSelect() {
+    languageSelect.innerHTML = "";
+    const systemOption = document.createElement("option");
+    systemOption.value = SYSTEM_LOCALE;
+    systemOption.textContent = t("settings.systemDefault");
+    languageSelect.appendChild(systemOption);
+    for (const { code, nativeName } of LOCALES) {
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = nativeName;
+        languageSelect.appendChild(option);
+    }
+    // An unset preference means "system"; map a stored regional tag such as
+    // "es-ES" onto the supported base locale so the picker stays in sync.
+    languageSelect.value = settings.locale ? resolveLocale(settings.locale) : SYSTEM_LOCALE;
+}
+
 function openSettings() {
     // Pre-load all Google Fonts so dropdown options render in their own typeface
     GOOGLE_FONTS.forEach((f) => loadGoogleFont(f.family));
+    buildLanguageSelect();
     buildFontSelect(fontDefaultSelect, settings.default_font);
     buildFontSelect(fontHeaderSelect, settings.header_font);
     buildCodeFontSelect(fontCodeSelect, settings.code_font);
@@ -1345,7 +1384,7 @@ async function getAppVersion() {
         // In a plain browser (npm run dev) Tauri IPC is unavailable, so use
         // the version injected by Vite from package.json instead.
         console.warn("Failed to read app version:", err);
-        return typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "Unknown";
+        return typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : t("about.unknownVersion");
     }
 }
 
@@ -1460,6 +1499,14 @@ fontCodeSize.addEventListener("change", () => {
     persistSettings();
 });
 
+languageSelect.addEventListener("change", async () => {
+    settings.locale = languageSelect.value || null;
+    await persistSettings();
+    // Tabs, file lists and tree nodes are built at runtime. Reloading is the
+    // simplest way to avoid a half-translated UI.
+    window.location.reload();
+});
+
 useGitignoreCheckbox.addEventListener("change", () => {
     settings.use_gitignore = useGitignoreCheckbox.checked;
     persistSettings();
@@ -1481,7 +1528,7 @@ function renderRecentFolders() {
     if (items.length === 0) {
         const li = document.createElement("li");
         li.className = "recent-empty";
-        li.textContent = "No recent folders";
+        li.textContent = t("menu.noRecentFolders");
         recentFoldersList.appendChild(li);
         return;
     }
@@ -1530,7 +1577,7 @@ async function openFolder() {
         const selected = await open({
             directory: true,
             multiple: false,
-            title: "Select a folder with markdown files",
+            title: t("dialog.openFolder"),
         });
 
         if (!selected) return;
@@ -1539,7 +1586,7 @@ async function openFolder() {
     } catch (error) {
         showLoading(false);
         console.error("Failed to open folder:", error);
-        alert(`Error opening folder: ${error}`);
+        alert(t("error.openFolder", { error }));
     }
 }
 
@@ -1582,7 +1629,7 @@ async function openFolderByPath(folderPath) {
     } catch (error) {
         showLoading(false);
         console.error("Failed to open folder:", error);
-        alert(`Error opening folder: ${error}`);
+        alert(t("error.openFolder", { error }));
     }
 }
 
@@ -1620,7 +1667,7 @@ async function createNewFile() {
         }
     } catch (error) {
         console.error("Failed to create new file:", error);
-        alert(`Error creating file: ${error}`);
+        alert(t("error.createFile", { error }));
     }
 }
 
@@ -1667,7 +1714,7 @@ async function createNewFileInFolder(dirRel) {
         if (index >= 0) await selectFile(index);
     } catch (error) {
         console.error("Failed to create file in folder:", error);
-        alert(`Error creating file: ${error}`);
+        alert(t("error.createFile", { error }));
     }
 }
 
@@ -1773,8 +1820,8 @@ function renderFileView(files) {
 
     if (files.length === 0) {
         emptyState.innerHTML = `
-      <p>No markdown files found</p>
-      <p class="hint">This folder doesn't contain any .md or .markdown files.</p>
+      <p>${t("empty.noFilesFound")}</p>
+      <p class="hint">${t("empty.noFilesHint")}</p>
     `;
         emptyState.classList.remove("hidden");
         fileList.classList.add("hidden");
@@ -1784,8 +1831,8 @@ function renderFileView(files) {
     }
 
     emptyState.innerHTML = `
-      <p>No folder selected</p>
-      <p class="hint">Click "Open Folder" to browse for a directory containing markdown files.</p>
+      <p>${t("empty.noFolderSelected")}</p>
+      <p class="hint">${t("empty.noFolderHint")}</p>
     `;
     emptyState.classList.add("hidden");
 
@@ -2354,7 +2401,7 @@ confirmDeleteBtn.addEventListener("click", async () => {
         persistCurrentTabs();
     } catch (error) {
         console.error("Failed to delete file:", error);
-        alert(`Error deleting file: ${error}`);
+        alert(t("error.deleteFile", { error }));
     }
 });
 
@@ -2389,7 +2436,7 @@ async function saveCurrentFile() {
         persistCurrentTabs();
     } catch (error) {
         console.error("Failed to save file:", error);
-        alert(`Failed to save ${tab.fileName}: ${error}`);
+        alert(t("error.saveFile", { file: tab.fileName, error }));
     }
 }
 
@@ -2438,7 +2485,7 @@ async function saveFileAs() {
         persistCurrentTabs();
     } catch (error) {
         console.error("Failed to save file as:", error);
-        alert(`Failed to save file: ${error}`);
+        alert(t("error.saveFileAs", { error }));
     }
 }
 

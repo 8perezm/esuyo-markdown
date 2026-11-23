@@ -1,0 +1,111 @@
+// Esperanto dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "Menuo",
+    "theme.toggle": "Baskuli temon",
+    "theme.switchToDark": "Ŝanĝi al malhela temo",
+    "theme.switchToLight": "Ŝanĝi al hela temo",
+    "file.new": "Nova dosiero",
+    "file.newTooltip": "Nova dosiero",
+    "folder.reload": "Reŝargi dosierujon",
+    "folder.open": "Malfermi dosierujon",
+    "action.save": "Konservi",
+    "action.saveAs": "Konservi kiel",
+    "settings.title": "Agordoj",
+    "menu.recentFolders": "Lastaj dosierujoj",
+    "menu.noRecentFolders": "Neniuj lastaj dosierujoj",
+    "about.title": "Pri",
+    "context.newFileHere": "Nova markdown-dosiero ĉi tie",
+
+    // File view / sidebar
+    "view.group": "Dosiera navigada vido",
+    "view.flatList": "Plata listo",
+    "view.treeView": "Arba vido",
+    "view.allDirs": "Ĉiuj dosierujoj",
+    "view.allDirsTooltip": "Montri dosierujojn sen markdown-dosieroj",
+    "sidebar.toggle": "Baskuli flankan strion",
+    "sidebar.show": "Montri flankan strion",
+    "sidebar.hide": "Kaŝi flankan strion",
+    "tabs.ariaLabel": "Malfermitaj dosieroj",
+    "tabs.close": "Fermi langeton",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "Neniu dosierujo elektita",
+    "empty.noFolderHint": "Alklaku \"Malfermi dosierujon\" por foliumi dosierujon enhavantan markdown-dosierojn.",
+    "empty.noFilesFound": "Neniuj markdown-dosieroj trovitaj",
+    "empty.noFilesHint": "Ĉi tiu dosierujo ne enhavas dosierojn .md aŭ .markdown.",
+    "welcome.title": "Bonvenon al Esuyo Markdown",
+    "welcome.hint": "Malfermu dosierujon por foliumi kaj legi markdown-dosierojn.",
+    "loading.scanning": "Skanado de dosierujo...",
+
+    // Reader / editor
+    "editor.source": "Fonto",
+    "editor.edit": "Redakti",
+    "editor.placeholder": "Komenci skribi Markdown...",
+    "editor.sourcePlaceholder": "Redakti krudan fonton de Markdown...",
+    "viewer.fileMissing": "Dosiero ne plu ekzistas: {file}",
+    "viewer.missingSuffix": " (mankas)",
+    "zoom.tooltip": "Zomo: Ctrl + musrado, Ctrl + / Ctrl -, Ctrl 0. Alklaku por restarigi al 100%.",
+    "zoom.resetAria": "Restarigi zomon al 100%",
+    "zoom.normal": "Zomo: 100% (normala). Ctrl + musrado aŭ Ctrl + / Ctrl - por ŝanĝi.",
+    "zoom.changed": "Zomo: {zoom}%. Alklaku aŭ premu Ctrl+0 por restarigi al 100%.",
+
+    // Common actions
+    "action.cancel": "Nuligi",
+    "action.delete": "Forigi",
+    "file.delete": "Forigi dosieron",
+
+    // Dialogs
+    "dialog.delete.title": "Forigi dosieron",
+    "dialog.delete.message": "Ĉu vi certas, ke vi volas forigi ĉi tiun dosieron?",
+    "dialog.delete.hint": "La dosiero estos movita al la recikla rubujo.",
+    "dialog.dirty.title": "Nekonservitaj ŝanĝoj",
+    "dialog.dirty.message_one": "“{file}” havas nekonservitajn ŝanĝojn. Kion vi volas fari?",
+    "dialog.dirty.message_other": "{count} dosieroj havas nekonservitajn ŝanĝojn. Elektu kiujn konservi.",
+    "dialog.dirty.saveSelected": "Konservi elektitajn",
+    "dialog.dirty.saveSelectedClose": "Konservi elektitajn & fermi",
+    "dialog.dirty.saveSelectedSwitch": "Konservi elektitajn & ŝanĝi",
+    "dialog.dirty.saveSelectedQuit": "Konservi elektitajn & ĉesi",
+    "dialog.dirty.discard": "Forĵeti",
+    "dialog.dirty.discardClose": "Forĵeti & fermi",
+    "dialog.dirty.discardSwitch": "Forĵeti & ŝanĝi",
+    "dialog.dirty.discardQuit": "Forĵeti & ĉesi",
+    "dialog.openFolder": "Elektu dosierujon kun markdown-dosieroj",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "Malsukcesis konservi {file}. La operacio estis nuligita.",
+    "error.openFolder": "Eraro dum malfermado de dosierujo: {error}",
+    "error.createFile": "Eraro dum kreado de dosiero: {error}",
+    "error.deleteFile": "Eraro dum forigado de dosiero: {error}",
+    "error.saveFile": "Malsukcesis konservi {file}: {error}",
+    "error.saveFileAs": "Malsukcesis konservi dosieron: {error}",
+
+    // Settings
+    "settings.close": "Fermi agordojn",
+    "settings.fileDiscovery": "Dosiera malkovro",
+    "settings.useGitignore": "Uzi .gitignore",
+    "settings.useGitignoreHint": "Preterlasi dosierojn kaj dosierujojn kongruantajn kun .gitignore. Malmarku por inkluzivi ignoritajn dosierojn en la liston.",
+    "settings.fonts": "Tiparoj",
+    "settings.bodyFont": "Korpa tiparo",
+    "settings.headingFont": "Titola tiparo",
+    "settings.codeFont": "Koda tiparo",
+    "settings.size": "Grando",
+    "settings.language": "Lingvo",
+    "settings.displayLanguage": "Montra lingvo",
+    "settings.languageHint": "Ŝanĝoj efektiviĝas post reŝargo de la aplikaĵo.",
+    "settings.systemDefault": "Sistema defaŭlto",
+    "fonts.sansSerif": "Sen serifo",
+    "fonts.serif": "Serifo",
+    "fonts.monospace": "Unuspaca",
+
+    // About (the license name itself stays untranslated)
+    "about.titleFull": "Pri Esuyo Markdown",
+    "about.close": "Fermi",
+    "about.version": "Versio",
+    "about.unknownVersion": "Nekonata",
+    "about.license": "Licenco",
+    "about.github": "GitHub-deponejo",
+    "about.store": "Microsoft Store",
+};

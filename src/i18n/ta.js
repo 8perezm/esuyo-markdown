@@ -1,0 +1,111 @@
+// Tamil dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // மேல் பட்டி / மெனு
+    "menu.tooltip": "மெனு",
+    "theme.toggle": "தீம் மாற்ற",
+    "theme.switchToDark": "இருண்ட தீமிற்கு மாற",
+    "theme.switchToLight": "வெளிர் தீமிற்கு மாற",
+    "file.new": "புதிய கோப்பு",
+    "file.newTooltip": "புதிய கோப்பு",
+    "folder.reload": "கோப்புறையை மீண்டும் ஏற்ற",
+    "folder.open": "கோப்புறையைத் திற",
+    "action.save": "சேமி",
+    "action.saveAs": "மற்றொரு பெயரில் சேமி",
+    "settings.title": "அமைப்புகள்",
+    "menu.recentFolders": "சமீபத்திய கோப்புறைகள்",
+    "menu.noRecentFolders": "சமீபத்திய கோப்புறைகள் இல்லை",
+    "about.title": "பற்றி",
+    "context.newFileHere": "இங்கே புதிய markdown கோப்பு",
+
+    // கோப்பு காட்சி / பக்கப்பட்டி
+    "view.group": "கோப்பு உலாவல் காட்சி",
+    "view.flatList": "தட்டையான பட்டியல்",
+    "view.treeView": "மரக் காட்சி",
+    "view.allDirs": "அனைத்து கோப்புறைகள்",
+    "view.allDirsTooltip": "markdown கோப்புகள் இல்லாத கோப்புறைகளைக் காட்டு",
+    "sidebar.toggle": "பக்கப்பட்டியை மாற்ற",
+    "sidebar.show": "பக்கப்பட்டியைக் காட்டு",
+    "sidebar.hide": "பக்கப்பட்டியை மறை",
+    "tabs.ariaLabel": "திறந்த கோப்புகள்",
+    "tabs.close": "தாவலை மூடு",
+
+    // வெறுமை / வரவேற்பு / ஏற்றும் நிலைகள்
+    "empty.noFolderSelected": "கோப்புறை எதுவும் தேர்ந்தெடுக்கப்படவில்லை",
+    "empty.noFolderHint": "markdown கோப்புகள் உள்ள ஒரு கோப்புறையை உலாவ \"கோப்புறையைத் திற\" என்பதைக் கிளிக் செய்யவும்.",
+    "empty.noFilesFound": "markdown கோப்புகள் எதுவும் கிடைக்கவில்லை",
+    "empty.noFilesHint": "இந்தக் கோப்புறையில் .md அல்லது .markdown கோப்புகள் எதுவும் இல்லை.",
+    "welcome.title": "Esuyo Markdown க்கு வரவேற்கிறோம்",
+    "welcome.hint": "markdown கோப்புகளை உலாவிப் படிக்க ஒரு கோப்புறையைத் திறக்கவும்.",
+    "loading.scanning": "கோப்புறை தேடப்படுகிறது...",
+
+    // வாசகர் / திருத்தி
+    "editor.source": "மூலம்",
+    "editor.edit": "திருத்து",
+    "editor.placeholder": "Markdown எழுதத் தொடங்குங்கள்...",
+    "editor.sourcePlaceholder": "மூல Markdown ஐத் திருத்துங்கள்...",
+    "viewer.fileMissing": "கோப்பு இனி இல்லை: {file}",
+    "viewer.missingSuffix": " (கிடைக்கவில்லை)",
+    "zoom.tooltip": "ஜூம்: Ctrl + சுட்டி சக்கரம், Ctrl + / Ctrl -, Ctrl 0. 100% க்கு மீண்டும் அமைக்க கிளிக் செய்யவும்.",
+    "zoom.resetAria": "ஜூமை 100% க்கு மீண்டும் அமை",
+    "zoom.normal": "ஜூம்: 100% (இயல்பானது). மாற்ற Ctrl + சுட்டி சக்கரம் அல்லது Ctrl + / Ctrl - ஐப் பயன்படுத்தவும்.",
+    "zoom.changed": "ஜூம்: {zoom}%. 100% க்கு மீண்டும் அமைக்க கிளிக் செய்யவும் அல்லது Ctrl+0 ஐ அழுத்தவும்.",
+
+    // பொதுவான செயல்கள்
+    "action.cancel": "ரத்து",
+    "action.delete": "நீக்கு",
+    "file.delete": "கோப்பை நீக்கு",
+
+    // உரையாடல்கள்
+    "dialog.delete.title": "கோப்பை நீக்கு",
+    "dialog.delete.message": "இந்தக் கோப்பை நீக்க விரும்புகிறீர்களா?",
+    "dialog.delete.hint": "கோப்பு மறுசுழற்சி கூடையில் நகர்த்தப்படும்.",
+    "dialog.dirty.title": "சேமிக்கப்படாத மாற்றங்கள்",
+    "dialog.dirty.message_one": "“{file}” இல் சேமிக்கப்படாத மாற்றங்கள் உள்ளன. என்ன செய்ய விரும்புகிறீர்கள்?",
+    "dialog.dirty.message_other": "{count} கோப்புகளில் சேமிக்கப்படாத மாற்றங்கள் உள்ளன. எவற்றைச் சேமிக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.",
+    "dialog.dirty.saveSelected": "தேர்ந்தெடுத்ததைச் சேமி",
+    "dialog.dirty.saveSelectedClose": "தேர்ந்தெடுத்ததைச் சேமித்து மூடு",
+    "dialog.dirty.saveSelectedSwitch": "தேர்ந்தெடுத்ததைச் சேமித்து மாறு",
+    "dialog.dirty.saveSelectedQuit": "தேர்ந்தெடுத்ததைச் சேமித்து வெளியேறு",
+    "dialog.dirty.discard": "நிராகரி",
+    "dialog.dirty.discardClose": "நிராகரித்து மூடு",
+    "dialog.dirty.discardSwitch": "நிராகரித்து மாறு",
+    "dialog.dirty.discardQuit": "நிராகரித்து வெளியேறு",
+    "dialog.openFolder": "markdown கோப்புகள் உள்ள ஒரு கோப்புறையைத் தேர்ந்தெடுக்கவும்",
+
+    // எச்சரிக்கைகளில் காணப்படும் பிழைகள்
+    "error.saveCancelled": "{file} ஐச் சேமிக்க முடியவில்லை. செயல்பாடு ரத்து செய்யப்பட்டது.",
+    "error.openFolder": "கோப்புறையைத் திறக்க பிழை: {error}",
+    "error.createFile": "கோப்பை உருவாக்க பிழை: {error}",
+    "error.deleteFile": "கோப்பை நீக்க பிழை: {error}",
+    "error.saveFile": "{file} ஐச் சேமிக்க முடியவில்லை: {error}",
+    "error.saveFileAs": "கோப்பைச் சேமிக்க முடியவில்லை: {error}",
+
+    // அமைப்புகள்
+    "settings.close": "அமைப்புகளை மூடு",
+    "settings.fileDiscovery": "கோப்பு கண்டுபிடிப்பு",
+    "settings.useGitignore": ".gitignore ஐப் பயன்படுத்து",
+    "settings.useGitignoreHint": ".gitignore ஆல் பொருந்தும் கோப்புகளையும் கோப்புறைகளையும் தவிர்க்கவும். பட்டியலில் புறக்கணிக்கப்பட்ட கோப்புகளைச் சேர்க்க குறியை நீக்கவும்.",
+    "settings.fonts": "எழுத்துருக்கள்",
+    "settings.bodyFont": "உடல் எழுத்துரு",
+    "settings.headingFont": "தலைப்பு எழுத்துரு",
+    "settings.codeFont": "குறியீட்டு எழுத்துரு",
+    "settings.size": "அளவு",
+    "settings.language": "மொழி",
+    "settings.displayLanguage": "காட்சி மொழி",
+    "settings.languageHint": "பயன்பாடு மீண்டும் ஏற்றப்பட்ட பிறகு மாற்றங்கள் நடைமுறைக்கு வரும்.",
+    "settings.systemDefault": "கணினி இயல்புநிலை",
+    "fonts.sansSerif": "சான்ஸ்-செரிஃப்",
+    "fonts.serif": "செரிஃப்",
+    "fonts.monospace": "மோனோஸ்பேஸ்",
+
+    // பற்றி (உரிமத்தின் பெயர் மொழிபெயர்க்கப்படுவதில்லை)
+    "about.titleFull": "Esuyo Markdown பற்றி",
+    "about.close": "மூடு",
+    "about.version": "பதிப்பு",
+    "about.unknownVersion": "தெரியவில்லை",
+    "about.license": "உரிமம்",
+    "about.github": "GitHub களஞ்சியம்",
+    "about.store": "Microsoft Store",
+};

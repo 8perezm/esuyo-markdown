@@ -1,0 +1,111 @@
+// Danish dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Topbjælke / menu
+    "menu.tooltip": "Menu",
+    "theme.toggle": "Skift tema",
+    "theme.switchToDark": "Skift til mørkt tema",
+    "theme.switchToLight": "Skift til lyst tema",
+    "file.new": "Ny fil",
+    "file.newTooltip": "Ny fil",
+    "folder.reload": "Genindlæs mappe",
+    "folder.open": "Åbn mappe",
+    "action.save": "Gem",
+    "action.saveAs": "Gem som",
+    "settings.title": "Indstillinger",
+    "menu.recentFolders": "Seneste mapper",
+    "menu.noRecentFolders": "Ingen seneste mapper",
+    "about.title": "Om",
+    "context.newFileHere": "Ny Markdown-fil her",
+
+    // Filvisning / sidepanel
+    "view.group": "Filnavigering",
+    "view.flatList": "Flad liste",
+    "view.treeView": "Trævisning",
+    "view.allDirs": "Alle mapper",
+    "view.allDirsTooltip": "Vis mapper uden Markdown-filer",
+    "sidebar.toggle": "Vis/skjul sidepanel",
+    "sidebar.show": "Vis sidepanel",
+    "sidebar.hide": "Skjul sidepanel",
+    "tabs.ariaLabel": "Åbne filer",
+    "tabs.close": "Luk fane",
+
+    // Tomme / velkomst- / indlæsningstilstande
+    "empty.noFolderSelected": "Ingen mappe valgt",
+    "empty.noFolderHint": "Klik på \"Åbn mappe\" for at finde en mappe med Markdown-filer.",
+    "empty.noFilesFound": "Ingen Markdown-filer fundet",
+    "empty.noFilesHint": "Denne mappe indeholder ingen .md- eller .markdown-filer.",
+    "welcome.title": "Velkommen til Esuyo Markdown",
+    "welcome.hint": "Åbn en mappe for at gennemse og læse Markdown-filer.",
+    "loading.scanning": "Scanner mappen...",
+
+    // Læser / editor
+    "editor.source": "Kilde",
+    "editor.edit": "Rediger",
+    "editor.placeholder": "Begynd at skrive Markdown...",
+    "editor.sourcePlaceholder": "Rediger rå Markdown-kilde...",
+    "viewer.fileMissing": "Filen findes ikke længere: {file}",
+    "viewer.missingSuffix": " (mangler)",
+    "zoom.tooltip": "Zoom: Ctrl + musehjul, Ctrl + / Ctrl -, Ctrl 0. Klik for at nulstille til 100 %.",
+    "zoom.resetAria": "Nulstil zoom til 100 %",
+    "zoom.normal": "Zoom: 100 % (normal). Ctrl + musehjul eller Ctrl + / Ctrl - for at ændre.",
+    "zoom.changed": "Zoom: {zoom} %. Klik eller tryk Ctrl+0 for at nulstille til 100 %.",
+
+    // Almindelige handlinger
+    "action.cancel": "Annuller",
+    "action.delete": "Slet",
+    "file.delete": "Slet fil",
+
+    // Dialoger
+    "dialog.delete.title": "Slet fil",
+    "dialog.delete.message": "Er du sikker på, at du vil slette denne fil?",
+    "dialog.delete.hint": "Filen flyttes til Papirkurven.",
+    "dialog.dirty.title": "Ulagrede ændringer",
+    "dialog.dirty.message_one": "\"{file}\" har ulagrede ændringer. Hvad vil du gøre?",
+    "dialog.dirty.message_other": "{count} filer har ulagrede ændringer. Vælg hvilke der skal gemmes.",
+    "dialog.dirty.saveSelected": "Gem valgte",
+    "dialog.dirty.saveSelectedClose": "Gem valgte og luk",
+    "dialog.dirty.saveSelectedSwitch": "Gem valgte og skift",
+    "dialog.dirty.saveSelectedQuit": "Gem valgte og afslut",
+    "dialog.dirty.discard": "Forkast",
+    "dialog.dirty.discardClose": "Forkast og luk",
+    "dialog.dirty.discardSwitch": "Forkast og skift",
+    "dialog.dirty.discardQuit": "Forkast og afslut",
+    "dialog.openFolder": "Vælg en mappe med Markdown-filer",
+
+    // Fejl vist i advarsler
+    "error.saveCancelled": "Kunne ikke gemme {file}. Handlingen blev annulleret.",
+    "error.openFolder": "Fejl ved åbning af mappen: {error}",
+    "error.createFile": "Fejl ved oprettelse af fil: {error}",
+    "error.deleteFile": "Fejl ved sletning af fil: {error}",
+    "error.saveFile": "Kunne ikke gemme {file}: {error}",
+    "error.saveFileAs": "Kunne ikke gemme filen: {error}",
+
+    // Indstillinger
+    "settings.close": "Luk indstillinger",
+    "settings.fileDiscovery": "Filregistrering",
+    "settings.useGitignore": "Brug .gitignore",
+    "settings.useGitignoreHint": "Spring over filer og mapper, der matcher .gitignore. Fjern markeringen for at medtage ignorerede filer i listen.",
+    "settings.fonts": "Skrifttyper",
+    "settings.bodyFont": "Brødtekstskrift",
+    "settings.headingFont": "Overskriftsskrift",
+    "settings.codeFont": "Kodeskrift",
+    "settings.size": "Størrelse",
+    "settings.language": "Sprog",
+    "settings.displayLanguage": "Visningssprog",
+    "settings.languageHint": "Ændringer træder i kraft, når appen genindlæses.",
+    "settings.systemDefault": "Systemstandard",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Om (licensnavnet forbliver uoversat)
+    "about.titleFull": "Om Esuyo Markdown",
+    "about.close": "Luk",
+    "about.version": "Version",
+    "about.unknownVersion": "Ukendt",
+    "about.license": "Licens",
+    "about.github": "GitHub-depot",
+    "about.store": "Microsoft Store",
+};

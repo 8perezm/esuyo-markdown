@@ -1,0 +1,111 @@
+// Sinhala dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "මෙනුව",
+    "theme.toggle": "තේමාව මාරු කරන්න",
+    "theme.switchToDark": "අඳුරු තේමාවට මාරු වන්න",
+    "theme.switchToLight": "දීප්තිමත් තේමාවට මාරු වන්න",
+    "file.new": "නව ගොනුව",
+    "file.newTooltip": "නව ගොනුවක්",
+    "folder.reload": "ෆෝල්ඩරය නැවත පූරණය කරන්න",
+    "folder.open": "ෆෝල්ඩරය විවෘත කරන්න",
+    "action.save": "සුරකින්න",
+    "action.saveAs": "වෙනත් නමකින් සුරකින්න",
+    "settings.title": "සැකසුම්",
+    "menu.recentFolders": "මෑතකදී විවෘත කළ ෆෝල්ඩර",
+    "menu.noRecentFolders": "මෑතකදී විවෘත කළ ෆෝල්ඩර නැත",
+    "about.title": "පිළිබඳව",
+    "context.newFileHere": "මෙහි නව Markdown ගොනුවක්",
+
+    // File view / sidebar
+    "view.group": "ගොනු සංචාලන දසුන",
+    "view.flatList": "පැතලි ලැයිස්තුව",
+    "view.treeView": "ගස් දසුන",
+    "view.allDirs": "සියලු ෆෝල්ඩර",
+    "view.allDirsTooltip": "Markdown ගොනු නොමැති ෆෝල්ඩර ද පෙන්වන්න",
+    "sidebar.toggle": "පැති තීරුව මාරු කරන්න",
+    "sidebar.show": "පැති තීරුව පෙන්වන්න",
+    "sidebar.hide": "පැති තීරුව සඟවන්න",
+    "tabs.ariaLabel": "විවෘත ගොනු",
+    "tabs.close": "ටැබය වසන්න",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "කිසිදු ෆෝල්ඩරයක් තෝරාගෙන නැත",
+    "empty.noFolderHint": "Markdown ගොනු සහිත ඩයිරෙක්ටරියක් සොයා ගැනීමට \"Open Folder\" ක්ලික් කරන්න.",
+    "empty.noFilesFound": "කිසිදු Markdown ගොනුවක් හමු නොවීය",
+    "empty.noFilesHint": "මෙම ෆෝල්ඩරයේ .md හෝ .markdown ගොනු නොමැත.",
+    "welcome.title": "Esuyo Markdown වෙත සාදරයෙන් පිළිගනිමු",
+    "welcome.hint": "Markdown ගොනු පිරික්සීමට සහ කියවීමට ෆෝල්ඩරයක් විවෘත කරන්න.",
+    "loading.scanning": "ෆෝල්ඩරය ස්කෑන් කරමින්...",
+
+    // Reader / editor
+    "editor.source": "මූල කේතය",
+    "editor.edit": "සංස්කරණය",
+    "editor.placeholder": "Markdown ලිවීම ආරම්භ කරන්න...",
+    "editor.sourcePlaceholder": "අමු Markdown මූල කේතය සංස්කරණය කරන්න...",
+    "viewer.fileMissing": "ගොනුව දැන් නොපවතී: {file}",
+    "viewer.missingSuffix": " (නැති වී ඇත)",
+    "zoom.tooltip": "විශාලනය: Ctrl + මවුස් රෝදය, Ctrl + / Ctrl -, Ctrl 0. 100% නැවත සකස් කිරීමට ක්ලික් කරන්න.",
+    "zoom.resetAria": "විශාලනය 100% නැවත සකස් කරන්න",
+    "zoom.normal": "විශාලනය: 100% (සාමාන්‍ය). වෙනස් කිරීමට Ctrl + මවුස් රෝදය හෝ Ctrl + / Ctrl - භාවිත කරන්න.",
+    "zoom.changed": "විශාලනය: {zoom}%. 100% නැවත සකස් කිරීමට ක්ලික් කරන්න හෝ Ctrl+0 ඔබන්න.",
+
+    // Common actions
+    "action.cancel": "අවලංගු කරන්න",
+    "action.delete": "මකන්න",
+    "file.delete": "ගොනුව මකන්න",
+
+    // Dialogs
+    "dialog.delete.title": "ගොනුව මකන්න",
+    "dialog.delete.message": "මෙම ගොනුව මකන්නට ඔබට විශ්වාසද?",
+    "dialog.delete.hint": "ගොනුව ප්‍රතිචක්‍රීකරණ බින් එකට ගෙන යනු ඇත.",
+    "dialog.dirty.title": "සුරකින්නැති වෙනස්කම්",
+    "dialog.dirty.message_one": "“{file}” හි සුරකින්නැති වෙනස්කම් ඇත. ඔබට කුමක් කිරීමට අවශ්‍යද?",
+    "dialog.dirty.message_other": "ගොනු {count} ක සුරකින්නැති වෙනස්කම් ඇත. සුරැකීමට ඒවා තෝරන්න.",
+    "dialog.dirty.saveSelected": "තෝරාගත් ඒවා සුරකින්න",
+    "dialog.dirty.saveSelectedClose": "තෝරාගත් ඒවා සුරකින්න සහ වසන්න",
+    "dialog.dirty.saveSelectedSwitch": "තෝරාගත් ඒවා සුරකින්න සහ මාරු වන්න",
+    "dialog.dirty.saveSelectedQuit": "තෝරාගත් ඒවා සුරකින්න සහ පිටවන්න",
+    "dialog.dirty.discard": "අතහරින්න",
+    "dialog.dirty.discardClose": "අතහරින්න සහ වසන්න",
+    "dialog.dirty.discardSwitch": "අතහරින්න සහ මාරු වන්න",
+    "dialog.dirty.discardQuit": "අතහරින්න සහ පිටවන්න",
+    "dialog.openFolder": "Markdown ගොනු සහිත ෆෝල්ඩරයක් තෝරන්න",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "{file} සුරැකීමට අසමත් විය. මෙහෙයුම අවලංගු කෙරිණි.",
+    "error.openFolder": "ෆෝල්ඩරය විවෘත කිරීමේ දෝෂය: {error}",
+    "error.createFile": "ගොනුව නිර්මාණය කිරීමේ දෝෂය: {error}",
+    "error.deleteFile": "ගොනුව මකන දී දෝෂයක්: {error}",
+    "error.saveFile": "{file} සුරැකීමට අසමත් විය: {error}",
+    "error.saveFileAs": "ගොනුව සුරැකීමට අසමත් විය: {error}",
+
+    // Settings
+    "settings.close": "සැකසුම් වසන්න",
+    "settings.fileDiscovery": "ගොනු සොයා ගැනීම",
+    "settings.useGitignore": ".gitignore භාවිත කරන්න",
+    "settings.useGitignoreHint": ".gitignore වලට ගැළපෙන ගොනු සහ ෆෝල්ඩර මඟහරින්න. ලැයිස්තුවට නොසලකා හැරි ගොනු ඇතුළත් කිරීමට ලකුණ ඉවත් කරන්න.",
+    "settings.fonts": "අකුරු වර්ග",
+    "settings.bodyFont": "ප්‍රධාන පාඨ අකුරු",
+    "settings.headingFont": "සිරස්තල අකුරු",
+    "settings.codeFont": "කේත අකුරු",
+    "settings.size": "ප්‍රමාණය",
+    "settings.language": "භාෂාව",
+    "settings.displayLanguage": "ප්‍රදර්ශන භාෂාව",
+    "settings.languageHint": "යෙදුම නැවත පූරණය වූ පසු වෙනස්කම් ක්‍රියාත්මක වේ.",
+    "settings.systemDefault": "පද්ධති පෙරනිමිය",
+    "fonts.sansSerif": "සැන්ස්-සෙරිෆ්",
+    "fonts.serif": "සෙරිෆ්",
+    "fonts.monospace": "මොනොස්පේස්",
+
+    // About
+    "about.titleFull": "Esuyo Markdown පිළිබඳව",
+    "about.close": "වසන්න",
+    "about.version": "අනුවාදය",
+    "about.unknownVersion": "නොදනී",
+    "about.license": "බලපත්‍රය",
+    "about.github": "GitHub ගබඩාව",
+    "about.store": "Microsoft Store",
+};

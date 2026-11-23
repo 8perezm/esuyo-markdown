@@ -46,6 +46,9 @@ $RECYCLE.BIN/
 System Volume Information/
 
 # ── Misc ─────────────────────────────────────────────────────────────────────
+# Temporary scratch space; durable scripts live in scripts/ and docs/ instead.
+agent-build/
+
 *.tgz
 *.tar.gz
 *.zip

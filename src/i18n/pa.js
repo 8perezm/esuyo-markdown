@@ -1,0 +1,111 @@
+// Punjabi (Gurmukhi) dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Top bar / menu
+    "menu.tooltip": "ਮੇਨੂ",
+    "theme.toggle": "ਥੀਮ ਬਦਲੋ",
+    "theme.switchToDark": "ਗੂੜ੍ਹੀ ਥੀਮ ਵਿੱਚ ਬਦਲੋ",
+    "theme.switchToLight": "ਹਲਕੀ ਥੀਮ ਵਿੱਚ ਬਦਲੋ",
+    "file.new": "ਨਵੀਂ ਫਾਈਲ",
+    "file.newTooltip": "ਨਵੀਂ ਫਾਈਲ",
+    "folder.reload": "ਫੋਲਡਰ ਰੀਲੋਡ ਕਰੋ",
+    "folder.open": "ਫੋਲਡਰ ਖੋਲ੍ਹੋ",
+    "action.save": "ਸੇਵ ਕਰੋ",
+    "action.saveAs": "ਸੇਵ ਐਜ਼",
+    "settings.title": "ਸੈਟਿੰਗਾਂ",
+    "menu.recentFolders": "ਹਾਲੀਆ ਫੋਲਡਰ",
+    "menu.noRecentFolders": "ਕੋਈ ਹਾਲੀਆ ਫੋਲਡਰ ਨਹੀਂ",
+    "about.title": "ਬਾਰੇ",
+    "context.newFileHere": "ਇੱਥੇ ਨਵੀਂ Markdown ਫਾਈਲ",
+
+    // File view / sidebar
+    "view.group": "ਫਾਈਲ ਨੈਵੀਗੇਸ਼ਨ ਵਿਊ",
+    "view.flatList": "ਫਲੈਟ ਸੂਚੀ",
+    "view.treeView": "ਟ੍ਰੀ ਵਿਊ",
+    "view.allDirs": "ਸਾਰੇ ਫੋਲਡਰ",
+    "view.allDirsTooltip": "ਬਿਨਾਂ Markdown ਫਾਈਲਾਂ ਵਾਲੇ ਫੋਲਡਰ ਵੀ ਦਿਖਾਓ",
+    "sidebar.toggle": "ਸਾਈਡਬਾਰ ਟੌਗਲ ਕਰੋ",
+    "sidebar.show": "ਸਾਈਡਬਾਰ ਦਿਖਾਓ",
+    "sidebar.hide": "ਸਾਈਡਬਾਰ ਲੁਕਾਓ",
+    "tabs.ariaLabel": "ਖੁੱਲ੍ਹੀਆਂ ਫਾਈਲਾਂ",
+    "tabs.close": "ਟੈਬ ਬੰਦ ਕਰੋ",
+
+    // Empty / welcome / loading states
+    "empty.noFolderSelected": "ਕੋਈ ਫੋਲਡਰ ਚੁਣਿਆ ਨਹੀਂ ਗਿਆ",
+    "empty.noFolderHint": "Markdown ਫਾਈਲਾਂ ਵਾਲੀ ਡਾਇਰੈਕਟਰੀ ਲੱਭਣ ਲਈ \"Open Folder\" 'ਤੇ ਕਲਿੱਕ ਕਰੋ।",
+    "empty.noFilesFound": "ਕੋਈ Markdown ਫਾਈਲ ਨਹੀਂ ਮਿਲੀ",
+    "empty.noFilesHint": "ਇਸ ਫੋਲਡਰ ਵਿੱਚ ਕੋਈ .md ਜਾਂ .markdown ਫਾਈਲ ਨਹੀਂ ਹੈ।",
+    "welcome.title": "Esuyo Markdown ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ",
+    "welcome.hint": "Markdown ਫਾਈਲਾਂ ਨੂੰ ਬ੍ਰਾਊਜ਼ ਕਰਨ ਅਤੇ ਪੜ੍ਹਨ ਲਈ ਕੋਈ ਫੋਲਡਰ ਖੋਲ੍ਹੋ।",
+    "loading.scanning": "ਫੋਲਡਰ ਸਕੈਨ ਹੋ ਰਿਹਾ ਹੈ...",
+
+    // Reader / editor
+    "editor.source": "ਸੋਰਸ",
+    "editor.edit": "ਸੰਪਾਦਨ",
+    "editor.placeholder": "Markdown ਲਿਖਣਾ ਸ਼ੁਰੂ ਕਰੋ...",
+    "editor.sourcePlaceholder": "ਕੱਚਾ Markdown ਸੋਰਸ ਸੰਪਾਦਿਤ ਕਰੋ...",
+    "viewer.fileMissing": "ਫਾਈਲ ਹੁਣ ਮੌਜੂਦ ਨਹੀਂ ਹੈ: {file}",
+    "viewer.missingSuffix": " (ਗੁੰਮ)",
+    "zoom.tooltip": "ਜ਼ੂਮ: Ctrl + ਮਾਊਸ ਵ੍ਹੀਲ, Ctrl + / Ctrl -, Ctrl 0। 100% 'ਤੇ ਰੀਸੈੱਟ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ।",
+    "zoom.resetAria": "ਜ਼ੂਮ ਨੂੰ 100% 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ",
+    "zoom.normal": "ਜ਼ੂਮ: 100% (ਸਧਾਰਨ)। ਬਦਲਣ ਲਈ Ctrl + ਮਾਊਸ ਵ੍ਹੀਲ ਜਾਂ Ctrl + / Ctrl - ਦਬਾਓ।",
+    "zoom.changed": "ਜ਼ੂਮ: {zoom}%। 100% 'ਤੇ ਰੀਸੈੱਟ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ ਜਾਂ Ctrl+0 ਦਬਾਓ।",
+
+    // Common actions
+    "action.cancel": "ਰੱਦ ਕਰੋ",
+    "action.delete": "ਮਿਟਾਓ",
+    "file.delete": "ਫਾਈਲ ਮਿਟਾਓ",
+
+    // Dialogs
+    "dialog.delete.title": "ਫਾਈਲ ਮਿਟਾਓ",
+    "dialog.delete.message": "ਕੀ ਤੁਸੀਂ ਇਸ ਫਾਈਲ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "dialog.delete.hint": "ਫਾਈਲ ਨੂੰ ਰੀਸਾਈਕਲ ਬਿਨ ਵਿੱਚ ਭੇਜ ਦਿੱਤਾ ਜਾਵੇਗਾ।",
+    "dialog.dirty.title": "ਅਣਸੇਵ ਕੀਤੇ ਬਦਲਾਅ",
+    "dialog.dirty.message_one": "“{file}” ਵਿੱਚ ਅਣਸੇਵ ਕੀਤੇ ਬਦਲਾਅ ਹਨ। ਤੁਸੀਂ ਕੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "dialog.dirty.message_other": "{count} ਫਾਈਲਾਂ ਵਿੱਚ ਅਣਸੇਵ ਕੀਤੇ ਬਦਲਾਅ ਹਨ। ਸੇਵ ਕਰਨ ਲਈ ਫਾਈਲਾਂ ਚੁਣੋ।",
+    "dialog.dirty.saveSelected": "ਚੁਣੀਆਂ ਹੋਈਆਂ ਸੇਵ ਕਰੋ",
+    "dialog.dirty.saveSelectedClose": "ਚੁਣੀਆਂ ਹੋਈਆਂ ਸੇਵ ਕਰੋ ਅਤੇ ਬੰਦ ਕਰੋ",
+    "dialog.dirty.saveSelectedSwitch": "ਚੁਣੀਆਂ ਹੋਈਆਂ ਸੇਵ ਕਰੋ ਅਤੇ ਬਦਲੋ",
+    "dialog.dirty.saveSelectedQuit": "ਚੁਣੀਆਂ ਹੋਈਆਂ ਸੇਵ ਕਰੋ ਅਤੇ ਬਾਹਰ ਜਾਓ",
+    "dialog.dirty.discard": "ਤਿਆਗੋ",
+    "dialog.dirty.discardClose": "ਤਿਆਗੋ ਅਤੇ ਬੰਦ ਕਰੋ",
+    "dialog.dirty.discardSwitch": "ਤਿਆਗੋ ਅਤੇ ਬਦਲੋ",
+    "dialog.dirty.discardQuit": "ਤਿਆਗੋ ਅਤੇ ਬਾਹਰ ਜਾਓ",
+    "dialog.openFolder": "Markdown ਫਾਈਲਾਂ ਵਾਲਾ ਫੋਲਡਰ ਚੁਣੋ",
+
+    // Errors surfaced in alerts
+    "error.saveCancelled": "{file} ਨੂੰ ਸੇਵ ਕਰਨ ਵਿੱਚ ਅਸਫਲ। ਕਾਰਵਾਈ ਰੱਦ ਕਰ ਦਿੱਤੀ ਗਈ।",
+    "error.openFolder": "ਫੋਲਡਰ ਖੋਲ੍ਹਣ ਵਿੱਚ ਗਲਤੀ: {error}",
+    "error.createFile": "ਫਾਈਲ ਬਣਾਉਣ ਵਿੱਚ ਗਲਤੀ: {error}",
+    "error.deleteFile": "ਫਾਈਲ ਮਿਟਾਉਣ ਵਿੱਚ ਗਲਤੀ: {error}",
+    "error.saveFile": "{file} ਨੂੰ ਸੇਵ ਕਰਨ ਵਿੱਚ ਅਸਫਲ: {error}",
+    "error.saveFileAs": "ਫਾਈਲ ਸੇਵ ਕਰਨ ਵਿੱਚ ਅਸਫਲ: {error}",
+
+    // Settings
+    "settings.close": "ਸੈਟਿੰਗਾਂ ਬੰਦ ਕਰੋ",
+    "settings.fileDiscovery": "ਫਾਈਲ ਖੋਜ",
+    "settings.useGitignore": ".gitignore ਵਰਤੋਂ",
+    "settings.useGitignoreHint": ".gitignore ਨਾਲ ਮੇਲ ਖਾਂਦੀਆਂ ਫਾਈਲਾਂ ਅਤੇ ਫੋਲਡਰ ਛੱਡ ਦਿਓ। ਸੂਚੀ ਵਿੱਚ ਅਣਡਿੱਠ ਫਾਈਲਾਂ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਅਨਚੈਕ ਕਰੋ।",
+    "settings.fonts": "ਫੌਂਟ",
+    "settings.bodyFont": "ਮੁੱਖ ਟੈਕਸਟ ਫੌਂਟ",
+    "settings.headingFont": "ਸਿਰਲੇਖ ਫੌਂਟ",
+    "settings.codeFont": "ਕੋਡ ਫੌਂਟ",
+    "settings.size": "ਆਕਾਰ",
+    "settings.language": "ਭਾਸ਼ਾ",
+    "settings.displayLanguage": "ਡਿਸਪਲੇ ਭਾਸ਼ਾ",
+    "settings.languageHint": "ਬਦਲਾਅ ਐਪ ਰੀਲੋਡ ਹੋਣ ਤੋਂ ਬਾਅਦ ਲਾਗੂ ਹੋਣਗੇ।",
+    "settings.systemDefault": "ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ",
+    "fonts.sansSerif": "ਸੈਨਸ-ਸੇਰਿਫ",
+    "fonts.serif": "ਸੇਰਿਫ",
+    "fonts.monospace": "ਮੋਨੋਸਪੇਸ",
+
+    // About
+    "about.titleFull": "Esuyo Markdown ਬਾਰੇ",
+    "about.close": "ਬੰਦ ਕਰੋ",
+    "about.version": "ਵਰਜਨ",
+    "about.unknownVersion": "ਅਣਜਾਣ",
+    "about.license": "ਲਾਇਸੈਂਸ",
+    "about.github": "GitHub ਰਿਪੋਜ਼ਟਰੀ",
+    "about.store": "Microsoft Store",
+};

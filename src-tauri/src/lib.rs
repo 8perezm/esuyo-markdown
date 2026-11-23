@@ -61,6 +61,11 @@ pub struct AppSettings {
     /// In tree view, include directories that contain no markdown files.
     #[serde(default)]
     pub tree_show_all_dirs: bool,
+    /// UI locale (e.g. "en", "es"). `None` / missing means "follow the OS";
+    /// the frontend resolves it via navigator.language. `#[serde(default)]`
+    /// keeps existing settings.json files valid.
+    #[serde(default)]
+    pub locale: Option<String>,
 }
 
 fn default_true() -> bool {

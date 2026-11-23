@@ -1,0 +1,113 @@
+// Romanian dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Bara superioară / meniu
+    "menu.tooltip": "Meniu",
+    "theme.toggle": "Comută tema",
+    "theme.switchToDark": "Comută la tema întunecată",
+    "theme.switchToLight": "Comută la tema luminoasă",
+    "file.new": "Fișier nou",
+    "file.newTooltip": "Fișier nou",
+    "folder.reload": "Reîncarcă dosarul",
+    "folder.open": "Deschide dosarul",
+    "action.save": "Salvează",
+    "action.saveAs": "Salvează ca",
+    "settings.title": "Setări",
+    "menu.recentFolders": "Dosare recente",
+    "menu.noRecentFolders": "Niciun dosar recent",
+    "about.title": "Despre",
+    "context.newFileHere": "Fișier Markdown nou aici",
+
+    // Vizualizare fișiere / bară laterală
+    "view.group": "Vizualizare navigare fișiere",
+    "view.flatList": "Listă plată",
+    "view.treeView": "Vizualizare în arbore",
+    "view.allDirs": "Toate dosarele",
+    "view.allDirsTooltip": "Afișează dosarele fără fișiere Markdown",
+    "sidebar.toggle": "Comută bara laterală",
+    "sidebar.show": "Afișează bara laterală",
+    "sidebar.hide": "Ascunde bara laterală",
+    "tabs.ariaLabel": "Fișiere deschise",
+    "tabs.close": "Închide fila",
+
+    // Stări goale / bun venit / încărcare
+    "empty.noFolderSelected": "Niciun dosar selectat",
+    "empty.noFolderHint": "Faceți clic pe \"Deschide dosarul\" pentru a căuta un director care conține fișiere Markdown.",
+    "empty.noFilesFound": "Nu au fost găsite fișiere Markdown",
+    "empty.noFilesHint": "Acest dosar nu conține fișiere .md sau .markdown.",
+    "welcome.title": "Bine ați venit la Esuyo Markdown",
+    "welcome.hint": "Deschideți un dosar pentru a răsfoi și a citi fișiere Markdown.",
+    "loading.scanning": "Se scanează dosarul...",
+
+    // Cititor / editor
+    "editor.source": "Sursă",
+    "editor.edit": "Editează",
+    "editor.placeholder": "Începeți să scrieți Markdown...",
+    "editor.sourcePlaceholder": "Editați sursa Markdown brută...",
+    "viewer.fileMissing": "Fișierul nu mai există: {file}",
+    "viewer.missingSuffix": " (lipsă)",
+    "zoom.tooltip": "Zoom: Ctrl + rotița mouse-ului, Ctrl + / Ctrl -, Ctrl 0. Faceți clic pentru a reseta la 100 %.",
+    "zoom.resetAria": "Resetează zoomul la 100 %",
+    "zoom.normal": "Zoom: 100 % (normal). Ctrl + rotița mouse-ului sau Ctrl + / Ctrl - pentru a modifica.",
+    "zoom.changed": "Zoom: {zoom} %. Faceți clic sau apăsați Ctrl+0 pentru a reseta la 100 %.",
+
+    // Acțiuni comune
+    "action.cancel": "Anulează",
+    "action.delete": "Șterge",
+    "file.delete": "Șterge fișierul",
+
+    // Dialoguri
+    "dialog.delete.title": "Șterge fișierul",
+    "dialog.delete.message": "Sigur doriți să ștergeți acest fișier?",
+    "dialog.delete.hint": "Fișierul va fi mutat în Coșul de reciclare.",
+    "dialog.dirty.title": "Modificări nesalvate",
+    "dialog.dirty.message_one": "„{file}” are modificări nesalvate. Ce doriți să faceți?",
+    "dialog.dirty.message_other": "{count} de fișiere au modificări nesalvate. Alegeți pe care doriți să le salvați.",
+    "dialog.dirty.message_few": "{count} fișiere au modificări nesalvate. Alegeți pe care doriți să le salvați.",
+    "dialog.dirty.message_many": "{count} de fișiere au modificări nesalvate. Alegeți pe care doriți să le salvați.",
+    "dialog.dirty.saveSelected": "Salvează selecția",
+    "dialog.dirty.saveSelectedClose": "Salvează selecția și închide",
+    "dialog.dirty.saveSelectedSwitch": "Salvează selecția și comută",
+    "dialog.dirty.saveSelectedQuit": "Salvează selecția și ieși",
+    "dialog.dirty.discard": "Renunță",
+    "dialog.dirty.discardClose": "Renunță și închide",
+    "dialog.dirty.discardSwitch": "Renunță și comută",
+    "dialog.dirty.discardQuit": "Renunță și ieși",
+    "dialog.openFolder": "Selectați un dosar cu fișiere Markdown",
+
+    // Erori afișate în alerte
+    "error.saveCancelled": "Nu s-a putut salva {file}. Operațiunea a fost anulată.",
+    "error.openFolder": "Eroare la deschiderea dosarului: {error}",
+    "error.createFile": "Eroare la crearea fișierului: {error}",
+    "error.deleteFile": "Eroare la ștergerea fișierului: {error}",
+    "error.saveFile": "Nu s-a putut salva {file}: {error}",
+    "error.saveFileAs": "Nu s-a putut salva fișierul: {error}",
+
+    // Setări
+    "settings.close": "Închide setările",
+    "settings.fileDiscovery": "Descoperirea fișierelor",
+    "settings.useGitignore": "Folosește .gitignore",
+    "settings.useGitignoreHint": "Ignoră fișierele și dosarele care corespund cu .gitignore. Debifează pentru a include fișierele ignorate în listă.",
+    "settings.fonts": "Fonturi",
+    "settings.bodyFont": "Fontul textului",
+    "settings.headingFont": "Fontul titlurilor",
+    "settings.codeFont": "Fontul codului",
+    "settings.size": "Dimensiune",
+    "settings.language": "Limbă",
+    "settings.displayLanguage": "Limba de afișare",
+    "settings.languageHint": "Modificările au efect după repornirea aplicației.",
+    "settings.systemDefault": "Valoarea implicită a sistemului",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Despre (numele licenței rămâne netradus)
+    "about.titleFull": "Despre Esuyo Markdown",
+    "about.close": "Închide",
+    "about.version": "Versiune",
+    "about.unknownVersion": "Necunoscută",
+    "about.license": "Licență",
+    "about.github": "Depozit GitHub",
+    "about.store": "Microsoft Store",
+};

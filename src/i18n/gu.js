@@ -1,0 +1,111 @@
+// Gujarati dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // ઉપરની પટ્ટી / મેનુ
+    "menu.tooltip": "મેનુ",
+    "theme.toggle": "થીમ બદલો",
+    "theme.switchToDark": "ઘાટી થીમ પર જાઓ",
+    "theme.switchToLight": "હલકી થીમ પર જાઓ",
+    "file.new": "નવી ફાઇલ",
+    "file.newTooltip": "નવી ફાઇલ",
+    "folder.reload": "ફોલ્ડર ફરીથી લોડ કરો",
+    "folder.open": "ફોલ્ડર ખોલો",
+    "action.save": "સાચવો",
+    "action.saveAs": "અન્ય નામે સાચવો",
+    "settings.title": "સેટિંગ્સ",
+    "menu.recentFolders": "તાજેતરના ફોલ્ડરો",
+    "menu.noRecentFolders": "કોઈ તાજેતરના ફોલ્ડરો નથી",
+    "about.title": "વિશે",
+    "context.newFileHere": "અહીં નવી markdown ફાઇલ",
+
+    // ફાઇલ દૃશ્ય / સાઇડબાર
+    "view.group": "ફાઇલ નેવિગેશન દૃશ્ય",
+    "view.flatList": "સપાટ યાદી",
+    "view.treeView": "ટ્રી દૃશ્ય",
+    "view.allDirs": "બધા ફોલ્ડરો",
+    "view.allDirsTooltip": "markdown ફાઇલો વિના ફોલ્ડરો બતાવો",
+    "sidebar.toggle": "સાઇડબાર ટૉગલ કરો",
+    "sidebar.show": "સાઇડબાર બતાવો",
+    "sidebar.hide": "સાઇડબાર સંતાડો",
+    "tabs.ariaLabel": "ખુલ્લી ફાઇલો",
+    "tabs.close": "ટેબ બંધ કરો",
+
+    // ખાલી / સ્વાગત / લોડ થવાની સ્થિતિઓ
+    "empty.noFolderSelected": "કોઈ ફોલ્ડર પસંદ કરેલ નથી",
+    "empty.noFolderHint": "markdown ફાઇલો ધરાવતી ડિરેક્ટરી શોધવા \"ફોલ્ડર ખોલો\" પર ક્લિક કરો.",
+    "empty.noFilesFound": "કોઈ markdown ફાઇલો મળી નથી",
+    "empty.noFilesHint": "આ ફોલ્ડરમાં .md કે .markdown ફાઇલો નથી.",
+    "welcome.title": "Esuyo Markdown માં આપનું સ્વાગત છે",
+    "welcome.hint": "markdown ફાઇલો બ્રાઉઝ કરવા અને વાંચવા એક ફોલ્ડર ખોલો.",
+    "loading.scanning": "ફોલ્ડર સ્કેન થઈ રહ્યું છે...",
+
+    // રીડર / એડિટર
+    "editor.source": "સ્ત્રોત",
+    "editor.edit": "સંપાદન",
+    "editor.placeholder": "Markdown લખવાનું શરૂ કરો...",
+    "editor.sourcePlaceholder": "કાચો Markdown સ્ત્રોત સંપાદિત કરો...",
+    "viewer.fileMissing": "ફાઇલ હવે અસ્તિત્વમાં નથી: {file}",
+    "viewer.missingSuffix": " (ઉપલબ્ધ નથી)",
+    "zoom.tooltip": "ઝૂમ: Ctrl + માઉસ વ્હીલ, Ctrl + / Ctrl -, Ctrl 0. 100% પર રીસેટ કરવા ક્લિક કરો.",
+    "zoom.resetAria": "ઝૂમ 100% પર રીસેટ કરો",
+    "zoom.normal": "ઝૂમ: 100% (સામાન્ય). બદલવા Ctrl + માઉસ વ્હીલ અથવા Ctrl + / Ctrl - વાપરો.",
+    "zoom.changed": "ઝૂમ: {zoom}%. 100% પર રીસેટ કરવા ક્લિક કરો કે Ctrl+0 દબાવો.",
+
+    // સામાન્ય કામગીરી
+    "action.cancel": "રદ કરો",
+    "action.delete": "કાઢી નાખો",
+    "file.delete": "ફાઇલ કાઢી નાખો",
+
+    // સંવાદ
+    "dialog.delete.title": "ફાઇલ કાઢી નાખો",
+    "dialog.delete.message": "શું તમને ખરેખર આ ફાઇલ કાઢી નાખવી છે?",
+    "dialog.delete.hint": "ફાઇલ રિસાયકલ બિનમાં ખસેડવામાં આવશે.",
+    "dialog.dirty.title": "સાચવેલા નહીં એવા ફેરફારો",
+    "dialog.dirty.message_one": "“{file}” માં સાચવેલા નહીં એવા ફેરફારો છે. તમે શું કરવા માંગો છો?",
+    "dialog.dirty.message_other": "{count} ફાઇલોમાં સાચવેલા નહીં એવા ફેરફારો છે. કઈ ફાઇલો સાચવવી તે પસંદ કરો.",
+    "dialog.dirty.saveSelected": "પસંદ કરેલી સાચવો",
+    "dialog.dirty.saveSelectedClose": "પસંદ કરેલી સાચવો અને બંધ કરો",
+    "dialog.dirty.saveSelectedSwitch": "પસંદ કરેલી સાચવો અને બદલો",
+    "dialog.dirty.saveSelectedQuit": "પસંદ કરેલી સાચવો અને છોડો",
+    "dialog.dirty.discard": "છોડી દો",
+    "dialog.dirty.discardClose": "છોડીને બંધ કરો",
+    "dialog.dirty.discardSwitch": "છોડીને બદલો",
+    "dialog.dirty.discardQuit": "છોડીને બહાર નીકળો",
+    "dialog.openFolder": "markdown ફાઇલો ધરાવતું ફોલ્ડર પસંદ કરો",
+
+    // ચેતવણીઓમાં દેખાતી ભૂલો
+    "error.saveCancelled": "{file} સાચવી શકાઈ નહીં. કામગીરી રદ કરવામાં આવી.",
+    "error.openFolder": "ફોલ્ડર ખોલવામાં ભૂલ: {error}",
+    "error.createFile": "ફાઇલ બનાવવામાં ભૂલ: {error}",
+    "error.deleteFile": "ફાઇલ કાઢી નાખવામાં ભૂલ: {error}",
+    "error.saveFile": "{file} સાચવવામાં નિષ્ફળ: {error}",
+    "error.saveFileAs": "ફાઇલ સાચવવામાં નિષ્ફળ: {error}",
+
+    // સેટિંગ્સ
+    "settings.close": "સેટિંગ્સ બંધ કરો",
+    "settings.fileDiscovery": "ફાઇલ શોધ",
+    "settings.useGitignore": ".gitignore વાપરો",
+    "settings.useGitignoreHint": ".gitignore સાથે મેળ ખાતી ફાઇલો અને ફોલ્ડરો છોડી દો. યાદીમાં અવગણેલી ફાઇલો સામેલ કરવા ટિક દૂર કરો.",
+    "settings.fonts": "ફોન્ટ્સ",
+    "settings.bodyFont": "મુખ્ય ફોન્ટ",
+    "settings.headingFont": "શીર્ષક ફોન્ટ",
+    "settings.codeFont": "કોડ ફોન્ટ",
+    "settings.size": "કદ",
+    "settings.language": "ભાષા",
+    "settings.displayLanguage": "પ્રદર્શન ભાષા",
+    "settings.languageHint": "એપ ફરીથી લોડ થયા પછી ફેરફારો અસરકારક થશે.",
+    "settings.systemDefault": "સિસ્ટમ ડિફૉલ્ટ",
+    "fonts.sansSerif": "સાન્સ-સેરિફ",
+    "fonts.serif": "સેરિફ",
+    "fonts.monospace": "મોનોસ્પેસ",
+
+    // વિશે (લાઇસન્સનું નામ અનુવાદિત થતું નથી)
+    "about.titleFull": "Esuyo Markdown વિશે",
+    "about.close": "બંધ કરો",
+    "about.version": "સંસ્કરણ",
+    "about.unknownVersion": "અજ્ઞાત",
+    "about.license": "લાઇસન્સ",
+    "about.github": "GitHub રિપોઝિટરી",
+    "about.store": "Microsoft Store",
+};

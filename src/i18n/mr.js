@@ -1,0 +1,111 @@
+// Marathi dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // वरचा पट्टी / मेन्यू
+    "menu.tooltip": "मेन्यू",
+    "theme.toggle": "थीम बदला",
+    "theme.switchToDark": "गडद थीमवर जा",
+    "theme.switchToLight": "हलकी थीमवर जा",
+    "file.new": "नवीन फाइल",
+    "file.newTooltip": "नवीन फाइल",
+    "folder.reload": "फोल्डर पुन्हा लोड करा",
+    "folder.open": "फोल्डर उघडा",
+    "action.save": "जतन करा",
+    "action.saveAs": "इतर नावाने जतन करा",
+    "settings.title": "सेटिंग्ज",
+    "menu.recentFolders": "अलीकडील फोल्डर्स",
+    "menu.noRecentFolders": "अलीकडील फोल्डर्स नाहीत",
+    "about.title": "बद्दल",
+    "context.newFileHere": "येथे नवीन markdown फाइल",
+
+    // फाइल दृश्य / साइडबार
+    "view.group": "फाइल नेव्हिगेशन दृश्य",
+    "view.flatList": "सपाट सूची",
+    "view.treeView": "ट्री दृश्य",
+    "view.allDirs": "सर्व फोल्डर्स",
+    "view.allDirsTooltip": "markdown फाइल्स नसलेले फोल्डर्स दाखवा",
+    "sidebar.toggle": "साइडबार टॉगल करा",
+    "sidebar.show": "साइडबार दाखवा",
+    "sidebar.hide": "साइडबार लपवा",
+    "tabs.ariaLabel": "उघडलेल्या फाइल्स",
+    "tabs.close": "टॅब बंद करा",
+
+    // रिक्त / स्वागत / लोड होण्याच्या अवस्था
+    "empty.noFolderSelected": "कोणताही फोल्डर निवडलेला नाही",
+    "empty.noFolderHint": "markdown फाइल्स असलेली डायरेक्टरी ब्राउझ करण्यासाठी \"फोल्डर उघडा\" वर क्लिक करा.",
+    "empty.noFilesFound": "कोणत्याही markdown फाइल्स आढळल्या नाहीत",
+    "empty.noFilesHint": "या फोल्डरमध्ये .md किंवा .markdown फाइल्स नाहीत.",
+    "welcome.title": "Esuyo Markdown मध्ये स्वागत आहे",
+    "welcome.hint": "markdown फाइल्स ब्राउझ करून वाचण्यासाठी एक फोल्डर उघडा.",
+    "loading.scanning": "फोल्डर स्कॅन करत आहे...",
+
+    // रीडर / एडिटर
+    "editor.source": "स्रोत",
+    "editor.edit": "संपादन",
+    "editor.placeholder": "Markdown लिहायला सुरुवात करा...",
+    "editor.sourcePlaceholder": "कच्चा Markdown स्रोत संपादित करा...",
+    "viewer.fileMissing": "फाइल आता अस्तित्वात नाही: {file}",
+    "viewer.missingSuffix": " (उपलब्ध नाही)",
+    "zoom.tooltip": "झूम: Ctrl + माउस व्हील, Ctrl + / Ctrl -, Ctrl 0. 100% वर रीसेट करण्यासाठी क्लिक करा.",
+    "zoom.resetAria": "झूम 100% वर रीसेट करा",
+    "zoom.normal": "झूम: 100% (सामान्य). बदलण्यासाठी Ctrl + माउस व्हील किंवा Ctrl + / Ctrl - वापरा.",
+    "zoom.changed": "झूम: {zoom}%. 100% वर रीसेट करण्यासाठी क्लिक करा किंवा Ctrl+0 दाबा.",
+
+    // सामान्य क्रिया
+    "action.cancel": "रद्द करा",
+    "action.delete": "हटवा",
+    "file.delete": "फाइल हटवा",
+
+    // संवाद
+    "dialog.delete.title": "फाइल हटवा",
+    "dialog.delete.message": "तुम्हाला ही फाइल हटवायची आहे याची खात्री आहे का?",
+    "dialog.delete.hint": "फाइल रीसायकल बिनमध्ये हलवली जाईल.",
+    "dialog.dirty.title": "जतन न केलेले बदल",
+    "dialog.dirty.message_one": "“{file}” मध्ये जतन न केलेले बदल आहेत. तुम्हाला काय करायचे आहे?",
+    "dialog.dirty.message_other": "{count} फाइल्समध्ये जतन न केलेले बदल आहेत. कोणत्या जतन करायच्या ते निवडा.",
+    "dialog.dirty.saveSelected": "निवडलेल्या जतन करा",
+    "dialog.dirty.saveSelectedClose": "निवडलेल्या जतन करा व बंद करा",
+    "dialog.dirty.saveSelectedSwitch": "निवडलेल्या जतन करा व बदला",
+    "dialog.dirty.saveSelectedQuit": "निवडलेल्या जतन करा व बाहर पडा",
+    "dialog.dirty.discard": "वगळा",
+    "dialog.dirty.discardClose": "वगळा व बंद करा",
+    "dialog.dirty.discardSwitch": "वगळा व बदला",
+    "dialog.dirty.discardQuit": "वगळा व बाहर पडा",
+    "dialog.openFolder": "markdown फाइल्स असलेले फोल्डर निवडा",
+
+    // अलर्टमध्ये दिसणाऱ्या त्रुटी
+    "error.saveCancelled": "{file} जतन करता आली नाही. ऑपरेशन रद्द करण्यात आले.",
+    "error.openFolder": "फोल्डर उघडताना त्रुटी: {error}",
+    "error.createFile": "फाइल तयार करताना त्रुटी: {error}",
+    "error.deleteFile": "फाइल हटवताना त्रुटी: {error}",
+    "error.saveFile": "{file} जतन करण्यात अयशस्वी: {error}",
+    "error.saveFileAs": "फाइल जतन करण्यात अयशस्वी: {error}",
+
+    // सेटिंग्ज
+    "settings.close": "सेटिंग्ज बंद करा",
+    "settings.fileDiscovery": "फाइल शोध",
+    "settings.useGitignore": ".gitignore वापरा",
+    "settings.useGitignoreHint": ".gitignore शी जुळणाऱ्या फाइल्स व फोल्डर्स वगळा. सूचीमध्ये वगळलेल्या फाइल्स समाविष्ट करण्यासाठी टिक काढा.",
+    "settings.fonts": "फॉन्ट्स",
+    "settings.bodyFont": "मुख्य फॉन्ट",
+    "settings.headingFont": "मथळा फॉन्ट",
+    "settings.codeFont": "कोड फॉन्ट",
+    "settings.size": "आकार",
+    "settings.language": "भाषा",
+    "settings.displayLanguage": "प्रदर्शन भाषा",
+    "settings.languageHint": "अॅप पुन्हा लोड झाल्यावर बदल लागू होतील.",
+    "settings.systemDefault": "सिस्टम डिफॉल्ट",
+    "fonts.sansSerif": "सेन्स-सेरिफ",
+    "fonts.serif": "सेरिफ",
+    "fonts.monospace": "मोनोस्पेस",
+
+    // बद्दल (परवान्याचे नाव अनुवादित केले जात नाही)
+    "about.titleFull": "Esuyo Markdown बद्दल",
+    "about.close": "बंद करा",
+    "about.version": "आवृत्ती",
+    "about.unknownVersion": "अज्ञात",
+    "about.license": "परवाना",
+    "about.github": "GitHub रेपॉजिटरी",
+    "about.store": "Microsoft Store",
+};

@@ -1,0 +1,111 @@
+// Mongolian dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Дээд самбар / цэс
+    "menu.tooltip": "Цэс",
+    "theme.toggle": "Сэдвийг солих",
+    "theme.switchToDark": "Харанхуй сэдэв рүү шилжих",
+    "theme.switchToLight": "Гэрэлтэй сэдэв рүү шилжих",
+    "file.new": "Шинэ файл",
+    "file.newTooltip": "Шинэ файл",
+    "folder.reload": "Хавтасыг дахин ачааллах",
+    "folder.open": "Хавтас нээх",
+    "action.save": "Хадгалах",
+    "action.saveAs": "Өөрөөр хадгалах",
+    "settings.title": "Тохиргоо",
+    "menu.recentFolders": "Сүүлд нээсэн хавтасууд",
+    "menu.noRecentFolders": "Сүүлд нээсэн хавтас байхгүй",
+    "about.title": "Тухай",
+    "context.newFileHere": "Энд шинэ Markdown файл үүсгэх",
+
+    // Файлын харагдац / хажуугийн самбар
+    "view.group": "Файлын навигаци",
+    "view.flatList": "Хавтгай жагсаалт",
+    "view.treeView": "Мод харагдац",
+    "view.allDirs": "Бүх хавтас",
+    "view.allDirsTooltip": "Markdown файлгүй хавтасуудыг харуулах",
+    "sidebar.toggle": "Хажуугийн самбарыг нээх/хаах",
+    "sidebar.show": "Хажуугийн самбарыг харуулах",
+    "sidebar.hide": "Хажуугийн самбарыг нуух",
+    "tabs.ariaLabel": "Нээлттэй файлууд",
+    "tabs.close": "Табыг хаах",
+
+    // Хоосон / тавтай морил / ачааллын төлөвүүд
+    "empty.noFolderSelected": "Хавтас сонгоогүй байна",
+    "empty.noFolderHint": "Markdown файлтай хавтасыг олохын тулд \"Хавтас нээх\" товчийг дарна уу.",
+    "empty.noFilesFound": "Markdown файл олдсонгүй",
+    "empty.noFilesHint": "Энэ хавтаст .md эсвэл .markdown файл байхгүй байна.",
+    "welcome.title": "Esuyo Markdown-д тавтай морил",
+    "welcome.hint": "Markdown файлуудыг үзэж, уншихын тулд хавтас нээнэ үү.",
+    "loading.scanning": "Хавтасыг шалгаж байна...",
+
+    // Уншигч / засварлагч
+    "editor.source": "Эх код",
+    "editor.edit": "Засах",
+    "editor.placeholder": "Markdown бичихээ эхэлнэ үү...",
+    "editor.sourcePlaceholder": "Markdown эх кодыг засаарай...",
+    "viewer.fileMissing": "Файл байхгүй болсон: {file}",
+    "viewer.missingSuffix": " (байхгүй)",
+    "zoom.tooltip": "Томруулалт: Ctrl + хулганы дугуй, Ctrl + / Ctrl -, Ctrl 0. 100 % руу буцаахын тулд дарна уу.",
+    "zoom.resetAria": "Томруулалтыг 100 % руу буцаах",
+    "zoom.normal": "Томруулалт: 100 % (хэвийн). Өөрчлөхийн тулд Ctrl + хулганы дугуй эсвэл Ctrl + / Ctrl - ашиглана уу.",
+    "zoom.changed": "Томруулалт: {zoom} %. 100 % руу буцаахын тулд дарна уу эсвэл Ctrl+0 дарна уу.",
+
+    // Ердийн үйлдлүүд
+    "action.cancel": "Цуцлах",
+    "action.delete": "Устгах",
+    "file.delete": "Файлыг устгах",
+
+    // Харилцан ярианы цонхууд
+    "dialog.delete.title": "Файл устгах",
+    "dialog.delete.message": "Энэ файлыг устгахдаа итгэлтэй байна уу?",
+    "dialog.delete.hint": "Файл Хогийн сав руу шилжүүлэгдэнэ.",
+    "dialog.dirty.title": "Хадгалаагүй өөрчлөлтүүд",
+    "dialog.dirty.message_one": "“{file}” файлд хадгалаагүй өөрчлөлтүүд байна. Юу хийхийг хүсэж байна вэ?",
+    "dialog.dirty.message_other": "{count} файлд хадгалаагүй өөрчлөлтүүд байна. Алийг нь хадгалахыг сонгоно уу.",
+    "dialog.dirty.saveSelected": "Сонгогдсыг хадгалах",
+    "dialog.dirty.saveSelectedClose": "Сонгогдсыг хадгалаад хаах",
+    "dialog.dirty.saveSelectedSwitch": "Сонгогдсыг хадгалаад солих",
+    "dialog.dirty.saveSelectedQuit": "Сонгогдсыг хадгалаад гарах",
+    "dialog.dirty.discard": "Хаях",
+    "dialog.dirty.discardClose": "Хаяад хаах",
+    "dialog.dirty.discardSwitch": "Хаяад солих",
+    "dialog.dirty.discardQuit": "Хаяад гарах",
+    "dialog.openFolder": "Markdown файлтай хавтас сонгоно уу",
+
+    // Анхааруулгад харуулах алдаанууд
+    "error.saveCancelled": "{file}-г хадгалж чадсангүй. Үйлдэл цуцлагдсан.",
+    "error.openFolder": "Хавтас нээхэд алдаа гарлаа: {error}",
+    "error.createFile": "Файл үүсгэхэд алдаа гарлаа: {error}",
+    "error.deleteFile": "Файл устгахад алдаа гарлаа: {error}",
+    "error.saveFile": "{file}-г хадгалахад алдаа гарлаа: {error}",
+    "error.saveFileAs": "Файлыг хадгалахад алдаа гарлаа: {error}",
+
+    // Тохиргоо
+    "settings.close": "Тохиргоог хаах",
+    "settings.fileDiscovery": "Файл илрүүлэх",
+    "settings.useGitignore": ".gitignore ашиглах",
+    "settings.useGitignoreHint": ".gitignore-д таалагдсан файл, хавтсыг алгасах. Ignore хийсэн файлуудыг жагсаалтад оруулахын тулд тэмдгийг авна уу.",
+    "settings.fonts": "Фонтууд",
+    "settings.bodyFont": "Үндсэн фонт",
+    "settings.headingFont": "Гарчиг фонт",
+    "settings.codeFont": "Код фонт",
+    "settings.size": "Хэмжээ",
+    "settings.language": "Хэл",
+    "settings.displayLanguage": "Дэлгэцийн хэл",
+    "settings.languageHint": "Өөрчлөлтүүд апп дахин ачаалагдсаны дараа хүчин төгөлдөр болно.",
+    "settings.systemDefault": "Системийн анхдагч",
+    "fonts.sansSerif": "Санс-сериф",
+    "fonts.serif": "Сериф",
+    "fonts.monospace": "Моноширин",
+
+    // Тухай (лицензийн нэр орчуулагдахгүй)
+    "about.titleFull": "Esuyo Markdown-ийн тухай",
+    "about.close": "Хаах",
+    "about.version": "Хувилбар",
+    "about.unknownVersion": "Мэдэгдэхгүй",
+    "about.license": "Лиценз",
+    "about.github": "GitHub репозитори",
+    "about.store": "Microsoft Store",
+};

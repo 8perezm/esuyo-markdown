@@ -1,0 +1,111 @@
+// Swedish dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Toppfält / meny
+    "menu.tooltip": "Meny",
+    "theme.toggle": "Växla tema",
+    "theme.switchToDark": "Byt till mörkt tema",
+    "theme.switchToLight": "Byt till ljust tema",
+    "file.new": "Ny fil",
+    "file.newTooltip": "Ny fil",
+    "folder.reload": "Ladda om mapp",
+    "folder.open": "Öppna mapp",
+    "action.save": "Spara",
+    "action.saveAs": "Spara som",
+    "settings.title": "Inställningar",
+    "menu.recentFolders": "Senaste mappar",
+    "menu.noRecentFolders": "Inga senaste mappar",
+    "about.title": "Om",
+    "context.newFileHere": "Ny Markdown-fil här",
+
+    // Filvy / sidopanel
+    "view.group": "Filnavigering",
+    "view.flatList": "Platt lista",
+    "view.treeView": "Trädvy",
+    "view.allDirs": "Alla mappar",
+    "view.allDirsTooltip": "Visa mappar utan Markdown-filer",
+    "sidebar.toggle": "Växla sidopanel",
+    "sidebar.show": "Visa sidopanel",
+    "sidebar.hide": "Dölj sidopanel",
+    "tabs.ariaLabel": "Öppna filer",
+    "tabs.close": "Stäng fliken",
+
+    // Tomma / välkomst- / laddningstillstånd
+    "empty.noFolderSelected": "Ingen mapp vald",
+    "empty.noFolderHint": "Klicka på \"Öppna mapp\" för att hitta en katalog med Markdown-filer.",
+    "empty.noFilesFound": "Inga Markdown-filer hittades",
+    "empty.noFilesHint": "Den här mappen innehåller inga .md- eller .markdown-filer.",
+    "welcome.title": "Välkommen till Esuyo Markdown",
+    "welcome.hint": "Öppna en mapp för att bläddra bland och läsa Markdown-filer.",
+    "loading.scanning": "Söker i mappen...",
+
+    // Läsare / redigerare
+    "editor.source": "Källa",
+    "editor.edit": "Redigera",
+    "editor.placeholder": "Börja skriva Markdown...",
+    "editor.sourcePlaceholder": "Redigera rå Markdown-källa...",
+    "viewer.fileMissing": "Filen finns inte längre: {file}",
+    "viewer.missingSuffix": " (saknas)",
+    "zoom.tooltip": "Zoom: Ctrl + musrulle, Ctrl + / Ctrl -, Ctrl 0. Klicka för att återställa till 100 %.",
+    "zoom.resetAria": "Återställ zoom till 100 %",
+    "zoom.normal": "Zoom: 100 % (normalt). Ctrl + musrulle eller Ctrl + / Ctrl - för att ändra.",
+    "zoom.changed": "Zoom: {zoom} %. Klicka eller tryck Ctrl+0 för att återställa till 100 %.",
+
+    // Vanliga åtgärder
+    "action.cancel": "Avbryt",
+    "action.delete": "Ta bort",
+    "file.delete": "Ta bort fil",
+
+    // Dialoger
+    "dialog.delete.title": "Ta bort fil",
+    "dialog.delete.message": "Är du säker på att du vill ta bort den här filen?",
+    "dialog.delete.hint": "Filen flyttas till Papperskorgen.",
+    "dialog.dirty.title": "Osparade ändringar",
+    "dialog.dirty.message_one": "\"{file}\" har osparade ändringar. Vad vill du göra?",
+    "dialog.dirty.message_other": "{count} filer har osparade ändringar. Välj vilka som ska sparas.",
+    "dialog.dirty.saveSelected": "Spara valda",
+    "dialog.dirty.saveSelectedClose": "Spara valda och stäng",
+    "dialog.dirty.saveSelectedSwitch": "Spara valda och växla",
+    "dialog.dirty.saveSelectedQuit": "Spara valda och avsluta",
+    "dialog.dirty.discard": "Förkasta",
+    "dialog.dirty.discardClose": "Förkasta och stäng",
+    "dialog.dirty.discardSwitch": "Förkasta och växla",
+    "dialog.dirty.discardQuit": "Förkasta och avsluta",
+    "dialog.openFolder": "Välj en mapp med Markdown-filer",
+
+    // Fel som visas i varningar
+    "error.saveCancelled": "Det gick inte att spara {file}. Åtgärden avbröts.",
+    "error.openFolder": "Fel vid öppning av mappen: {error}",
+    "error.createFile": "Fel vid skapande av fil: {error}",
+    "error.deleteFile": "Fel vid borttagning av fil: {error}",
+    "error.saveFile": "Det gick inte att spara {file}: {error}",
+    "error.saveFileAs": "Det gick inte att spara filen: {error}",
+
+    // Inställningar
+    "settings.close": "Stäng inställningar",
+    "settings.fileDiscovery": "Filupptäckt",
+    "settings.useGitignore": "Använd .gitignore",
+    "settings.useGitignoreHint": "Hoppa över filer och mappar som matchar .gitignore. Avmarkera för att ta med ignorerade filer i listan.",
+    "settings.fonts": "Typsnitt",
+    "settings.bodyFont": "Brödtypsnitt",
+    "settings.headingFont": "Rubriktypsnitt",
+    "settings.codeFont": "Kodtypsnitt",
+    "settings.size": "Storlek",
+    "settings.language": "Språk",
+    "settings.displayLanguage": "Visningsspråk",
+    "settings.languageHint": "Ändringar träder i kraft när appen laddas om.",
+    "settings.systemDefault": "Systemstandard",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Om (licensnamnet förblir översatt)
+    "about.titleFull": "Om Esuyo Markdown",
+    "about.close": "Stäng",
+    "about.version": "Version",
+    "about.unknownVersion": "Okänd",
+    "about.license": "Licens",
+    "about.github": "GitHub-förvar",
+    "about.store": "Microsoft Store",
+};

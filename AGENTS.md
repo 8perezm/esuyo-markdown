@@ -9,9 +9,11 @@ Esuyo Markdown — a local-only desktop Markdown reader/editor. Tauri v2 app: Ru
 - `index.html` — app shell (sidebar, viewer, editor, settings, dialogs)
 - `src/main.js` — all frontend logic (~2000 lines, single file)
 - `src/style.css` — app chrome; `src/markdown-theme.css` — rendered Markdown typography
+- `src/i18n/` — one flat key→string dictionary per supported LTR locale (`*.js`), plus locale resolution / `t()` / `tp()` (`index.js`); adding a locale means adding a dictionary and registering it in `index.js`
 - `src-tauri/src/lib.rs` — all Tauri commands, settings, scan/ignore logic (`main.rs` is a thin entry point)
 - `src-tauri/tauri.conf.json` — product name/version, `devUrl` port 1420, bundle config
-- `docs/` — architecture, dev, build, reference docs; `*-plan.md` files are proposals, not implemented behavior
+- `docs/` — architecture, dev, build, reference docs; `*-plan.md` files are proposals, not implemented behavior; `microsoft-store-languages*.{md,js}` is the generated partner-site language checklist + auto-tick helper
+- `scripts/` — build helpers (`build-msix.ps1`) and `scripts/i18n/` — the Microsoft language-list source, checklist generator, and auto-tick test
 - `dist/`, `src-tauri/target/`, `src-tauri/gen/`, `Cargo.lock` are generated/ignored
 
 ## Commands
@@ -40,6 +42,7 @@ Full docs: `docs/development.md`, `docs/build-and-deployment.md`.
 - Keep settings schema changes backward-compatible: use `#[serde(default)]` on new `AppSettings` fields. Settings live in OS app-data `settings.json`; paths are normalized to forward slashes; recent folders capped at 10, tab lists at 30.
 - File discovery uses `.gitignore` + a built-in ignore list (`BUILTIN_IGNORE_DIRS` in `lib.rs`); flat list and tree view share `should_visit` so they stay consistent.
 - Table round-trips are fragile: relevant code is `parseMarkdownForEditor`, `getEditorMarkdown`, `cleanHtmlForTurndown`/`stripTableTemporaryArtifacts` in `main.js`.
+- All user-facing text goes through i18n: static HTML uses `data-i18n` / `data-i18n-title` / `data-i18n-aria-label` attributes, JS uses `t()` / `tp()`. Whenever you add, remove, reword, or fix application text (labels, tooltips, dialogs, alerts, empty states, About, settings/font labels), update the key in **every** dictionary in `src/i18n/` — keys must stay in sync, missing keys fall back to English with a dev warning. Use whole-sentence keys (never concatenate translated fragments or glue on a translated verb); plural keys use `_one` / `_other` suffixes via `tp()` (add `_two` / `_few` / `_many` where the locale's `Intl.PluralRules` needs them). Only LTR locales are supported — do not add RTL dictionaries. Keep interpolated filenames/user data in `textContent`, never `innerHTML`.
 - Version `0.1.11` is duplicated in `package.json`, `Cargo.toml`, and `tauri.conf.json` — bump all three together.
 
 ## Testing

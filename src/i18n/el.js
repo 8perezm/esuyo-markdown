@@ -1,0 +1,111 @@
+// Greek dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Επάνω γραμμή / μενού
+    "menu.tooltip": "Μενού",
+    "theme.toggle": "Εναλλαγή θέματος",
+    "theme.switchToDark": "Μετάβαση σε σκοτεινό θέμα",
+    "theme.switchToLight": "Μετάβαση σε φωτεινό θέμα",
+    "file.new": "Νέο αρχείο",
+    "file.newTooltip": "Νέο αρχείο",
+    "folder.reload": "Επαναφόρτωση φακέλου",
+    "folder.open": "Άνοιγμα φακέλου",
+    "action.save": "Αποθήκευση",
+    "action.saveAs": "Αποθήκευση ως",
+    "settings.title": "Ρυθμίσεις",
+    "menu.recentFolders": "Πρόσφατοι φάκελοι",
+    "menu.noRecentFolders": "Δεν υπάρχουν πρόσφατοι φάκελοι",
+    "about.title": "Σχετικά",
+    "context.newFileHere": "Νέο αρχείο Markdown εδώ",
+
+    // Προβολή αρχείων / πλευρική γραμμή
+    "view.group": "Προβολή πλοήγησης αρχείων",
+    "view.flatList": "Επίπεδη λίστα",
+    "view.treeView": "Προβολή δέντρου",
+    "view.allDirs": "Όλοι οι φάκελοι",
+    "view.allDirsTooltip": "Εμφάνιση φακέλων χωρίς αρχεία Markdown",
+    "sidebar.toggle": "Εναλλαγή πλευρικής γραμμής",
+    "sidebar.show": "Εμφάνιση πλευρικής γραμμής",
+    "sidebar.hide": "Απόκρυψη πλευρικής γραμμής",
+    "tabs.ariaLabel": "Ανοιχτά αρχεία",
+    "tabs.close": "Κλείσιμο καρτέλας",
+
+    // Καταστάσεις κενού / καλωσορίσματος / φόρτωσης
+    "empty.noFolderSelected": "Δεν έχει επιλεγεί φάκελος",
+    "empty.noFolderHint": "Κάντε κλικ στο «Άνοιγμα φακέλου» για να βρείτε έναν κατάλογο με αρχεία Markdown.",
+    "empty.noFilesFound": "Δεν βρέθηκαν αρχεία Markdown",
+    "empty.noFilesHint": "Αυτός ο φάκελος δεν περιέχει αρχεία .md ή .markdown.",
+    "welcome.title": "Καλώς ήρθατε στο Esuyo Markdown",
+    "welcome.hint": "Ανοίξτε έναν φάκελο για να περιηγηθείτε και να διαβάσετε αρχεία Markdown.",
+    "loading.scanning": "Σάρωση φακέλου...",
+
+    // Αναγνώστης / επεξεργαστής
+    "editor.source": "Πηγαίος κώδικας",
+    "editor.edit": "Επεξεργασία",
+    "editor.placeholder": "Ξεκινήστε να γράφετε Markdown...",
+    "editor.sourcePlaceholder": "Επεξεργασία της ακατέργαστης πηγής Markdown...",
+    "viewer.fileMissing": "Το αρχείο δεν υπάρχει πλέον: {file}",
+    "viewer.missingSuffix": " (λείπει)",
+    "zoom.tooltip": "Εστίαση: Ctrl + τροχός ποντικιού, Ctrl + / Ctrl -, Ctrl 0. Κάντε κλικ για επαναφορά στο 100 %.",
+    "zoom.resetAria": "Επαναφορά εστίασης στο 100 %",
+    "zoom.normal": "Εστίαση: 100 % (κανονική). Ctrl + τροχός ποντικιού ή Ctrl + / Ctrl - για αλλαγή.",
+    "zoom.changed": "Εστίαση: {zoom} %. Κάντε κλικ ή πατήστε Ctrl+0 για επαναφορά στο 100 %.",
+
+    // Κοινές ενέργειες
+    "action.cancel": "Άκυρο",
+    "action.delete": "Διαγραφή",
+    "file.delete": "Διαγραφή αρχείου",
+
+    // Παράθυρα διαλόγου
+    "dialog.delete.title": "Διαγραφή αρχείου",
+    "dialog.delete.message": "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το αρχείο;",
+    "dialog.delete.hint": "Το αρχείο θα μετακινηθεί στον Κάδο Ανακύκλωσης.",
+    "dialog.dirty.title": "Μη αποθηκευμένες αλλαγές",
+    "dialog.dirty.message_one": "Το «{file}» έχει μη αποθηκευμένες αλλαγές. Τι θα θέλατε να κάνετε;",
+    "dialog.dirty.message_other": "{count} αρχεία έχουν μη αποθηκευμένες αλλαγές. Επιλέξτε ποια θέλετε να αποθηκεύσετε.",
+    "dialog.dirty.saveSelected": "Αποθήκευση επιλεγμένων",
+    "dialog.dirty.saveSelectedClose": "Αποθήκευση επιλεγμένων και κλείσιμο",
+    "dialog.dirty.saveSelectedSwitch": "Αποθήκευση επιλεγμένων και εναλλαγή",
+    "dialog.dirty.saveSelectedQuit": "Αποθήκευση επιλεγμένων και έξοδος",
+    "dialog.dirty.discard": "Απόρριψη",
+    "dialog.dirty.discardClose": "Απόρριψη και κλείσιμο",
+    "dialog.dirty.discardSwitch": "Απόρριψη και εναλλαγή",
+    "dialog.dirty.discardQuit": "Απόρριψη και έξοδος",
+    "dialog.openFolder": "Επιλέξτε έναν φάκελο με αρχεία Markdown",
+
+    // Σφάλματα που εμφανίζονται σε ειδοποιήσεις
+    "error.saveCancelled": "Δεν ήταν δυνατή η αποθήκευση του {file}. Η λειτουργία ακυρώθηκε.",
+    "error.openFolder": "Σφάλμα κατά το άνοιγμα του φακέλου: {error}",
+    "error.createFile": "Σφάλμα κατά τη δημιουργία αρχείου: {error}",
+    "error.deleteFile": "Σφάλμα κατά τη διαγραφή αρχείου: {error}",
+    "error.saveFile": "Δεν ήταν δυνατή η αποθήκευση του {file}: {error}",
+    "error.saveFileAs": "Δεν ήταν δυνατή η αποθήκευση του αρχείου: {error}",
+
+    // Ρυθμίσεις
+    "settings.close": "Κλείσιμο ρυθμίσεων",
+    "settings.fileDiscovery": "Εντοπισμός αρχείων",
+    "settings.useGitignore": "Χρήση .gitignore",
+    "settings.useGitignoreHint": "Παράλειψη αρχείων και φακέλων που ταιριάζουν με το .gitignore. Καταργήστε την επιλογή για να συμπεριλάβετε τα αγνοημένα αρχεία στη λίστα.",
+    "settings.fonts": "Γραμματοσειρές",
+    "settings.bodyFont": "Γραμματοσειρά κειμένου",
+    "settings.headingFont": "Γραμματοσειρά τίτλων",
+    "settings.codeFont": "Γραμματοσειρά κώδικα",
+    "settings.size": "Μέγεθος",
+    "settings.language": "Γλώσσα",
+    "settings.displayLanguage": "Γλώσσα εμφάνισης",
+    "settings.languageHint": "Οι αλλαγές θα ισχύσουν μετά την επανεκκίνηση της εφαρμογής.",
+    "settings.systemDefault": "Προεπιλογή συστήματος",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Σχετικά (το όνομα της άδειας παραμένει αμετάφραστο)
+    "about.titleFull": "Σχετικά με το Esuyo Markdown",
+    "about.close": "Κλείσιμο",
+    "about.version": "Έκδοση",
+    "about.unknownVersion": "Άγνωστη",
+    "about.license": "Άδεια χρήσης",
+    "about.github": "Αποθετήριο στο GitHub",
+    "about.store": "Microsoft Store",
+};

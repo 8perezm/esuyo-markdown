@@ -1,0 +1,112 @@
+// Slovak dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Horná lišta / ponuka
+    "menu.tooltip": "Ponuka",
+    "theme.toggle": "Prepnúť tému",
+    "theme.switchToDark": "Prepnúť na tmavú tému",
+    "theme.switchToLight": "Prepnúť na svetlú tému",
+    "file.new": "Nový súbor",
+    "file.newTooltip": "Nový súbor",
+    "folder.reload": "Obnoviť priečinok",
+    "folder.open": "Otvoriť priečinok",
+    "action.save": "Uložiť",
+    "action.saveAs": "Uložiť ako",
+    "settings.title": "Nastavenia",
+    "menu.recentFolders": "Nedávne priečinky",
+    "menu.noRecentFolders": "Žiadne nedávne priečinky",
+    "about.title": "O programe",
+    "context.newFileHere": "Nový Markdown súbor tu",
+
+    // Zobrazenie súborov / bočný panel
+    "view.group": "Zobrazenie navigácie súborov",
+    "view.flatList": "Plochý zoznam",
+    "view.treeView": "Stromové zobrazenie",
+    "view.allDirs": "Všetky priečinky",
+    "view.allDirsTooltip": "Zobraziť priečinky bez Markdown súborov",
+    "sidebar.toggle": "Prepnúť bočný panel",
+    "sidebar.show": "Zobraziť bočný panel",
+    "sidebar.hide": "Skryť bočný panel",
+    "tabs.ariaLabel": "Otvorené súbory",
+    "tabs.close": "Zavrieť kartu",
+
+    // Prázdne stavy / uvítanie / načítanie
+    "empty.noFolderSelected": "Nie je vybraný žiadny priečinok",
+    "empty.noFolderHint": "Kliknite na \"Otvoriť priečinok\" a vyhľadajte adresár obsahujúci Markdown súbory.",
+    "empty.noFilesFound": "Nenašli sa žiadne Markdown súbory",
+    "empty.noFilesHint": "Tento priečinok neobsahuje žiadne súbory .md ani .markdown.",
+    "welcome.title": "Vitajte v Esuyo Markdown",
+    "welcome.hint": "Otvorte priečinok a prehliadajte a čítajte Markdown súbory.",
+    "loading.scanning": "Prehľadávanie priečinka...",
+
+    // Čítačka / editor
+    "editor.source": "Zdrojový kód",
+    "editor.edit": "Upraviť",
+    "editor.placeholder": "Začnite písať Markdown...",
+    "editor.sourcePlaceholder": "Upraviť zdrojový Markdown...",
+    "viewer.fileMissing": "Súbor už neexistuje: {file}",
+    "viewer.missingSuffix": " (chýba)",
+    "zoom.tooltip": "Priblíženie: Ctrl + koliesko myši, Ctrl + / Ctrl -, Ctrl 0. Kliknutím obnovíte na 100 %.",
+    "zoom.resetAria": "Obnoviť priblíženie na 100 %",
+    "zoom.normal": "Priblíženie: 100 % (normálne). Ctrl + koliesko myši alebo Ctrl + / Ctrl - na zmenu.",
+    "zoom.changed": "Priblíženie: {zoom} %. Kliknite alebo stlačte Ctrl+0 na obnovenie na 100 %.",
+
+    // Bežné akcie
+    "action.cancel": "Zrušiť",
+    "action.delete": "Odstrániť",
+    "file.delete": "Odstrániť súbor",
+
+    // Dialógy
+    "dialog.delete.title": "Odstrániť súbor",
+    "dialog.delete.message": "Naozaj chcete odstrániť tento súbor?",
+    "dialog.delete.hint": "Súbor sa presunie do Koša.",
+    "dialog.dirty.title": "Neuložené zmeny",
+    "dialog.dirty.message_one": "„{file}“ má neuložené zmeny. Čo chcete urobiť?",
+    "dialog.dirty.message_other": "{count} súborov má neuložené zmeny. Vyberte, ktoré chcete uložiť.",
+    "dialog.dirty.message_few": "{count} súbory majú neuložené zmeny. Vyberte, ktoré chcete uložiť.",
+    "dialog.dirty.saveSelected": "Uložiť vybrané",
+    "dialog.dirty.saveSelectedClose": "Uložiť vybrané a zavrieť",
+    "dialog.dirty.saveSelectedSwitch": "Uložiť vybrané a prepnúť",
+    "dialog.dirty.saveSelectedQuit": "Uložiť vybrané a ukončiť",
+    "dialog.dirty.discard": "Zahodiť",
+    "dialog.dirty.discardClose": "Zahodiť a zavrieť",
+    "dialog.dirty.discardSwitch": "Zahodiť a prepnúť",
+    "dialog.dirty.discardQuit": "Zahodiť a ukončiť",
+    "dialog.openFolder": "Vyberte priečinok s Markdown súbormi",
+
+    // Chyby zobrazené v upozorneniach
+    "error.saveCancelled": "Nepodarilo sa uložiť {file}. Operácia bola zrušená.",
+    "error.openFolder": "Chyba pri otváraní priečinka: {error}",
+    "error.createFile": "Chyba pri vytváraní súboru: {error}",
+    "error.deleteFile": "Chyba pri odstraňovaní súboru: {error}",
+    "error.saveFile": "Nepodarilo sa uložiť {file}: {error}",
+    "error.saveFileAs": "Nepodarilo sa uložiť súbor: {error}",
+
+    // Nastavenia
+    "settings.close": "Zavrieť nastavenia",
+    "settings.fileDiscovery": "Vyhľadávanie súborov",
+    "settings.useGitignore": "Použiť .gitignore",
+    "settings.useGitignoreHint": "Preskočiť súbory a priečinky zodpovedajúce .gitignore. Zrušte zaškrtnutie pre zahrnutie ignorovaných súborov do zoznamu.",
+    "settings.fonts": "Písma",
+    "settings.bodyFont": "Písmo textu",
+    "settings.headingFont": "Písmo nadpisov",
+    "settings.codeFont": "Písmo kódu",
+    "settings.size": "Veľkosť",
+    "settings.language": "Jazyk",
+    "settings.displayLanguage": "Jazyk rozhrania",
+    "settings.languageHint": "Zmeny sa prejavia po reštarte aplikácie.",
+    "settings.systemDefault": "Predvolené systémom",
+    "fonts.sansSerif": "Bezpätkové",
+    "fonts.serif": "Pätkové",
+    "fonts.monospace": "Monospace",
+
+    // O programe (názov licencie zostáva nepreložený)
+    "about.titleFull": "O programe Esuyo Markdown",
+    "about.close": "Zavrieť",
+    "about.version": "Verzia",
+    "about.unknownVersion": "Neznáma",
+    "about.license": "Licencia",
+    "about.github": "Repozitár na GitHub",
+    "about.store": "Microsoft Store",
+};

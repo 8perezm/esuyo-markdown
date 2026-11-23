@@ -1,0 +1,111 @@
+// Telugu dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // పై పట్టీ / మెనూ
+    "menu.tooltip": "మెనూ",
+    "theme.toggle": "థీమ్ మార్చండి",
+    "theme.switchToDark": "చీకటి థీమ్ కి మారండి",
+    "theme.switchToLight": "వెలుగు థీమ్ కి మారండి",
+    "file.new": "కొత్త ఫైలు",
+    "file.newTooltip": "కొత్త ఫైలు",
+    "folder.reload": "ఫోల్డర్ ని మళ్లీ లోడ్ చేయండి",
+    "folder.open": "ఫోల్డర్ తెరవండి",
+    "action.save": "భద్రపరచు",
+    "action.saveAs": "ఇతర పేరుతో భద్రపరచు",
+    "settings.title": "సెట్టింగ్ లు",
+    "menu.recentFolders": "ఇటీవలి ఫోల్డర్ లు",
+    "menu.noRecentFolders": "ఇటీవలి ఫోల్డర్ లు లేవు",
+    "about.title": "గురించి",
+    "context.newFileHere": "ఇక్కడ కొత్త markdown ఫైలు",
+
+    // ఫైల్ దృశ్యం / సైడ్ బార్
+    "view.group": "ఫైల్ నావిగేషన్ దృశ్యం",
+    "view.flatList": "చదునైన జాబితా",
+    "view.treeView": "ట్రీ దృశ్యం",
+    "view.allDirs": "అన్ని ఫోల్డర్ లు",
+    "view.allDirsTooltip": "markdown ఫైల్ లు లేని ఫోల్డర్ లను చూపించు",
+    "sidebar.toggle": "సైడ్ బార్ ని మార్చండి",
+    "sidebar.show": "సైడ్ బార్ ని చూపించండి",
+    "sidebar.hide": "సైడ్ బార్ ని దాచండి",
+    "tabs.ariaLabel": "తెరిచిన ఫైల్ లు",
+    "tabs.close": "ట్యాబ్ ని మూసివేయండి",
+
+    // ఖాళీ / స్వాగతం / లోడ్ అవుతున్న స్థితులు
+    "empty.noFolderSelected": "ఫోల్డర్ ఏదీ ఎంచుకోబడలేదు",
+    "empty.noFolderHint": "markdown ఫైల్ లున్న డైరెక్టరీని వెతకడానికి \"ఫోల్డర్ తెరవండి\" పై క్లిక్ చేయండి.",
+    "empty.noFilesFound": "markdown ఫైల్ లు కనుగొనబడలేదు",
+    "empty.noFilesHint": "ఈ ఫోల్డర్ లో .md లేదా .markdown ఫైల్ లు లేవు.",
+    "welcome.title": "Esuyo Markdown కి స్వాగతం",
+    "welcome.hint": "markdown ఫైల్ లను బ్రౌజ్ చేసి చదవడానికి ఒక ఫోల్డర్ తెరవండి.",
+    "loading.scanning": "ఫోల్డర్ స్కాన్ అవుతోంది...",
+
+    // రీడర్ / ఎడిటర్
+    "editor.source": "మూలం",
+    "editor.edit": "సవరించు",
+    "editor.placeholder": "Markdown రాయడం ప్రారంభించండి...",
+    "editor.sourcePlaceholder": "ముడి Markdown మూలాన్ని సవరించండి...",
+    "viewer.fileMissing": "ఫైలు ఇక లేదు: {file}",
+    "viewer.missingSuffix": " (లభ్యం కాదు)",
+    "zoom.tooltip": "జూమ్: Ctrl + మౌస్ వీల్, Ctrl + / Ctrl -, Ctrl 0. 100% కి తిరిగి సెట్ చేయడానికి క్లిక్ చేయండి.",
+    "zoom.resetAria": "జూమ్ ని 100% కి రీసెట్ చేయండి",
+    "zoom.normal": "జూమ్: 100% (సాధారణం). మార్చడానికి Ctrl + మౌస్ వీల్ లేదా Ctrl + / Ctrl - ఉపయోగించండి.",
+    "zoom.changed": "జూమ్: {zoom}%. 100% కి తిరిగి సెట్ చేయడానికి క్లిక్ చేయండి లేదా Ctrl+0 నొక్కండి.",
+
+    // సాధారణ చర్యలు
+    "action.cancel": "రద్దు చేయండి",
+    "action.delete": "తొలగించండి",
+    "file.delete": "ఫైలు తొలగించండి",
+
+    // డైలాగ్ లు
+    "dialog.delete.title": "ఫైలు తొలగించండి",
+    "dialog.delete.message": "ఈ ఫైలుని తొలగించాలని మీరు ఖచ్చితంగా కోరుకుంటున్నారా?",
+    "dialog.delete.hint": "ఫైలు రీసైకిల్ బిన్ లోకి తరలించబడుతుంది.",
+    "dialog.dirty.title": "భద్రపరచని మార్పులు",
+    "dialog.dirty.message_one": "“{file}” లో భద్రపరచని మార్పులున్నాయి. మీరు ఏమి చేయాలనుకుంటున్నారు?",
+    "dialog.dirty.message_other": "{count} ఫైల్ లలో భద్రపరచని మార్పులున్నాయి. ఏవి భద్రపరచాలో ఎంచుకోండి.",
+    "dialog.dirty.saveSelected": "ఎంచుకున్నవి భద్రపరచు",
+    "dialog.dirty.saveSelectedClose": "ఎంచుకున్నవి భద్రపరచి మూసివేయు",
+    "dialog.dirty.saveSelectedSwitch": "ఎంచుకున్నవి భద్రపరచి మార్చు",
+    "dialog.dirty.saveSelectedQuit": "ఎంచుకున్నవి భద్రపరచి నిష్క్రమించు",
+    "dialog.dirty.discard": "వదిలేయండి",
+    "dialog.dirty.discardClose": "వదిలేసి మూసివేయండి",
+    "dialog.dirty.discardSwitch": "వదిలేసి మార్చండి",
+    "dialog.dirty.discardQuit": "వదిలేసి నిష్క్రమించండి",
+    "dialog.openFolder": "markdown ఫైల్ లున్న ఫోల్డర్ ని ఎంచుకోండి",
+
+    // హెచ్చరికల్లో కనిపించే లోపాలు
+    "error.saveCancelled": "{file} ని భద్రపరచడం విఫలమైంది. ఆపరేషన్ రద్దు చేయబడింది.",
+    "error.openFolder": "ఫోల్డర్ తెరవడంలో లోపం: {error}",
+    "error.createFile": "ఫైలు సృష్టించడంలో లోపం: {error}",
+    "error.deleteFile": "ఫైలు తొలగించడంలో లోపం: {error}",
+    "error.saveFile": "{file} ని భద్రపరచడం విఫలమైంది: {error}",
+    "error.saveFileAs": "ఫైలు భద్రపరచడం విఫలమైంది: {error}",
+
+    // సెట్టింగ్ లు
+    "settings.close": "సెట్టింగ్ లు మూసివేయండి",
+    "settings.fileDiscovery": "ఫైల్ గుర్తింపు",
+    "settings.useGitignore": ".gitignore ఉపయోగించండి",
+    "settings.useGitignoreHint": ".gitignore తో సరిపోలే ఫైల్ లనూ ఫోల్డర్ లనూ దాటవేయండి. జాబితాలో విస్మరించబడిన ఫైల్ లను చేర్చాలంటే గుర్తు తీసేయండి.",
+    "settings.fonts": "ఫాంట్ లు",
+    "settings.bodyFont": "బాడీ ఫాంట్",
+    "settings.headingFont": "శీర్షిక ఫాంట్",
+    "settings.codeFont": "కోడ్ ఫాంట్",
+    "settings.size": "పరిమాణం",
+    "settings.language": "భాష",
+    "settings.displayLanguage": "ప్రదర్శన భాష",
+    "settings.languageHint": "అప్లికేషన్ మళ్లీ లోడ్ అయ్యాక మార్పులు అమల్లోకి వస్తాయి.",
+    "settings.systemDefault": "సిస్టమ్ డిఫాల్ట్",
+    "fonts.sansSerif": "సాన్స్-సెరిఫ్",
+    "fonts.serif": "సెరిఫ్",
+    "fonts.monospace": "మోనోస్పేస్",
+
+    // గురించి (లైసెన్స్ పేరును అనువదించరు)
+    "about.titleFull": "Esuyo Markdown గురించి",
+    "about.close": "మూసివేయండి",
+    "about.version": "వెర్షన్",
+    "about.unknownVersion": "తెలియదు",
+    "about.license": "లైసెన్స్",
+    "about.github": "GitHub రిపోజిటరీ",
+    "about.store": "Microsoft Store",
+};

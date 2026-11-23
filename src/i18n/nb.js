@@ -1,0 +1,111 @@
+// Norwegian Bokmål dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Toppfelt / meny
+    "menu.tooltip": "Meny",
+    "theme.toggle": "Bytt tema",
+    "theme.switchToDark": "Bytt til mørkt tema",
+    "theme.switchToLight": "Bytt til lyst tema",
+    "file.new": "Ny fil",
+    "file.newTooltip": "Ny fil",
+    "folder.reload": "Last inn mappen på nytt",
+    "folder.open": "Åpne mappe",
+    "action.save": "Lagre",
+    "action.saveAs": "Lagre som",
+    "settings.title": "Innstillinger",
+    "menu.recentFolders": "Nylige mapper",
+    "menu.noRecentFolders": "Ingen nylige mapper",
+    "about.title": "Om",
+    "context.newFileHere": "Ny Markdown-fil her",
+
+    // Filvisning / sidepanel
+    "view.group": "Filnavigering",
+    "view.flatList": "Flat liste",
+    "view.treeView": "Trevisning",
+    "view.allDirs": "Alle mapper",
+    "view.allDirsTooltip": "Vis mapper uten Markdown-filer",
+    "sidebar.toggle": "Vis/skjul sidepanel",
+    "sidebar.show": "Vis sidepanel",
+    "sidebar.hide": "Skjul sidepanel",
+    "tabs.ariaLabel": "Åpne filer",
+    "tabs.close": "Lukk fane",
+
+    // Tomme / velkomst- / innlastingstilstander
+    "empty.noFolderSelected": "Ingen mappe valgt",
+    "empty.noFolderHint": "Klikk \"Åpne mappe\" for å finne en katalog med Markdown-filer.",
+    "empty.noFilesFound": "Ingen Markdown-filer funnet",
+    "empty.noFilesHint": "Denne mappen inneholder ingen .md- eller .markdown-filer.",
+    "welcome.title": "Velkommen til Esuyo Markdown",
+    "welcome.hint": "Åpne en mappe for å bla gjennom og lese Markdown-filer.",
+    "loading.scanning": "Skanner mappen...",
+
+    // Leser / redaktør
+    "editor.source": "Kilde",
+    "editor.edit": "Rediger",
+    "editor.placeholder": "Begynn å skrive Markdown...",
+    "editor.sourcePlaceholder": "Rediger rå Markdown-kilde...",
+    "viewer.fileMissing": "Filen finnes ikke lenger: {file}",
+    "viewer.missingSuffix": " (mangler)",
+    "zoom.tooltip": "Zoom: Ctrl + musehjul, Ctrl + / Ctrl -, Ctrl 0. Klikk for å nullstille til 100 %.",
+    "zoom.resetAria": "Nullstill zoom til 100 %",
+    "zoom.normal": "Zoom: 100 % (normal). Ctrl + musehjul eller Ctrl + / Ctrl - for å endre.",
+    "zoom.changed": "Zoom: {zoom} %. Klikk eller trykk Ctrl+0 for å nullstille til 100 %.",
+
+    // Vanlige handlinger
+    "action.cancel": "Avbryt",
+    "action.delete": "Slett",
+    "file.delete": "Slett fil",
+
+    // Dialoger
+    "dialog.delete.title": "Slett fil",
+    "dialog.delete.message": "Er du sikker på at du vil slette denne filen?",
+    "dialog.delete.hint": "Filen flyttes til Papirkurven.",
+    "dialog.dirty.title": "Ulagrede endringer",
+    "dialog.dirty.message_one": "\"{file}\" har ulagrede endringer. Hva vil du gjøre?",
+    "dialog.dirty.message_other": "{count} filer har ulagrede endringer. Velg hvilke som skal lagres.",
+    "dialog.dirty.saveSelected": "Lagre valgte",
+    "dialog.dirty.saveSelectedClose": "Lagre valgte og lukk",
+    "dialog.dirty.saveSelectedSwitch": "Lagre valgte og bytt",
+    "dialog.dirty.saveSelectedQuit": "Lagre valgte og avslutt",
+    "dialog.dirty.discard": "Forkast",
+    "dialog.dirty.discardClose": "Forkast og lukk",
+    "dialog.dirty.discardSwitch": "Forkast og bytt",
+    "dialog.dirty.discardQuit": "Forkast og avslutt",
+    "dialog.openFolder": "Velg en mappe med Markdown-filer",
+
+    // Feil vist i varsler
+    "error.saveCancelled": "Kunne ikke lagre {file}. Operasjonen ble avbrutt.",
+    "error.openFolder": "Feil ved åpning av mappen: {error}",
+    "error.createFile": "Feil ved oppretting av fil: {error}",
+    "error.deleteFile": "Feil ved sletting av fil: {error}",
+    "error.saveFile": "Kunne ikke lagre {file}: {error}",
+    "error.saveFileAs": "Kunne ikke lagre filen: {error}",
+
+    // Innstillinger
+    "settings.close": "Lukk innstillinger",
+    "settings.fileDiscovery": "Filoppdagelse",
+    "settings.useGitignore": "Bruk .gitignore",
+    "settings.useGitignoreHint": "Hopp over filer og mapper som matcher .gitignore. Fjern avkrysningen for å ta med ignorerte filer i listen.",
+    "settings.fonts": "Skrifttyper",
+    "settings.bodyFont": "Brødtekstskrift",
+    "settings.headingFont": "Overskriftsskrift",
+    "settings.codeFont": "Kodeskrift",
+    "settings.size": "Størrelse",
+    "settings.language": "Språk",
+    "settings.displayLanguage": "Visningsspråk",
+    "settings.languageHint": "Endringer trer i kraft når appen lastes inn på nytt.",
+    "settings.systemDefault": "Systemstandard",
+    "fonts.sansSerif": "Sans-serif",
+    "fonts.serif": "Serif",
+    "fonts.monospace": "Monospace",
+
+    // Om (lisensnavnet forblir uoversatt)
+    "about.titleFull": "Om Esuyo Markdown",
+    "about.close": "Lukk",
+    "about.version": "Versjon",
+    "about.unknownVersion": "Ukjent",
+    "about.license": "Lisens",
+    "about.github": "GitHub-depot",
+    "about.store": "Microsoft Store",
+};

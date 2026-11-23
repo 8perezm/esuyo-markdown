@@ -1,0 +1,111 @@
+// Bulgarian dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // Горна лента / меню
+    "menu.tooltip": "Меню",
+    "theme.toggle": "Превключване на тема",
+    "theme.switchToDark": "Превключване към тъмна тема",
+    "theme.switchToLight": "Превключване към светла тема",
+    "file.new": "Нов файл",
+    "file.newTooltip": "Нов файл",
+    "folder.reload": "Презареждане на папката",
+    "folder.open": "Отваряне на папка",
+    "action.save": "Запази",
+    "action.saveAs": "Запази като",
+    "settings.title": "Настройки",
+    "menu.recentFolders": "Скорошни папки",
+    "menu.noRecentFolders": "Няма скорошни папки",
+    "about.title": "Относно",
+    "context.newFileHere": "Нов Markdown файл тук",
+
+    // Изглед на файловете / странична лента
+    "view.group": "Изглед за навигация на файловете",
+    "view.flatList": "Плосък списък",
+    "view.treeView": "Дървовиден изглед",
+    "view.allDirs": "Всички папки",
+    "view.allDirsTooltip": "Показване на папки без Markdown файлове",
+    "sidebar.toggle": "Превключване на страничната лента",
+    "sidebar.show": "Показване на страничната лента",
+    "sidebar.hide": "Скриване на страничната лента",
+    "tabs.ariaLabel": "Отворени файлове",
+    "tabs.close": "Затваряне на раздел",
+
+    // Празни състояния / добре дошли / зареждане
+    "empty.noFolderSelected": "Няма избрана папка",
+    "empty.noFolderHint": "Щракнете върху \"Отваряне на папка\", за да намерите директория с Markdown файлове.",
+    "empty.noFilesFound": "Няма намерени Markdown файлове",
+    "empty.noFilesHint": "Тази папка не съдържа файлове .md или .markdown.",
+    "welcome.title": "Добре дошли в Esuyo Markdown",
+    "welcome.hint": "Отворете папка, за да преглеждате и четете Markdown файлове.",
+    "loading.scanning": "Сканиране на папката...",
+
+    // Четец / редактор
+    "editor.source": "Изходен код",
+    "editor.edit": "Редактиране",
+    "editor.placeholder": "Започнете да пишете Markdown...",
+    "editor.sourcePlaceholder": "Редактиране на суровия Markdown код...",
+    "viewer.fileMissing": "Файлът вече не съществува: {file}",
+    "viewer.missingSuffix": " (липсва)",
+    "zoom.tooltip": "Мащабиране: Ctrl + колелцето на мишката, Ctrl + / Ctrl -, Ctrl 0. Щракнете за нулиране на 100 %.",
+    "zoom.resetAria": "Нулиране на мащабирането на 100 %",
+    "zoom.normal": "Мащабиране: 100 % (нормално). Ctrl + колелцето на мишката или Ctrl + / Ctrl - за промяна.",
+    "zoom.changed": "Мащабиране: {zoom} %. Щракнете или натиснете Ctrl+0 за нулиране на 100 %.",
+
+    // Чести действия
+    "action.cancel": "Отказ",
+    "action.delete": "Изтриване",
+    "file.delete": "Изтриване на файл",
+
+    // Диалози
+    "dialog.delete.title": "Изтриване на файл",
+    "dialog.delete.message": "Сигурни ли сте, че искате да изтриете този файл?",
+    "dialog.delete.hint": "Файлът ще бъде преместен в Кошчето за рециклиране.",
+    "dialog.dirty.title": "Незапазени промени",
+    "dialog.dirty.message_one": "„{file}“ има незапазени промени. Какво искате да направите?",
+    "dialog.dirty.message_other": "{count} файла имат незапазени промени. Изберете кои да бъдат запазени.",
+    "dialog.dirty.saveSelected": "Запази избраните",
+    "dialog.dirty.saveSelectedClose": "Запази избраните и затвори",
+    "dialog.dirty.saveSelectedSwitch": "Запази избраните и превключи",
+    "dialog.dirty.saveSelectedQuit": "Запази избраните и излези",
+    "dialog.dirty.discard": "Отхвърли",
+    "dialog.dirty.discardClose": "Отхвърли и затвори",
+    "dialog.dirty.discardSwitch": "Отхвърли и превключи",
+    "dialog.dirty.discardQuit": "Отхвърли и излези",
+    "dialog.openFolder": "Изберете папка с Markdown файлове",
+
+    // Грешки, показани в съобщения
+    "error.saveCancelled": "Не може да се запази {file}. Операцията е отменена.",
+    "error.openFolder": "Грешка при отваряне на папката: {error}",
+    "error.createFile": "Грешка при създаване на файл: {error}",
+    "error.deleteFile": "Грешка при изтриване на файл: {error}",
+    "error.saveFile": "Не може да се запази {file}: {error}",
+    "error.saveFileAs": "Не може да се запази файлът: {error}",
+
+    // Настройки
+    "settings.close": "Затваряне на настройките",
+    "settings.fileDiscovery": "Откриване на файлове",
+    "settings.useGitignore": "Използване на .gitignore",
+    "settings.useGitignoreHint": "Пропускане на файлове и папки, съвпадащи с .gitignore. Премахнете отметката, за да включите игнорираните файлове в списъка.",
+    "settings.fonts": "Шрифтове",
+    "settings.bodyFont": "Шрифт на текста",
+    "settings.headingFont": "Шрифт на заглавията",
+    "settings.codeFont": "Шрифт на кода",
+    "settings.size": "Размер",
+    "settings.language": "Език",
+    "settings.displayLanguage": "Език на интерфейса",
+    "settings.languageHint": "Промените влизат в сила след презареждане на приложението.",
+    "settings.systemDefault": "По подразбиране на системата",
+    "fonts.sansSerif": "Без засечки",
+    "fonts.serif": "Със засечки",
+    "fonts.monospace": "Моноширинен",
+
+    // Относно (името на лиценза остава непреведено)
+    "about.titleFull": "Относно Esuyo Markdown",
+    "about.close": "Затвори",
+    "about.version": "Версия",
+    "about.unknownVersion": "Неизвестна",
+    "about.license": "Лиценз",
+    "about.github": "Хранилище в GitHub",
+    "about.store": "Microsoft Store",
+};

@@ -1,0 +1,111 @@
+// Bengali dictionary. Keys mirror en.js exactly.
+export const messages = {
+    "app.title": "Esuyo Markdown",
+
+    // উপরের বার / মেনু
+    "menu.tooltip": "মেনু",
+    "theme.toggle": "থিম পরিবর্তন করুন",
+    "theme.switchToDark": "গাঢ় থিমে যান",
+    "theme.switchToLight": "হালকা থিমে যান",
+    "file.new": "নতুন ফাইল",
+    "file.newTooltip": "নতুন ফাইল",
+    "folder.reload": "ফোল্ডার পুনরায় লোড করুন",
+    "folder.open": "ফোল্ডার খুলুন",
+    "action.save": "সংরক্ষণ",
+    "action.saveAs": "অন্য নামে সংরক্ষণ করুন",
+    "settings.title": "সেটিংস",
+    "menu.recentFolders": "সাম্প্রতিক ফোল্ডার",
+    "menu.noRecentFolders": "কোনো সাম্প্রতিক ফোল্ডার নেই",
+    "about.title": "সম্পর্কে",
+    "context.newFileHere": "এখানে নতুন markdown ফাইল",
+
+    // ফাইল ভিউ / সাইডবার
+    "view.group": "ফাইল নেভিগেশন ভিউ",
+    "view.flatList": "সমতল তালিকা",
+    "view.treeView": "ট্রি ভিউ",
+    "view.allDirs": "সমস্ত ফোল্ডার",
+    "view.allDirsTooltip": "markdown ফাইল ছাড়া ফোল্ডার দেখান",
+    "sidebar.toggle": "সাইডবার টগল করুন",
+    "sidebar.show": "সাইডবার দেখান",
+    "sidebar.hide": "সাইডবার লুকান",
+    "tabs.ariaLabel": "খোলা ফাইলসমূহ",
+    "tabs.close": "ট্যাব বন্ধ করুন",
+
+    // খালি / স্বাগত / লোডিং অবস্থা
+    "empty.noFolderSelected": "কোনো ফোল্ডার নির্বাচন করা হয়নি",
+    "empty.noFolderHint": "markdown ফাইল রয়েছে এমন একটি ডাইরেক্টরি খুঁজতে \"ফোল্ডার খুলুন\" ক্লিক করুন।",
+    "empty.noFilesFound": "কোনো markdown ফাইল পাওয়া যায়নি",
+    "empty.noFilesHint": "এই ফোল্ডারে কোনো .md বা .markdown ফাইল নেই।",
+    "welcome.title": "Esuyo Markdown-এ স্বাগতম",
+    "welcome.hint": "markdown ফাইল দেখতে ও পড়তে একটি ফোল্ডার খুলুন।",
+    "loading.scanning": "ফোল্ডার স্ক্যান করা হচ্ছে...",
+
+    // রিডার / এডিটর
+    "editor.source": "উৎস",
+    "editor.edit": "সম্পাদনা",
+    "editor.placeholder": "Markdown লেখা শুরু করুন...",
+    "editor.sourcePlaceholder": "কাঁচা Markdown উৎস সম্পাদনা করুন...",
+    "viewer.fileMissing": "ফাইল আর বিদ্যমান নেই: {file}",
+    "viewer.missingSuffix": " (অনুপলব্ধ)",
+    "zoom.tooltip": "জুম: Ctrl + মাউস হুইল, Ctrl + / Ctrl -, Ctrl 0। 100%-এ ফিরে যেতে ক্লিক করুন।",
+    "zoom.resetAria": "জুম 100%-এ রিসেট করুন",
+    "zoom.normal": "জুম: 100% (স্বাভাবিক)। পরিবর্তন করতে Ctrl + মাউস হুইল বা Ctrl + / Ctrl - ব্যবহার করুন।",
+    "zoom.changed": "জুম: {zoom}%। 100%-এ ফিরে যেতে ক্লিক করুন বা Ctrl+0 টিপুন।",
+
+    // সাধারণ কাজ
+    "action.cancel": "বাতিল",
+    "action.delete": "মুছুন",
+    "file.delete": "ফাইল মুছুন",
+
+    // ডায়ালগ
+    "dialog.delete.title": "ফাইল মুছুন",
+    "dialog.delete.message": "আপনি কি নিশ্চিত যে এই ফাইলটি মুছতে চান?",
+    "dialog.delete.hint": "ফাইলটি রিসাইকেল বিনে সরানো হবে।",
+    "dialog.dirty.title": "অসংরক্ষিত পরিবর্তন",
+    "dialog.dirty.message_one": "“{file}”-এ অসংরক্ষিত পরিবর্তন রয়েছে। আপনি কী করতে চান?",
+    "dialog.dirty.message_other": "{count}টি ফাইলে অসংরক্ষিত পরিবর্তন রয়েছে। কোনগুলো সংরক্ষণ করবেন তা বেছে নিন।",
+    "dialog.dirty.saveSelected": "নির্বাচিত সংরক্ষণ",
+    "dialog.dirty.saveSelectedClose": "নির্বাচিত সংরক্ষণ ও বন্ধ",
+    "dialog.dirty.saveSelectedSwitch": "নির্বাচিত সংরক্ষণ ও স্যুইচ",
+    "dialog.dirty.saveSelectedQuit": "নির্বাচিত সংরক্ষণ ও প্রস্থান",
+    "dialog.dirty.discard": "বাতিল",
+    "dialog.dirty.discardClose": "বাতিল ও বন্ধ",
+    "dialog.dirty.discardSwitch": "বাতিল ও স্যুইচ",
+    "dialog.dirty.discardQuit": "বাতিল ও প্রস্থান",
+    "dialog.openFolder": "markdown ফাইল রয়েছে এমন একটি ফোল্ডার নির্বাচন করুন",
+
+    // অ্যালার্টে দেখানো ত্রুটি
+    "error.saveCancelled": "{file} সংরক্ষণ করা যায়নি। অপারেশন বাতিল করা হয়েছে।",
+    "error.openFolder": "ফোল্ডার খুলতে ত্রুটি: {error}",
+    "error.createFile": "ফাইল তৈরি করতে ত্রুটি: {error}",
+    "error.deleteFile": "ফাইল মুছতে ত্রুটি: {error}",
+    "error.saveFile": "{file} সংরক্ষণ করতে ব্যর্থ: {error}",
+    "error.saveFileAs": "ফাইল সংরক্ষণ করতে ব্যর্থ: {error}",
+
+    // সেটিংস
+    "settings.close": "সেটিংস বন্ধ করুন",
+    "settings.fileDiscovery": "ফাইল আবিষ্কার",
+    "settings.useGitignore": ".gitignore ব্যবহার করুন",
+    "settings.useGitignoreHint": ".gitignore দ্বারা মেলা ফাইল ও ফোল্ডার এড়িয়ে যান। তালিকায় উপেক্ষিত ফাইল অন্তর্ভুক্ত করতে চেকবক্স অচেক করুন।",
+    "settings.fonts": "ফন্টসমূহ",
+    "settings.bodyFont": "বডি ফন্ট",
+    "settings.headingFont": "শিরোনাম ফন্ট",
+    "settings.codeFont": "কোড ফন্ট",
+    "settings.size": "আকার",
+    "settings.language": "ভাষা",
+    "settings.displayLanguage": "প্রদর্শন ভাষা",
+    "settings.languageHint": "অ্যাপ পুনরায় লোড হওয়ার পর পরিবর্তনগুলো কার্যকর হবে।",
+    "settings.systemDefault": "সিস্টেম ডিফল্ট",
+    "fonts.sansSerif": "স্যান্স-সেরিফ",
+    "fonts.serif": "সেরিফ",
+    "fonts.monospace": "মনোস্পেস",
+
+    // সম্পর্কে (লাইসেন্সের নাম অনুবাদ করা হয় না)
+    "about.titleFull": "Esuyo Markdown সম্পর্কে",
+    "about.close": "বন্ধ",
+    "about.version": "সংস্করণ",
+    "about.unknownVersion": "অজানা",
+    "about.license": "লাইসেন্স",
+    "about.github": "GitHub রিপোজিটরি",
+    "about.store": "Microsoft Store",
+};
