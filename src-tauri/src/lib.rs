@@ -282,11 +282,13 @@ fn scan_md_files(folder_path: &str, use_gitignore: bool) -> Result<Vec<MarkdownF
         if let Some(ext) = entry_path.extension() {
             if ext.eq_ignore_ascii_case("md") || ext.eq_ignore_ascii_case("markdown") {
                 let abs_path = entry_path.to_string_lossy().to_string();
+                // Emit forward slashes so the relative path is stable across
+                // platforms and can be compared with markdown link targets.
                 let relative = entry_path
                     .strip_prefix(folder_path)
                     .unwrap_or(entry_path)
                     .to_string_lossy()
-                    .to_string();
+                    .replace('\\', "/");
                 let name = entry_path
                     .file_stem()
                     .unwrap_or_default()
@@ -338,7 +340,7 @@ fn scan_dirs(folder_path: &str, use_gitignore: bool) -> Result<Vec<String>, Stri
             .strip_prefix(folder_path)
             .unwrap_or(entry.path())
             .to_string_lossy()
-            .to_string();
+            .replace('\\', "/");
         dirs.push(relative);
     }
 

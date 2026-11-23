@@ -2164,39 +2164,81 @@ function renderMarkdown(content) {
     welcome.classList.add("hidden");
     markdownViewer.classList.remove("hidden");
 
-    // Intercept clicks on internal markdown links to navigate within the app
-    renderedContentInner.querySelectorAll("a[href$='.md']").forEach((link) => {
+    // Intercept clicks on links so navigation never replaces the app shell
+    // (which would drop the open folder and tabs).
+    renderedContentInner.querySelectorAll("a[href]").forEach((link) => {
         link.addEventListener("click", (e) => {
             const href = link.getAttribute("href");
-            if (!href || href.startsWith("http://") || href.startsWith("https://")) return;
+            if (!href) return;
 
-            // Resolve the link target relative to the current file's folder
+            // In-page anchors can stay with the webview.
+            if (href.startsWith("#")) return;
+
+            // External links open in the system browser instead of the webview.
+            if (/^(https?|mailto|tel):/i.test(href) || href.startsWith("//")) {
+                e.preventDefault();
+                const url = href.startsWith("//") ? `https:${href}` : href;
+                openExternalUrl(url).catch((err) => console.warn("Failed to open external link:", err));
+                return;
+            }
+
+            // Other absolute URIs (file:, javascript:...) are left alone.
+            if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return;
+
+            // A folder-relative link must never reach the webview: navigating
+            // to it replaces the app shell, which loses the open folder.
+            e.preventDefault();
+
             const currentFile = currentFiles[currentFileIndex];
             if (!currentFile) return;
 
-            const currentDir = currentFile.relative_path.split("/").slice(0, -1).join("/");
-
-            // Resolve the href against the current file's folder, collapsing
-            // "." and ".." segments so links from nested folders resolve to
-            // the same normalized relative_path used by the file list.
-            const rawTarget = currentDir ? currentDir + "/" + href : href;
-            const segments = [];
-            for (const part of rawTarget.split("/")) {
-                if (!part || part === ".") continue;
-                if (part === "..") { segments.pop(); continue; }
-                segments.push(part);
-            }
-            const targetPath = segments.join("/");
+            const targetPath = resolveRelativeMarkdownLink(href, currentFile.relative_path);
+            if (!targetPath) return;
 
             // Find the matching file in the current file list
-            const targetIndex = currentFiles.findIndex((f) => f.relative_path === targetPath);
+            const targetIndex = currentFiles.findIndex((f) => normalizeRelPath(f.relative_path) === targetPath);
             if (targetIndex >= 0) {
-                e.preventDefault();
                 selectFile(targetIndex);
+            } else {
+                console.warn(`Link target is not in the open folder: ${href} -> ${targetPath}`);
             }
-            // If no match, let the browser handle it normally
         });
     });
+}
+
+/**
+ * Resolve a relative link against the folder of the file that contains it.
+ * Returns a normalized folder-relative path ("americas/index.md") or "" for
+ * links that point outside the folder.
+ */
+function resolveRelativeMarkdownLink(href, fromRelativePath) {
+    // Drop query strings and fragments, then undo URL encoding ("My%20File.md").
+    let target = normalizeRelPath(href.split(/[?#]/)[0]);
+    try {
+        target = decodeURIComponent(target);
+    } catch {
+        // Keep the raw value when it isn't valid percent-encoding.
+    }
+    if (!target) return "";
+
+    const currentDir = normalizeRelPath(fromRelativePath).split("/").slice(0, -1).join("/");
+
+    // Collapse "." and ".." segments so links from nested folders resolve to
+    // the same normalized relative_path used by the file list. A leading "/"
+    // is treated as the root of the open folder.
+    const baseDir = target.startsWith("/") ? "" : currentDir;
+    const segments = [];
+    for (const part of (baseDir ? baseDir + "/" + target : target).split("/")) {
+        if (!part || part === ".") continue;
+        if (part === "..") {
+            // Escaping the folder root can't resolve to a listed file.
+            if (segments.length === 0) return "";
+            segments.pop();
+            continue;
+        }
+        segments.push(part);
+    }
+    return segments.join("/");
 }
 
 // ── Loading State ───────────────────────────────────────────────────────────

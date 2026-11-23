@@ -38,8 +38,88 @@
       MinVersion="10.0.17763.0"
       MaxVersionTested="10.0.22621.0" />
   </Dependencies>
+  <!--
+    Languages declared here are what the Microsoft Store shows in the product
+    page's "Supported languages" section and what Partner Center reports under
+    "Languages supported in packages". Keep this list in sync with the app's
+    i18n locales in src/i18n/index.js. Codes must be Store-supported BCP-47
+    tags (see docs/build-and-deployment.md). Esperanto (eo) and Burmese (my)
+    are not supported by the Store, so they are intentionally omitted.
+  -->
   <Resources>
     <Resource Language="en-us" />
+    <Resource Language="es" />
+    <Resource Language="de" />
+    <Resource Language="af" />
+    <Resource Language="am" />
+    <Resource Language="az-latn" />
+    <Resource Language="be" />
+    <Resource Language="bg" />
+    <Resource Language="bn" />
+    <Resource Language="bs" />
+    <Resource Language="ca" />
+    <Resource Language="cs" />
+    <Resource Language="cy" />
+    <Resource Language="da" />
+    <Resource Language="el" />
+    <Resource Language="et" />
+    <Resource Language="eu" />
+    <Resource Language="fi" />
+    <Resource Language="fil" />
+    <Resource Language="fr" />
+    <Resource Language="ga" />
+    <Resource Language="gl" />
+    <Resource Language="gu" />
+    <Resource Language="hi" />
+    <Resource Language="hr" />
+    <Resource Language="hu" />
+    <Resource Language="hy" />
+    <Resource Language="id" />
+    <Resource Language="is" />
+    <Resource Language="it" />
+    <Resource Language="ja" />
+    <Resource Language="ka" />
+    <Resource Language="kk" />
+    <Resource Language="km" />
+    <Resource Language="kn" />
+    <Resource Language="ko" />
+    <Resource Language="ky-kg" />
+    <Resource Language="lb" />
+    <Resource Language="lt" />
+    <Resource Language="lo" />
+    <Resource Language="lv" />
+    <Resource Language="mk" />
+    <Resource Language="ml" />
+    <Resource Language="mn-cyrl" />
+    <Resource Language="mr" />
+    <Resource Language="ms" />
+    <Resource Language="mt" />
+    <Resource Language="nb" />
+    <Resource Language="ne" />
+    <Resource Language="nl" />
+    <Resource Language="pa" />
+    <Resource Language="pl" />
+    <Resource Language="pt" />
+    <Resource Language="pt-br" />
+    <Resource Language="ro" />
+    <Resource Language="ru" />
+    <Resource Language="si" />
+    <Resource Language="sk" />
+    <Resource Language="sl" />
+    <Resource Language="sq" />
+    <Resource Language="sr" />
+    <Resource Language="sv" />
+    <Resource Language="sw" />
+    <Resource Language="ta" />
+    <Resource Language="te" />
+    <Resource Language="th" />
+    <Resource Language="tr" />
+    <Resource Language="uk" />
+    <Resource Language="uz" />
+    <Resource Language="vi" />
+    <Resource Language="zh-cn" />
+    <Resource Language="zh-tw" />
+    <Resource Language="zu" />
   </Resources>
   <Applications>
     <Application

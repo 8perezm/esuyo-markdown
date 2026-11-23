@@ -46,12 +46,31 @@ Concurrency cancels superseded runs on the same branch (`publish.yml:9-11`).
 ## Microsoft Store (MSIX)
 
 - Store-specific WebView2 mode: `src-tauri/tauri.microsoftstore.conf.json` sets `webviewInstallMode.type: offlineInstaller` **for the Tauri MSI/NSIS installer only**. The hand-packed MSIX described below is not affected by that setting.
-- Pack script: `scripts/build-msix.ps1 -Version <3-part semver>` stages the release exe, **`WebView2Loader.dll`**, and the 4 required logos (`StoreLogo.png`, `Square44x44Logo.png`, `Square150x150Logo.png`, `Square71x71Logo.png` from `src-tauri/icons/`) and runs `makeappx.exe pack` (unsigned — the Store signs on submission).
+- Pack script: `scripts/build-msix.ps1 -Version <3-part semver>` stages the release exe, **`WebView2Loader.dll`**, and the 4 required logos (`StoreLogo.png`, `Square44x44Logo.png`, `Square150x150Logo.png`, `Square71x71Logo.png` from `src-tauri/icons/`) and runs `makeappx.exe pack` (unsigned, the Store signs on submission).
   - The GNU Rust toolchain loads `WebView2Loader.dll` dynamically from the exe's folder. If it is missing, the installed app fails with *"The code execution cannot proceed because WebView2Loader.dll was not found."* The script copies it from the Cargo output or the vendored `src-tauri/msix/WebView2Loader-<arch>.dll` files. See `src-tauri/msix/README.md`.
   - The WebView2 **runtime** itself is not bundled: it is built into Windows 11 and present on most Windows 10 installs. No runtime download is performed by the MSIX.
 - MSIX identity defaults (`build-msix.ps1:56-60`): `Esuyo.EsuyoMarkdown` / `CN=Esuyo` / `Esuyo Markdown` / `Esuyo`. Override via repo Variables `MSIX_IDENTITY_NAME`, `MSIX_PUBLISHER`, `MSIX_PUBLISHER_DISPLAY_NAME`, `MSIX_DISPLAY_NAME`, `MSIX_DESCRIPTION`. `DisplayName` must exactly match the Partner Center reserved name.
 - Auto-submit requires Secrets `AZURE_AD_TENANT_ID`, `SELLER_ID`, `AZURE_AD_APPLICATION_CLIENT_ID`, `AZURE_AD_APPLICATION_SECRET` plus Variable `STORE_PRODUCT_ID` (`publish.yml:290-299`). Only free products support API update. Without them, CI skips and you upload the `.msix` from the GitHub Release to Partner Center by hand.
-- First Store submission must be manual (Store API cannot create the very first submission) — see the setup checklist in `publish.yml:283-300`.
+- First Store submission must be manual (Store API cannot create the very first submission), see the setup checklist in `publish.yml:283-300`.
+
+### Supported languages on the Store product page
+
+The "Supported languages" section on the Microsoft Store product page, and the "Languages supported in packages" button in Partner Center, are derived from the `<Resources>` block of the MSIX manifest. They are **not** the Store listing languages added under Store listings, and they are **not** the JS i18n dictionaries by themselves.
+
+`src-tauri/msix/AppxManifest.template.xml` declares 73 Store-supported language codes, generated from the 75 app locales in `src/i18n/index.js`:
+
+- `az` becomes `az-latn`, `ky` becomes `ky-kg`, `mn` becomes `mn-cyrl` because the Store does not accept the bare codes.
+- `eo` (Esperanto) and `my` (Burmese) are omitted because they are not in the Store's supported-language list. Microsoft warns that unsupported codes can delay or fail certification.
+- `en-us` is kept as the first entry (the package default). The other 72 follow.
+
+To make the product page show them, the change has to ship in a package:
+
+1. Bump the app version above the currently submitted package (0.1.16.0), for example `0.1.17.0`.
+2. Run `npx tauri build --no-bundle`, then `scripts/build-msix.ps1 -Version 0.1.17`.
+3. After the in-flight submission publishes, create a new submission and upload the new `.msix` in Packages.
+4. Submit. Once certified, the Store catalog will report the full `SupportedLanguages` list and the product page will show the languages.
+
+Declaring a language here does not translate the UI. The app's JS i18n already does that, so the declarations are accurate.
 
 ## Artifacts
 

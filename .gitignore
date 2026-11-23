@@ -11,7 +11,7 @@ dist-ssr/
 src-tauri/target/
 src-tauri/Cargo.lock
 
-# Keep target out of the working tree — it's reproducible from source.
+# Keep target out of the working tree, it's reproducible from source.
 # If you need to commit Cargo.lock (e.g. for a binary crate), remove the line above.
 
 # ── Editor / OS noise ────────────────────────────────────────────────────────
@@ -44,6 +44,12 @@ src-tauri/gen/
 # ── OS / Windows ─────────────────────────────────────────────────────────────
 $RECYCLE.BIN/
 System Volume Information/
+
+# ── Microsoft Store tooling ──────────────────────────────────────────────────
+# Dedicated Chrome profile holds session cookies; generated CSV/JSON and rank
+# history are local working files. Source of truth lives in scripts/store/listing/.
+.store-browser/
+scripts/store/out/
 
 # ── Misc ─────────────────────────────────────────────────────────────────────
 # Temporary scratch space; durable scripts live in scripts/ and docs/ instead.

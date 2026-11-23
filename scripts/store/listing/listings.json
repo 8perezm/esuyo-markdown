@@ -1,0 +1,115 @@
+{
+  "$comment": "Source of truth for Microsoft Store listing copy. Fields are written to the `default` column of a Partner Center listings CSV; localeOverrides fill a language column only when present, otherwise that language inherits `default`. Never translate by machine without review.",
+  "productId": "9nfr3w513lvr",
+  "tracking": {
+    "market": { "hl": "en-GB", "gl": "GB" },
+    "queries": [
+      "markdown",
+      "markdown editor",
+      "markdown viewer",
+      "markdown reader",
+      "offline markdown editor",
+      "local markdown editor",
+      "markdown notes",
+      "Esuyo"
+    ]
+  },
+  "proposed": {
+    "reservedName": "Markdown Editor & Reader Esuyo",
+    "nameAlternatives": [
+      "Markdown Reader & Editor, Esuyo",
+      "Markdown Editor for Notes Esuyo",
+      "Esuyo Markdown (current, keep if renaming is too risky)"
+    ],
+    "rationale": "Brand-first names waste the highest-weighted text. 30 characters exactly; 'Markdown Editor' is contiguous, 'Reader' is present, brand stays last. Reserved name must be checked for availability in Partner Center.",
+    "fields": {
+      "Title": "Markdown Editor & Reader Esuyo",
+      "ShortDescription": "Offline Markdown editor and reader for local folders. Browse every .md file as a tree or flat list, read with syntax highlighting, edit in rich text or raw source, and save straight back to disk. No account, cloud sync, telemetry or ads.",
+      "Description": "Esuyo Markdown is a fast, offline Markdown editor and reader for local .md files. Point it at any folder and browse every .md and .markdown file inside, as a flat list or a collapsible folder tree, then read with clean, syntax-highlighted formatting or edit in rich text and raw source, saving straight back to disk.\n\nEverything stays on your device. No account, no cloud sync, no telemetry, no ads, the only network use is optional Google Fonts loading.\n\nBuilt for docs, notes, wikis and repos:\n• Recursive browsing with .gitignore support and a built-in skip list for node_modules, .git and friends\n• Flat file list or collapsible folder tree\n• Clean reading view with syntax-highlighted code blocks and GFM tables\n• Tabs with independent drafts, switch freely, and your open tabs are restored per folder\n• Rich-text (WYSIWYG) editing plus a raw Markdown source mode\n• New file, Save As and safe delete to the Recycle Bin\n• Light and dark themes, customizable body/heading/code fonts and sizes, plus quick zoom\n• Keyboard-first: ↑/↓ to move between files, Ctrl+N/S/W for new/save/close, Ctrl+Tab to switch tabs\n• Recent folders and settings that persist locally between sessions\n\nOpen source and offline by design.",
+      "ShortTitle": "Markdown Editor; Markdown Viewer; Esuyo Markdown",
+      "Feature1": "Offline Markdown editor for local .md and .markdown files",
+      "Feature2": "Folder tree or flat file list with .gitignore support",
+      "Feature3": "Rendered reading view with syntax-highlighted code and GFM tables",
+      "Feature4": "Rich-text WYSIWYG editing plus raw Markdown source mode",
+      "Feature5": "Tabs with independent drafts, restored per folder",
+      "Feature6": "New file, Save As and delete to the Recycle Bin",
+      "Feature7": "Light and dark themes with custom body, heading and code fonts",
+      "Feature8": "Keyboard-first navigation and quick zoom",
+      "Feature9": "No account, cloud sync, telemetry or ads",
+      "Feature10": "Recently used folders and settings stored locally",
+      "SearchTerm1": "markdown editor",
+      "SearchTerm2": "markdown reader",
+      "SearchTerm3": "local markdown editor",
+      "SearchTerm4": "md editor",
+      "SearchTerm5": "offline markdown editor",
+      "SearchTerm6": "markdown notes app",
+      "SearchTerm7": ".md file editor"
+    }
+  },
+  "localeOverrides": {
+    "en-gb": {
+      "Title": "Markdown Editor & Reader Esuyo"
+    }
+  },
+  "keywords": {
+    "applied": ["markdown editor", "markdown reader", "local markdown editor", "md editor", "offline markdown editor", "markdown notes app", ".md file editor"],
+    "primary": ["markdown editor", "markdown viewer", "markdown reader", "markdown files"],
+    "secondary": ["offline markdown", "local markdown editor", "md editor", "markdown preview", "markdown notes", "notes", "docs", "wiki", "local-first"],
+    "note": "Partner Center DOES have a hidden Keywords field (Store listing > Additional information): up to 7 keywords, 40 chars each, 21 words total. `applied` is exactly what is saved in the en-us draft. In the real listings CSV these map to SearchTerm1..SearchTerm7, not to a field named 'Keywords'. The field is hidden from customers but used for discoverability. Irrelevant keyword stuffing can still hurt ranking."
+  },
+  "storeLocaleOverrides": {
+    "en": "en-gb",
+    "id": "id-id",
+    "pt-BR": "pt-br",
+    "zh-CN": "zh-cn",
+    "zh-TW": "zh-tw",
+    "sr": "sr-latn",
+    "bs": "bs-latn",
+    "az": "az-latn",
+    "uz": "uz-latn",
+    "mn": "mn-cyrl",
+    "ky": "ky-cyrl"
+  },
+  "localizationExperiment": {
+    "status": "prep",
+    "approved": "2026-11-23, top-10 waves; prep now (name checks, translations, CSV, per-market rank tracking)",
+    "aiDraft": true,
+    "nativeReviewRequired": true,
+    "startCondition": "Submission 6 publishes, then a 2-4 week en-GB baseline window",
+    "design": "Wave 1 (de, fr, es, pt-BR, ru) receives localized Store listings; Wave 2 (ja, ko, zh-CN, it, nl) stays English as the control. After reading the result, localize the control.",
+    "primaryMetric": "per-market Store search rank for local-language 'markdown editor' queries",
+    "secondaryMetrics": ["Store page views per market", "installs per market", "conversion rate"],
+    "waves": {
+      "wave1_treatment": ["de", "fr", "es", "pt-BR", "ru"],
+      "wave2_control": ["ja", "ko", "zh-CN", "it", "nl"]
+    },
+    "reservedNameCandidates": {
+      "de": "Markdown Editor & Leser Esuyo",
+      "fr": "Markdown Éditeur Lecteur Esuyo",
+      "es": "Markdown Editor Lector Esuyo",
+      "pt-BR": "Markdown Editor Leitor Esuyo",
+      "ru": "Markdown Редактор Esuyo",
+      "ja": "Markdown エディター Esuyo",
+      "ko": "마크다운 편집기 Esuyo",
+      "zh-CN": "Markdown 编辑器 Esuyo",
+      "it": "Markdown Editor Lettore Esuyo",
+      "nl": "Markdown Editor Lezer Esuyo"
+    },
+    "nameAvailability": "Checked and RESERVED in Partner Center on 2026-11-23 with explicit human approval; all 10 appear as 'Reserved for this app'. Reservations expire in 3 months if no submission uses them.",
+    "translationsFile": "translations.json",
+    "screenshots": "Reuse the existing en-us screenshot asset URLs in every localized listing; no localized screenshots until a wave wins.",
+    "rankMarkets": {
+      "en-GB": { "hl": "en-GB", "gl": "GB", "queries": ["markdown", "markdown editor", "markdown viewer", "markdown reader", "Esuyo"] },
+      "de": { "hl": "de", "gl": "DE", "queries": ["markdown editor", "markdown leser", "markdown offline"] },
+      "fr": { "hl": "fr", "gl": "FR", "queries": ["éditeur markdown", "lecteur markdown", "markdown hors ligne"] },
+      "es": { "hl": "es", "gl": "ES", "queries": ["editor markdown", "lector markdown", "markdown sin conexión"] },
+      "pt-BR": { "hl": "pt-BR", "gl": "BR", "queries": ["editor markdown", "leitor markdown", "markdown offline"] },
+      "ru": { "hl": "ru", "gl": "RU", "queries": ["редактор markdown", "markdown читатель", "markdown офлайн"] },
+      "ja": { "hl": "ja", "gl": "JP", "queries": ["markdown エディター", "markdown ビューアー", "markdown オフライン"] },
+      "ko": { "hl": "ko", "gl": "KR", "queries": ["마크다운 편집기", "markdown 뷰어", "마크다운 오프라인"] },
+      "zh-CN": { "hl": "zh-CN", "gl": "CN", "queries": ["markdown 编辑器", "markdown 阅读器", "markdown 离线"] },
+      "it": { "hl": "it", "gl": "IT", "queries": ["editor markdown", "lettore markdown", "markdown offline"] },
+      "nl": { "hl": "nl", "gl": "NL", "queries": ["markdown editor", "markdown lezer", "markdown offline"] }
+    }
+  }
+}

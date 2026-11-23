@@ -9,7 +9,11 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "checklist": "node scripts/i18n/gen-language-checklist.mjs",
-    "test:autotick": "node scripts/i18n/test-autotick.mjs"
+    "test:autotick": "node scripts/i18n/test-autotick.mjs",
+    "store:listing": "node scripts/store/gen-listing-csv.mjs --preview",
+    "store:csv": "node scripts/store/gen-listing-csv.mjs",
+    "store:metadata": "node scripts/store/apply-metadata.mjs",
+    "store:rank": "node scripts/store/check-rank.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
